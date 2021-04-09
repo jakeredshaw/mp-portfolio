@@ -93,8 +93,9 @@ img::-moz-selection {
 }
 
 .btn-primary {
-  background-color: #fed136;
-  border-color: #fed136;
+  background-color: #9e8835;
+  border-color: #cea618;
+  
 }
 
 .btn-primary:active, .btn-primary:focus, .btn-primary:hover {
@@ -108,7 +109,7 @@ img::-moz-selection {
 }
 
 #mainNav {
-  background-color: #212529;
+  background-color: #404f60;
 }
 
 #mainNav .navbar-toggler {
@@ -172,7 +173,7 @@ img::-moz-selection {
 
 header.masthead {
   text-align: center;
-  color: #b9a65d;
+  color: #bcaa60;
   background-image: url("../img/1.JPG");
   background-repeat: no-repeat;
   background-attachment: scroll;
