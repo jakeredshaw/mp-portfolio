@@ -90,11 +90,11 @@
   const rows = [];
   ["1", "2", "3", "unsure"].forEach(freq => ["now", "keen", "curious"].forEach(ready => ["0", "1-5", "6-20", "20+"].forEach(exp => [false, true].forEach(cost => {
     const a = Object.assign({}, base, { freq, ready, exp, barrier: cost ? "cost" : "intimidated" }); const r = R.recommend(a); const L = links(a, r.pack);
-    rows.push(`<tr><td>${R.label("freq", freq)}</td><td>${R.label("ready", ready)}</td><td>${R.label("exp", exp)}</td><td>${cost ? "Cost" : "Other"}</td><td>${pk(r.pack)}</td><td class="small">${r.down ? C.packs[r.down].name : "none"} / ${r.up ? C.packs[r.up].name : "none"}</td><td><a href="${L.result}">Result</a> · <a href="${L.pack}">Pack</a></td></tr>`);
+    rows.push(`<tr><td>${R.label("freq", freq)}</td><td>${R.label("ready", ready)}</td><td>${R.label("exp", exp)}</td><td>${cost ? "Cost" : "Other"}</td><td>${pk(r.pack)}</td><td class="small">${R.recommend3(a).list.map(id => C.packs[id].name).join(", ")}</td><td><a href="${L.result}">Result</a> · <a href="${L.pack}">Pack</a></td></tr>`);
   }))));
   H.push(`<section><div class="in"><p class="eyebrow">3 · Every route</p><h2>All 96 routes to a pack.</h2>
     <p class="muted small">The pack is decided by how often they can come, how ready they are, their experience, and whether cost held them back. Everything else personalises the copy.</p>
-    <div style="max-height:520px;overflow:auto;border:1px solid var(--line);margin-top:12px"><table class="t"><thead><tr><th>How often</th><th>Readiness</th><th>Experience</th><th>Barrier</th><th>Pack</th><th>Down / up sell</th><th>Open</th></tr></thead><tbody>${rows.join("")}</tbody></table></div></div></section>`);
+    <div style="max-height:520px;overflow:auto;border:1px solid var(--line);margin-top:12px"><table class="t"><thead><tr><th>How often</th><th>Readiness</th><th>Experience</th><th>Barrier</th><th>Matched pack</th><th>3 shown on result</th><th>Open</th></tr></thead><tbody>${rows.join("")}</tbody></table></div></div></section>`);
 
   /* every profile */
   const profs = [];
@@ -127,6 +127,7 @@
   const upd = () => {
     const a = read(), r = R.recommend(a), L = links(a, r.pack);
     R.$("#out").innerHTML = `<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="caps">Outcome</span>${pk(r.pack)}<b>${C.profileName(a)}</b><span class="small muted">Down sell: ${r.down ? C.packs[r.down].name : "none"} · Up sell: ${r.up ? C.packs[r.up].name : "none"}</span></div>
+      <p class="small" style="margin:10px 0 0"><b>Shown on the result screen, in order:</b> ${R.recommend3(a).list.map((id, i) => (i + 1) + ". " + C.packs[id].name).join(" · ")}</p>
       <ul class="ticks small" style="margin:12px 0 0">${R.reasons(a, r.pack).map(x => `<li>${x}</li>`).join("")}</ul>
       <div class="btns"><a class="btn btn-primary" href="${L.result}">Open result screen</a><a class="btn btn-ghost" href="${L.pack}">Matched pack page</a>${C.order.filter(id => id !== r.pack).map(id => `<a class="btn btn-ghost" href="${C.packs[id].file}?r=${code(a)}">${C.packs[id].name} page</a>`).join("")}<a class="btn btn-ghost" href="${L.packs}">Shop page</a><a class="btn btn-ghost" href="${L.checkout}">Checkout</a><a class="btn btn-ghost" href="${L.thanks}">Thank you</a></div>`;
   };

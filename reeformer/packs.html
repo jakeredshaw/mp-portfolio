@@ -22,7 +22,11 @@
   .tile .tb{padding:12px 2px 0}
   .tile .nm{font-size:11.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--deep)}
   .tile .ds{font-size:13px;color:var(--muted);margin:2px 0 6px}
-  .tile .pr{font-size:14px;font-weight:600}
+  .tile .pr{font-size:13px;font-weight:600;color:var(--muted)}
+  .perbig{font-size:28px;font-weight:800;color:var(--deep);letter-spacing:-.02em;line-height:1.1;margin:4px 0 2px}
+  .perbig span{font-size:13px;font-weight:700;letter-spacing:0}
+  .cmp{background:var(--glass);border-radius:22px;overflow:hidden}
+  .cmp .hot{background:rgba(255,251,241,.95)}
   .tile .pr s{color:var(--muted);font-weight:400;margin-left:6px}
   .tile .mb{margin-top:10px}
   .cmp{width:100%;border-collapse:collapse;font-size:14px;min-width:620px}
@@ -37,11 +41,13 @@
 <main>
   <section class="hero-img" style="min-height:min(58vh,520px)"><img src="assets/img/concept-studio.jpg" alt="Concept visual of the reef Reformer studio"><div class="in">
     <p class="eyebrow" id="eb">The founder collection · Concept visual</p><h1 id="h">Founder packs.</h1>
-    <p id="sub">Every pack is cheaper than walking in after we open, comes with 3 Guest Passes, and disappears on opening day.</p></div></section>
+    <p id="sub">The more sessions you choose, the less each one costs. Every pack is fully refundable for 14 days and disappears on opening day.</p></div></section>
+  <div id="tick"></div>
   <section style="padding-top:34px"><div class="wrap">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><span class="caps muted" id="cnt">4 packs · 205 places</span><a class="link" href="index.html?restart=1">Not sure? Take the quiz</a></div>
     <div class="coll" id="coll"></div>
   </div></section>
+  <section style="padding-top:0"><div class="narrow" id="guar"></div></section>
   <section class="band-white"><div class="wrap"><div class="narrow center" style="padding:0"><p class="eyebrow">Compare</p><h2>Find your fit.</h2><p class="muted">Think of it like sizing. Pick the pack that matches how often you can come.</p></div>
     <div style="overflow-x:auto;margin-top:22px"><table class="cmp" id="cmp"></table></div></div></section>
   <section class="band-sand"><div class="wrap"><div class="grid g3 center">
@@ -64,19 +70,19 @@
   R.$("#t1").textContent = "Change your mind within " + CFG.refundDays + " days of buying online and get a full refund.";
   if (n) { R.$("#eb").textContent = n + "'s founder collection"; R.$("#h").textContent = n + ", find your founder pack."; }
   const desc = { founder5: "5 classes · the best first step", plus: "14 classes + red light + boots + tote", member: "30 classes + wellness + rate lock", year: "96 classes + 12 wellness + Founders Wall" };
-  R.$("#coll").innerHTML = C.order.map(id => {
+  R.$("#coll").innerHTML = C.order.slice().reverse().map(id => {
     const P = C.packs[id], hot = rec === id;
     return `<a class="tile" href="${P.file}${location.search}"><div style="position:relative">${R.img(P.imgs[0], "", false)}
-      <div class="bdg">${hot ? `<span class="badge blue">Matched to you</span>` : ""}<span class="badge">${P.badge}</span></div>
+      <div class="bdg">${id === "year" ? `<span class="badge">Best value</span>` : ""}${hot ? `<span class="badge blue">Matched to you</span>` : ""}<span class="badge foam">${P.badge}</span></div>
       <button class="btn btn-light btn-block qa js-qa" data-id="${id}" type="button">Quick add · ${R.money(P.price)}</button></div>
-      <div class="tb"><div class="nm">${P.name}</div><div class="ds">${desc[id]}</div><div class="pr">${R.money(P.price)}<s>${R.money(P.value)}</s></div>
-      <div class="small" style="color:var(--blue);margin-top:2px">You pay ${R.money(P.save)} less</div><div class="small muted">${R.placesShort(id)}</div></div></a>`;
+      <div class="tb"><div class="nm">${P.name}</div><div class="ds">${desc[id]}</div><div class="perbig">${R.money(P.perClass)}<span> a session</span></div><div class="pr">${R.money(P.price)} total<s>${R.money(P.value)}</s></div>
+      <div class="small" style="color:var(--blue);margin-top:2px;font-weight:700">${R.frame(id).pct}% less than walking in · You pay ${R.money(P.save)} less</div><div class="small muted">${R.placesShort(id)}</div></div></a>`;
   }).join("");
   document.querySelectorAll(".js-qa").forEach(b => b.onclick = (e) => { e.preventDefault(); e.stopPropagation(); R.addToBag(b.dataset.id); });
   const rows = [
-    ["Price", id => `<b>${R.money(C.packs[id].price)}</b>`],
+    ["Price per session", id => `<b style="font-size:18px">${R.money(C.packs[id].perClass)}</b>`],
+    ["Total price", id => R.money(C.packs[id].price)],
     ["Reformer classes", id => C.packs[id].classes],
-    ["Price per class", id => R.money(C.packs[id].perClass)],
     ["Best if you can come", id => ({ founder5: "To try it", plus: "Twice a week", member: "2 to 3 times a week", year: "Twice a week, all year" })[id]],
     ["Wellness sessions", id => ({ founder5: "None", plus: "2", member: "3", year: "12" })[id]],
     ["Gift", id => ({ founder5: "None", plus: "reef tote", member: "Merch bundle", year: "Full merch collection" })[id]],
@@ -85,8 +91,12 @@
     ["You pay less by", id => R.money(C.packs[id].save)],
     ["", id => `<a class="link" href="${C.packs[id].file}${location.search}">View</a>`]
   ];
-  R.$("#cmp").innerHTML = `<thead><tr><th></th>${C.order.map(id => `<th class="${id === (rec || "plus") ? "hot" : ""}">${C.packs[id].name}</th>`).join("")}</tr></thead><tbody>${rows.map(r => `<tr><td class="small muted">${r[0]}</td>${C.order.map(id => `<td class="${id === (rec || "plus") ? "hot" : ""}">${r[1](id)}</td>`).join("")}</tr>`).join("")}</tbody>`;
+  const ORD = C.order.slice().reverse();
+  R.$("#cmp").innerHTML = `<thead><tr><th></th>${ORD.map(id => `<th class="${id === (rec || "year") ? "hot" : ""}">${C.packs[id].name}</th>`).join("")}</tr></thead><tbody>${rows.map(r => `<tr><td class="small muted">${r[0]}</td>${ORD.map(id => `<td class="${id === (rec || "year") ? "hot" : ""}">${r[1](id)}</td>`).join("")}</tr>`).join("")}</tbody>`;
+  R.$("#guar").innerHTML = R.guarantee() + R.reassure();
+  R.$("#tick").innerHTML = R.ticker();
   R.$("#foot").innerHTML = R.footer();
+  R.animate();
   R.track("ViewContent", { content_name: "Founder packs" });
 })();
 </script>

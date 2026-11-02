@@ -17,21 +17,21 @@
   @media(min-width:900px){.co{grid-template-columns:1.1fr .9fr}}
   .co-main{padding:22px 16px 40px}
   @media(min-width:900px){.co-main{padding:40px 48px 60px}}
-  .co-side{background:var(--sand);border-left:1px solid var(--line);padding:22px 16px}
+  .co-side{background:rgba(243,236,223,.7);border-left:1px solid var(--line);padding:22px 16px}
   @media(min-width:900px){.co-side{padding:40px 36px;order:2}}
   @media(max-width:899px){.co-side{order:-1;border-left:0;border-bottom:1px solid var(--line)}}
   .sumtoggle{display:flex;justify-content:space-between;width:100%;background:none;border:0;padding:0;color:var(--blue);font-size:14px}
   @media(min-width:900px){.sumtoggle{display:none}.sumbody{display:block!important}}
   .co h2{font-size:22px;margin:28px 0 12px}
-  .fld{display:block;width:100%;font:inherit;font-size:15px;padding:14px;border:1px solid var(--stone);background:#fff;border-radius:0;outline:none;color:var(--ink)}
+  .fld{display:block;width:100%;font:inherit;font-size:15px;padding:14px;border:1.5px solid var(--stone);background:rgba(255,255,255,.88);border-radius:14px;outline:none;color:var(--ink)}
   .fld:focus{border-color:var(--deep);box-shadow:0 0 0 1px var(--deep)}
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .stack3{display:grid;gap:10px}
   .express{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-  .express button{min-height:48px;border:0;font-weight:700;font-size:15px;letter-spacing:.02em}
+  .express button{min-height:50px;border:0;font-weight:700;font-size:15px;letter-spacing:.02em;border-radius:14px}
   .or{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:12px;margin:22px 0 4px;text-transform:uppercase;letter-spacing:.14em}
   .or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
-  .bump{border:1.5px dashed var(--gold);background:#FFFBF1;padding:16px;margin-top:22px;display:flex;gap:12px;align-items:flex-start;cursor:pointer}
+  .bump{border:1.5px dashed var(--gold);background:#FFFBF1;border-radius:18px;padding:16px;margin-top:22px;display:flex;gap:12px;align-items:flex-start;cursor:pointer}
   .bump input{width:22px;height:22px;flex:none;accent-color:var(--gold);margin-top:2px}
   .chk{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;color:var(--muted);margin:12px 0}
   .chk input{width:18px;height:18px;margin-top:2px;flex:none;accent-color:var(--deep)}
@@ -77,8 +77,9 @@
           <div class="sumrow" style="color:var(--blue)"><span>Founder saving</span><span>${R.money(cur.save)}</span></div>
           <div class="sumrow"><span>Subtotal</span><span>${R.money(cur.price)}</span></div>
           <div class="tot"><span class="caps">Total</span><b>${R.money(cur.price)} <span class="small muted" style="font-weight:400">GBP</span></b></div>
+          <div class="sumrow" style="color:var(--deep);font-weight:800"><span>That works out at</span><span>${R.money(cur.perClass)} a session</span></div>
         </div>
-        <ul class="ticks small" style="margin-top:18px"><li>${CFG.refundDays} day refund window</li><li>Credits start on opening day, ${R.esc(CFG.openingDateText)}</li><li>3 Guest Passes for friends</li><li>Founder price, never available again</li></ul>
+        <div style="margin-top:18px">${R.guarantee(true)}</div>
       </div>
     </aside>
     <section class="co-main" style="padding-top:22px">
@@ -95,15 +96,16 @@
       <input class="fld" type="tel" placeholder="Mobile (for booking reminders)" autocomplete="tel" value="${R.esc(s.phone || "")}"></div>
       <h2>Payment</h2>
       <p class="small muted" style="margin-top:-6px">All transactions are secure and encrypted.</p>
-      <div class="stack3" style="border:1px solid var(--stone);background:var(--sand);padding:12px">
+      <div class="stack3" style="border:1px solid var(--glass-line);background:rgba(255,255,255,.55);border-radius:20px;padding:12px;box-shadow:var(--shadow)">
         <input class="fld" id="cc" inputmode="numeric" placeholder="Card number" value="4242 4242 4242 4242">
         <div class="row2"><input class="fld" placeholder="Expiry (MM / YY)" value="12 / 29"><input class="fld" placeholder="Security code" value="123"></div>
         <input class="fld" placeholder="Name on card" value="${R.esc(a.name || "")}">
       </div>
-      ${U ? `<label class="bump"><input type="checkbox" id="bp" ${bump ? "checked" : ""}><span><b style="color:var(--deep)">Yes, upgrade me to ${U.name} for ${R.money(P.bump.extra)} more.</b><br><span class="small">${P.bump.line}</span></span></label>` : ""}
+      ${U ? `<label class="bump"><input type="checkbox" id="bp" ${bump ? "checked" : ""}><span><b style="color:var(--deep)">Yes, upgrade me to ${U.name} for ${R.money(P.bump.extra)} more and pay just ${R.money(U.perClass)} a session.</b><br><span class="small">${P.bump.line}</span></span></label>` : ""}
       ${bump && U ? `<p class="small" style="color:var(--ok);margin-top:8px">✓ Upgraded to ${U.name}. Your total is now ${R.money(U.price)}.</p>` : ""}
       <div class="err" id="er"></div>
-      <button class="btn btn-primary btn-block" id="pay" type="button" style="margin-top:16px">Pay ${R.money(cur.price)} securely</button>
+      <button class="btn btn-gold btn-block pulse" id="pay" type="button" style="margin-top:16px">🔒 Pay ${R.money(cur.price)} securely</button>
+      <div style="margin-top:14px">${R.guarantee(true)}</div>
       <p class="small muted center" style="margin-top:12px">By paying you agree to the founder pack terms. Full ${CFG.refundDays} day refund window. Questions? <a href="mailto:${CFG.email}">${CFG.email}</a></p>
       <div class="pay"><span>VISA</span><span>MASTERCARD</span><span>AMEX</span><span>APPLE PAY</span><span>GOOGLE PAY</span></div>
     </section>`;

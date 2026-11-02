@@ -29,7 +29,7 @@
   const slides = [R.videoHtml(CFG.videos[packId], packId === "plus" ? "45 second founder video" : "Founder video"), ...P.imgs.map(i => R.img(i))];
   const brandTile = `<div class="img" style="background:var(--deep);display:grid;place-items:center"><div class="center" style="color:#F3E2C2;padding:20px"><img src="assets/logo/reef-mark-shell.png" alt="" width="110" height="115" style="margin:0 auto 18px;opacity:.95"><div class="caps" style="color:#fff">${P.name}</div><div style="font-family:var(--serif);font-size:30px;color:var(--gold-soft);margin-top:6px">${R.money(P.price)}</div><div class="small" style="margin-top:4px">${P.classes} Reformer classes</div></div></div>`;
   slides.push(brandTile);
-  const variants = C.order.map(id => { const X = C.packs[id]; return `<a class="vr ${id === packId ? "on" : ""}" href="${X.file}${q}" aria-label="${X.name}"><b>${X.classes}</b><span>classes</span><em>${R.money(X.price)}</em></a>`; }).join("");
+  const variants = C.order.slice().reverse().map(id => { const X = C.packs[id]; return `<a class="vr ${id === packId ? "on" : ""}" href="${X.file}${q}" aria-label="${X.name}">${id === "year" ? `<span class="vr-best">Best value</span>` : ""}<b>${R.money(X.perClass)}</b><span>a session</span><em>${X.classes} sessions</em></a>`; }).join("");
   const keyPoints = P.stack.slice(0, 4).map(r => `<li>${r[0]}</li>`).join("");
   const reasons = personal ? R.reasons(a, packId).slice(0, 2) : [];
 
@@ -48,22 +48,26 @@
       ${personal ? `<p class="eyebrow" style="margin-bottom:8px">${N ? N + "'s" : "Your"} plan · ${pname}</p>` : ""}
       <h1 style="font-size:clamp(28px,4vw,38px);margin-bottom:6px">${P.name}</h1>
       <p class="muted" style="margin:0 0 12px">${P.tagline}</p>
-      <div class="price"><b>${R.money(P.price)}</b><s>${R.money(P.value)}</s><span class="save">You pay ${R.money(P.save)} less</span></div>
-      <p class="small muted" style="margin:2px 0 0">${R.money(P.perClass)} a class${P.perClassWellness ? ` · ${R.money(P.perClassWellness)} with wellness counted` : ""}</p>
+      ${R.priceBlock(packId)}
+      <p class="small" style="margin:0;color:var(--blue);font-weight:700">Reduced from ${R.money(P.value)}. You pay ${R.money(P.save)} less.${P.perClassWellness ? ` Only ${R.money(P.perClassWellness)} a session once your wellness sessions are counted.` : ""}</p>
       ${R.placesHtml(packId)}
-      <div class="caps" style="margin:22px 0 10px;color:var(--deep)">Pack: <span style="color:var(--muted)">${P.name}</span></div>
+      <div class="caps" style="margin:22px 0 10px;color:var(--deep)">Choose your pack: <span style="color:var(--muted)">${P.name}</span></div>
       <div class="vrs">${variants}</div>
       <a class="link" href="index.html?restart=1" style="display:inline-block;margin:12px 0 0;font-size:10.5px">Which pack is right for me? Take the quiz</a>
       <ul class="ticks small" style="margin:18px 0 18px">${keyPoints}</ul>
-      <button class="btn btn-primary btn-block js-buy" type="button">Add to bag · ${R.money(P.price)}</button>
+      <button class="btn btn-gold btn-block js-buy pulse" type="button">Claim my founder place · ${R.money(P.price)}</button>
+      <p class="small center" style="margin:8px 0 0;color:var(--muted)">🛡️ Zero risk. Full refund within ${CFG.refundDays} days.</p>
       ${P.call ? `<div style="margin-top:10px">${R.callHtml("Book a 10 minute call with Ricky") || ""}</div>` : ""}
+      <div style="margin-top:16px">${R.guarantee(true)}</div>
       ${R.trustRow()}
+      ${R.benefitsNow(packId)}
       <div class="pay"><span>VISA</span><span>MASTERCARD</span><span>AMEX</span><span>APPLE PAY</span><span>GOOGLE PAY</span></div>
       ${reasons.length ? `<div class="card" style="margin-top:18px;background:var(--foam);border-color:var(--sky)"><div class="caps" style="color:var(--blue);margin-bottom:8px">Why this fits you${N ? ", " + N : ""}</div><ul class="ticks small" style="margin:0">${reasons.map(r => `<li>${r}</li>`).join("")}</ul></div>` : ""}
       <div style="margin-top:22px">${accordions.map((x, i) => `<details${i === 0 ? " open" : ""}><summary>${x[0]}</summary><div class="dbody">${x[1]}</div></details>`).join("")}</div>
     </div></div>
   </div></section>`);
 
+  sec.push(R.ticker());
   /* ================= personalised editorial ================= */
   sec.push(`<section class="band-sand center"><div class="narrow">
     <p class="eyebrow">${personal ? pname : "Reformer Pilates on Wyle Cop"}</p>
@@ -94,6 +98,8 @@
     <div class="grid ${bodies.length > 1 ? "g" + Math.min(3, bodies.length) : ""}" style="margin-top:28px">${bodies.map(b => C.bodyModules[b] ? `<div class="card"><h3>${C.bodyModules[b].t}</h3><p style="margin:0" class="muted">${C.bodyModules[b].b}</p></div>` : "").join("")}</div>
   </div></section>`);
 
+  { const F = R.frame(packId);
+    sec.push(`<section><div class="narrow"><div class="fact reveal"><b data-count="${F.pct}">${F.pct}%</b><div>Less per session than walking in once we open. That's <b>${F.per}</b> instead of £25, every single time you come.</div></div></div></section>`); }
   sec.push(`<section class="band-deep" style="padding:0"><div class="split flush"><div>${R.img("concept-studio-pc", "", true)}</div><div style="padding:clamp(40px,7vw,80px) 20px">
     <p class="eyebrow" style="color:#F3E2C2">Why Reformer works</p>
     <h2>A bed on rails, a set of springs, and nowhere to hide.</h2>
@@ -107,7 +113,7 @@
   sec.push(`<section><div class="wrap"><div class="narrow center" style="padding:0"><p class="eyebrow">The evidence</p>
     <h2>We printed the studies. Including the one that disagrees with us.</h2>
     <p class="muted">Every number comes from published research, collected in The Reeformer Pilates Manual.</p></div>
-    <div class="grid ${sciKeys.length > 3 ? "g4" : "g3"}" style="margin-top:28px">${sciKeys.map(k => { const x = C.science[k]; return `<div class="card stat"><b>${x[0]}</b><span>${x[1]}</span><div class="src" style="margin-top:8px">${x[2]}</div></div>`; }).join("")}</div>
+    <div class="grid ${sciKeys.length > 3 ? "g4" : "g3"}" style="margin-top:28px">${sciKeys.map(k => { const x = C.science[k]; return `<div class="card stat"><b data-count="${parseFloat(x[0]) || ""}">${x[0]}</b><span>${x[1]}</span><div class="src" style="margin-top:8px">${x[2]}</div></div>`; }).join("")}</div>
     <p class="small muted center" style="max-width:640px;margin:22px auto 0"><b style="color:var(--deep)">The honest one:</b> Pilates holds bone, it doesn't build it. A meta analysis of 11 studies in women aged 45 to 78 found bone density barely moved. <span class="src">Fernández Rodríguez et al, PLOS ONE, 2021</span></p>
   </div></section>`);
 
@@ -136,6 +142,14 @@
       <p>Peak slots, early mornings and evenings, are open to every founder on equal terms. 25 places. When they're gone, this pack never comes back.</p></div></section>`);
   }
 
+  { const F = R.frame(packId);
+    sec.push(`<section class="band-foam"><div class="narrow center">
+      <p class="eyebrow" style="color:var(--blue)">The maths</p><h2>Less than you think. Much less.</h2>
+      <div style="max-width:440px;margin:18px auto 0">${R.priceBlock(packId)}</div>
+      <p class="muted" style="margin-top:14px">${F.line}</p>
+      ${R.reassure()}
+      <button class="btn btn-gold js-buy" type="button" style="margin-top:6px">Claim ${P.name} · ${F.per} a session</button>
+    </div></section>`); }
   const bm = C.barrierModules[a.barrier];
   sec.push(`<section><div class="narrow">
     ${bm ? `<div class="card" style="border-left:3px solid var(--gold);margin-bottom:40px"><p class="eyebrow">You told us this held you back</p><h3>${bm.t}</h3><p style="margin:0">${R.fill(bm.b, a)}</p></div>` : ""}
@@ -152,16 +166,17 @@
     <p class="muted">Strength, posture and balance can all be built, at any age, and the Reformer is the kindest, smartest way we know to do it. Our founders are the people who'll shape this place. We'd love you to be one of them.</p>
     <p style="margin-top:20px;font-family:var(--serif);font-style:italic;font-size:20px;color:var(--gold)">${CFG.founderName ? R.esc(CFG.founderName) : "The reef family"}</p></div></section>`);
 
-  const others = C.order.filter(id => id !== packId);
+  const others = C.order.slice().reverse().filter(id => id !== packId);
   sec.push(`<section><div class="wrap"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap"><h2 style="margin:0">You may also like</h2><a class="link" href="packs.html${q}">Shop all packs</a></div>
-    <div class="grid g3" style="margin-top:24px">${others.map(id => { const X = C.packs[id]; return `<a class="pcard" href="${X.file}${q}">${R.img(X.imgs[0], "", false)}<div class="pc-b"><span class="badge ${rec && rec.pack === id ? "blue" : ""}">${rec && rec.pack === id ? "Matched to you" : X.badge}</span><div class="caps" style="margin-top:10px;color:var(--deep)">${X.name}</div><div class="small muted">${X.classes} Reformer classes</div><div style="margin-top:6px"><b>${R.money(X.price)}</b> <s class="small muted">${R.money(X.value)}</s></div></div></a>`; }).join("")}</div></div></section>`);
+    <div class="grid g3" style="margin-top:24px">${others.map(id => { const X = C.packs[id]; return `<a class="pcard" href="${X.file}${q}">${R.img(X.imgs[0], "", false)}<div class="pc-b"><span class="badge ${rec && rec.pack === id ? "blue" : ""}">${rec && rec.pack === id ? "Matched to you" : X.badge}</span><div class="caps" style="margin-top:10px;color:var(--deep)">${X.name}</div><div class="small muted">${X.classes} Reformer classes</div><div style="margin-top:6px"><b style="font-size:20px">${R.money(X.perClass)}</b> <span class="small muted">a session · ${R.money(X.price)}</span></div></div></a>`; }).join("")}</div></div></section>`);
 
   const down = P.down ? C.packs[P.down] : null;
   sec.push(`<section class="band-sand"><div class="narrow center">
     <img src="assets/logo/reef-mark-gold.png" alt="" width="64" height="67" style="margin:0 auto 14px">
-    <h2>Zero risk${N ? ", " + N : ""}.</h2>
-    <p class="muted">Full ${CFG.refundDays} day refund window. Your credits don't start until opening day, so you never lose a class. Founder prices end the day we open, ${R.esc(CFG.openingDateText)}.</p>
-    <button class="btn btn-primary btn-block js-buy" type="button" style="max-width:420px;margin:18px auto 0">Add ${P.name} to bag · ${R.money(P.price)}</button>
+    <h2>Zero risk${N ? ", " + N : ""}. Fully protected.</h2>
+    <div style="text-align:left;margin:18px 0">${R.guarantee()}</div>
+    <p class="muted">Founder prices end the day we open, ${R.esc(CFG.openingDateText)}. ${R.placesShort(packId)} at this price.</p>
+    <button class="btn btn-gold btn-block js-buy pulse" type="button" style="max-width:420px;margin:18px auto 0">Claim ${P.name} · ${R.money(P.perClass)} a session</button>
     ${down ? `<p style="margin-top:18px"><a href="${down.file}${q}">Not ready? Start with ${down.name} for ${R.money(down.price)}</a></p>` : ""}
   </div></section>`);
 
@@ -175,7 +190,7 @@
 
   /* sticky add to bag */
   const st = document.createElement("div"); st.className = "sticky";
-  st.innerHTML = `<div class="p"><b>${P.name}</b>${R.money(P.price)} · ${R.placesShort(packId)}</div><button class="btn btn-primary js-buy" type="button">Add to bag</button>`;
+  st.innerHTML = `<div class="p"><b>${R.money(P.perClass)} a session</b>${P.name} · ${R.money(P.price)} · 🛡️ ${CFG.refundDays} day refund</div><button class="btn btn-gold js-buy" type="button">Claim my place</button>`;
   document.body.appendChild(st);
   const firstBuy = R.$(".buy .js-buy");
   addEventListener("scroll", () => { const r = firstBuy.getBoundingClientRect(); st.classList.toggle("show", r.bottom < 0); }, { passive: true });
@@ -216,4 +231,5 @@
     lastY = y; lastT = t;
   }, { passive: true });
   if (new URLSearchParams(location.search).get("bag") === "1") R.openBag();
+  R.animate();
 })();

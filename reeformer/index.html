@@ -18,8 +18,8 @@
   .qtop{display:flex;align-items:center;gap:12px;padding:12px 16px;max-width:680px;margin:0 auto;width:100%}
   .qtop img{height:42px;width:auto}
   .qtop .back{margin-left:auto;background:none;border:0;color:var(--muted);font-size:14px;padding:8px;visibility:hidden}
-  .prog{max-width:680px;margin:0 auto;width:calc(100% - 32px);height:3px;background:var(--line);overflow:hidden}
-  .prog i{display:block;height:100%;width:0;background:var(--gold);transition:width .45s ease}
+  .prog{max-width:680px;margin:0 auto;width:calc(100% - 32px);height:8px;border-radius:99px;background:rgba(228,217,200,.7);overflow:hidden}
+  .prog i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#d4a35c,var(--gold),#1F7A99);transition:width .55s cubic-bezier(.2,.7,.2,1)}
   .progtxt{max-width:680px;margin:6px auto 0;width:calc(100% - 32px);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
   main{flex:1;width:100%}
   .screen{max-width:680px;margin:0 auto;padding:26px 16px 40px;animation:fade .35s ease}
@@ -27,19 +27,19 @@
   .q{font-size:clamp(24px,5.2vw,34px);margin:6px 0 8px}
   .help{color:var(--muted);margin:0 0 18px;font-size:15px}
   .opts{display:grid;gap:10px;margin-top:18px}
-  .opt{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:#fff;border:1px solid var(--line);border-radius:0;padding:17px 18px;font-size:15.5px;color:var(--ink);transition:border-color .15s,transform .1s,background .15s;min-height:58px}
+  .opt{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--glass-strong);border:1.5px solid var(--glass-line);border-radius:18px;box-shadow:0 8px 24px -14px rgba(15,59,76,.35);padding:16px 18px;font-size:15.5px;color:var(--ink);transition:border-color .15s,transform .1s,background .15s;min-height:58px}
   .opt:hover{border-color:var(--stone)}
   .opt:active{transform:scale(.99)}
   .opt.sel{border:1.5px solid var(--deep);background:var(--foam)}
   .opt .ic{font-size:22px;width:28px;text-align:center;flex:none}
-  .opt .bx{width:20px;height:20px;border:1px solid var(--stone);border-radius:0;flex:none;display:grid;place-items:center;background:#fff}
+  .opt .bx{width:22px;height:22px;border:1.5px solid var(--stone);border-radius:7px;flex:none;display:grid;place-items:center;background:#fff}
   .opt.sel .bx{background:var(--deep);border-color:var(--deep)}
   .opt.sel .bx::after{content:"";width:10px;height:6px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
   .scale{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:22px}
-  .scale button{aspect-ratio:1;border-radius:0;border:1px solid var(--line);background:#fff;font-family:var(--serif);font-size:24px;color:var(--deep)}
+  .scale button{aspect-ratio:1;border-radius:18px;border:1.5px solid var(--glass-line);background:var(--glass-strong);box-shadow:0 8px 24px -14px rgba(15,59,76,.35);font-family:var(--serif);font-size:24px;color:var(--deep)}
   .scale button.sel,.scale button:hover{border-color:var(--deep);background:var(--foam)}
   .scale-l{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;margin-top:8px}
-  input[type=text],input[type=email],input[type=tel]{width:100%;font:inherit;font-size:16px;padding:16px 18px;border-radius:0;border:1px solid var(--stone);background:#fff;color:var(--ink);outline:none}
+  input[type=text],input[type=email],input[type=tel]{width:100%;font:inherit;font-size:16px;padding:16px 18px;border-radius:16px;border:1.5px solid var(--stone);background:rgba(255,255,255,.85);color:var(--ink);outline:none}
   input:focus{border-color:var(--deep)}
   label.f{display:block;font-size:13px;color:var(--muted);margin:14px 0 6px}
   .chk{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;color:var(--muted);margin:14px 0 4px}
@@ -51,13 +51,15 @@
   .hero h1{margin:10px 0 14px}
   .hero .sub{font-size:17px;color:var(--muted);max-width:52ch;margin:0 auto 22px}
   .pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:20px 0 6px}
-  .pill{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;background:var(--foam);padding:7px 11px;color:var(--deep)}
-  .htrust{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin:28px 0 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .pill{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;background:var(--glass-strong);border:1px solid var(--glass-line);border-radius:99px;padding:8px 12px;color:var(--deep);box-shadow:0 6px 16px -10px rgba(15,59,76,.4)}
+  .htrust{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin:28px 0 0;background:var(--glass);border:1px solid var(--glass-line);border-radius:22px;box-shadow:var(--shadow)}
   .htrust div{padding:16px 6px;font-size:11.5px;color:var(--muted);line-height:1.35}
   .htrust div+div{border-left:1px solid var(--line)}
   .htrust b{display:block;color:var(--deep);font-family:var(--serif);font-weight:400;font-size:22px;margin-bottom:2px}
   /* hook */
-  .hook{background:var(--deep);color:#E4F0F3;margin-top:6px;overflow:hidden}
+  .hook{background:linear-gradient(150deg,#0F3B4C,#17556c);color:#E4F0F3;margin-top:6px;overflow:hidden;border-radius:28px;box-shadow:0 30px 60px -24px rgba(15,59,76,.6);animation:popin .5s cubic-bezier(.2,.8,.2,1.1)}
+  @keyframes popin{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:none}}
+  .hook .img{border-radius:0}
   .hook .hb{padding:28px 22px}
   .hook .img{aspect-ratio:16/9}
   .hook .eyebrow{color:#F3E2C2}
@@ -79,7 +81,7 @@
   .res-hd{text-align:center}
   .res-hd .emo{font-size:46px}
   .chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0}
-  .chip{font-size:12px;background:var(--foam);color:var(--deep);padding:7px 11px}
+  .chip{font-size:12px;background:var(--glass-strong);border:1px solid var(--glass-line);border-radius:99px;color:var(--deep);padding:7px 12px}
   .bigstat b{display:block;font-size:38px;color:var(--gold);line-height:1.1;margin-bottom:6px}
   .wk{display:grid;gap:10px}
   .wk .card{padding:18px 20px}
@@ -91,7 +93,7 @@
   .packcard .img{aspect-ratio:4/5}
   .packcard .pb{padding:22px 20px}
     .alt{display:grid;gap:10px;margin-top:14px}
-  .alt a{display:flex;justify-content:space-between;gap:10px;background:#fff;border:1px solid var(--line);padding:14px 16px;text-decoration:none;color:var(--ink);font-size:14.5px}
+  .alt a{display:flex;justify-content:space-between;gap:10px;background:var(--glass);border:1px solid var(--glass-line);border-radius:16px;padding:14px 16px;text-decoration:none;color:var(--ink);font-size:14.5px}
   .alt a b{color:var(--deep)}
 </style>
 </head>
@@ -140,12 +142,14 @@
       <p style="font-size:16px;opacity:.95;max-width:46ch;margin:0 auto 22px">Answer ${qCount} quick questions. Get your personal Reformer plan and the founder pack that fits you best.</p>
       <button class="btn btn-light btn-block" id="start" type="button" style="max-width:420px;margin:0 auto">Build my Reformer plan</button>
       <p class="small" style="margin:14px 0 0;opacity:.85">Concept visual · 55 to 57 Wyle Cop, Shrewsbury</p></div></section>
+      ${R.ticker()}
       <section class="hero" style="padding-top:28px">
       ${CFG.videos.quiz ? R.videoHtml(CFG.videos.quiz, "A quick hello from reef") + "<div style='height:18px'></div>" : ""}
-      <div class="pills"><span class="pill">No experience needed</span><span class="pill">Every age, every body</span><span class="pill">Men very welcome</span></div>
+      ${R.reassure()}
       <div class="htrust"><div><b>10+</b>Reformer beds on Wyle Cop</div><div><b>7 to 10</b>Open early and late, every day</div><div><b>800+</b>Guided sessions on your own screen</div></div>
       <p class="small muted" style="margin-top:22px">The first full Reformer studio inside Shrewsbury town centre. Opening ${R.esc(CFG.openingDateText)}.</p>
     </section>`;
+    R.animate();
     R.$("#start").onclick = () => { R.track("QuizStart", {}, true); go(0, false); };
   }
 
@@ -158,7 +162,7 @@
     const a = A();
     if (st.type === "hook") {
       const h = C.hooks[st.id](a);
-      const himg = { hook_exp: "concept-studio", hook_pace: "concept-lounge", hook_barrier: "concept-coffee" }[st.id];
+      const himg = { hook_exp: "concept-studio", hook_body: "concept-hallway", hook_pace: "concept-lounge", hook_barrier: "concept-coffee" }[st.id];
       app.innerHTML = `<div class="screen"><div class="hook">${R.img(himg)}<div class="hb">
         <p class="eyebrow">${R.fill(h.kicker, a)}</p><h2>${R.fill(h.title, a)}</h2><p style="margin:0">${R.fill(h.body, a)}</p>
         ${h.stat ? (h.stat.length === 3 ? `<div class="hstat"><b>${h.stat[0]}</b><span>${h.stat[1]}<span class="src">${h.stat[2]}</span></span></div>` : `<div class="hstat"><span style="font-size:17px"><b style="font-size:17px;color:#fff">${h.stat[0]}</b> ${h.stat[1]}</span></div>`) : ""}
@@ -166,7 +170,7 @@
       R.$("#nx").onclick = next; return;
     }
     if (st.type === "text") {
-      app.innerHTML = `<div class="screen"><h2 class="q">${R.fill(st.q, a)}</h2>
+      app.innerHTML = `<div class="screen"><h2 class="q">${R.fill(st.q, a)}</h2>${st.help ? `<p class="help">${st.help}</p>` : ""}
         <input type="text" id="tx" autocomplete="given-name" placeholder="${st.placeholder}" value="${R.esc(a.name || "")}" maxlength="40">
         <div class="err" id="er"></div><div class="cta-row"><button class="btn btn-primary btn-block" id="nx" type="button">${st.cta}</button></div></div>`;
       const tx = R.$("#tx"); setTimeout(() => tx.focus(), 50);
@@ -194,7 +198,7 @@
       R.$("#nx").onclick = () => { if (!sel.size) { R.$("#er").textContent = "Choose at least one."; return; } a[st.id] = [...sel]; save(); next(); }; return;
     }
     if (st.type === "scale") {
-      app.innerHTML = `<div class="screen"><h2 class="q">${R.fill(st.q, a)}</h2>
+      app.innerHTML = `<div class="screen"><h2 class="q">${R.fill(st.q, a)}</h2>${st.help ? `<p class="help">${st.help}</p>` : ""}
         <div class="scale">${[1,2,3,4,5].map(v => `<button class="${+a[st.id] === v ? "sel" : ""}" data-v="${v}" type="button">${v}</button>`).join("")}</div>
         <div class="scale-l"><span>${st.lo}</span><span>${st.hi}</span></div></div>`;
       app.querySelectorAll(".scale button").forEach(b => b.onclick = () => { a[st.id] = b.dataset.v; save(); b.classList.add("sel"); setTimeout(next, 220); }); return;
@@ -221,7 +225,7 @@
       <label class="chk"><input type="checkbox" id="sms"> Yes, text me founder updates. Reply STOP any time.</label>
       <div class="err" id="er"></div>
       <div class="cta-row"><button class="btn btn-gold btn-block" id="nx" type="button">Show me my plan</button></div>
-      <p class="small muted center" style="margin-top:12px">We'll email your plan and founder updates from reef. Unsubscribe in one click. We never share your details.</p>
+      <p class="small muted center" style="margin-top:12px">🔒 We'll email your plan and founder updates from reef. You can unsubscribe in one click, and we will never share your details.</p>
     </div>`;
     R.$("#em").focus();
     R.$("#nx").onclick = async () => {
@@ -246,46 +250,59 @@
   }
 
   function result(){
-    const a = A(), rec = R.recommend(a), P = C.packs[rec.pack], prof = C.profiles[a.goal || "strength"];
-    const pname = C.profileName(a), n = R.first(a);
-    R.track("QuizComplete", { profile: pname, pack: P.name }, true);
-    const chips = [
-      R.label("goal", a.goal), a.exp === "0" ? "Brand new to Reformer" : R.label("exp", a.exp) + " classes so far",
-      ...(a.body || []).filter(b => b !== "none").map(b => R.label("body", b)),
-      R.label("day", a.day), "Week pace " + a.pace + " of 5", R.label("freq", a.freq)
-    ].filter(Boolean);
+    const a = A(), rec = R.recommend(a), R3 = R.recommend3(a), prof = C.profiles[a.goal || "strength"];
+    const pname = C.profileName(a), n = R.first(a), N = n ? R.esc(n) : "";
+    R.track("QuizComplete", { profile: pname, pack: C.packs[rec.pack].name, shown: R3.list.join(",") }, true);
     const sci = C.science[prof.science[0]];
-    const link = P.file + "?from=quiz";
-    const alt = [rec.down, rec.up].filter(Boolean).map(id => {
-      const X = C.packs[id];
-      return `<a href="${X.file}?from=quiz"><span><b>${X.name}</b> · ${X.classes} classes</span><span>${R.money(X.price)} →</span></a>`;
-    }).join("");
+    const bodyTxt = (a.body || []).filter(b => b !== "none").map(b => R.label("body", b).toLowerCase());
+    const pains = [
+      bodyTxt.length ? `Your <b>${bodyTxt.join(" and ")}</b> ${bodyTxt.length > 1 ? "are" : "is"} giving you trouble.` : `You feel good now, and you want to <b>keep it that way</b>.`,
+      ({ desk: "You spend most of the day <b>sitting at a desk or driving</b>.", feet: "You're <b>on your feet all day</b>, so your body is tired but not trained.", rush: "You're <b>always rushing</b>, so your body never gets a proper reset.", parent: "You're <b>busy looking after everyone else</b>.", flex: "Your days are <b>flexible</b>, which is perfect for building a routine." })[a.day],
+      +a.pace >= 4 ? `Your week is a <b>${a.pace} out of 5</b>. That's a lot to carry.` : "",
+      a.metime === "cant" ? "You <b>can't remember</b> the last hour you had just for yourself." : ""
+    ].filter(Boolean);
+    const bm = C.barrierModules[a.barrier];
+    const recoCard = (id, i) => {
+      const P = C.packs[id], F = R.frame(id), isM = id === R3.matched;
+      const tag = i === 0 ? `<span class="badge">Best value · Lowest price per session</span>` : isM ? `<span class="badge blue">Matched to your answers</span>` : `<span class="badge foam">${P.badge}</span>`;
+      return `<button type="button" class="reco ${i === 0 ? "on" : ""}" data-id="${id}"><span class="rk">${tag}</span>
+        <div class="rh">${R.img(P.imgs[0], "", false)}<div style="min-width:0"><div class="rn">${i + 1}. ${P.name}</div><div class="rd">${P.classes} Reformer sessions${P.stack[1] ? " + " + (id === "year" ? "12 wellness sessions" : id === "member" ? "3 wellness sessions" : "red light + boots") : ""}</div>
+        <div class="rmini"><b>${F.per}</b><span>a session · ${R.money(P.price)} total</span></div></div><span class="radio"></span></div>
+        <div class="rbody">${R.priceBlock(id)}
+          <ul class="ticks small" style="margin:6px 0 10px">${R.reasons(a, id).slice(0, 3).map(r => `<li>${r}</li>`).join("")}</ul>
+          ${R.placesHtml(id)}</div></button>`;
+    };
     app.innerHTML = `<div class="screen">
-      <div class="res-hd"><div class="emo">${prof.emoji}</div><p class="eyebrow">Your Reformer profile</p>
-      <h1 style="font-size:clamp(28px,6vw,42px)">${n ? R.esc(n) + ", you're" : "You're"} <em>${pname}</em></h1>
+      <div class="res-hd reveal"><div class="emo">${prof.emoji}</div><p class="eyebrow">Your Reformer profile</p>
+      <h1 style="font-size:clamp(28px,6vw,42px)">${N ? N + ", you're" : "You're"} <em>${pname}</em></h1>
       <p style="font-size:18px;color:var(--deep)">${prof.line}</p></div>
-      <div class="card" style="margin-top:18px"><p class="eyebrow">What you told us</p><div class="chips">${chips.map(c => `<span class="chip">${R.esc(c)}</span>`).join("")}</div>
-      <p style="margin:16px 0 0">${prof.why}</p></div>
-      <div class="card" style="margin-top:14px"><div class="bigstat"><b>${sci[0]}</b><div><div>${sci[1]}</div><div class="src">${sci[2]}</div></div></div></div>
-      <h2 style="margin-top:36px">Your plan: <em>twice a week</em> for twelve weeks</h2>
-      <p class="muted">The NHS advises strength work on at least two days a week and names Pilates as an example. Twice a week is also the dose the published Pilates trials used. Here's how your first twelve weeks look.</p>
+      <div class="card" style="margin-top:18px"><p class="eyebrow">Here's what you told us</p><ul class="ticks" style="margin:0">${pains.map(p => `<li>${p}</li>`).join("")}</ul>
+      <p style="margin:14px 0 0">${prof.why}</p></div>
+      <div class="fact reveal" style="margin-top:14px"><b data-count="${parseFloat(sci[0]) || ""}">${sci[0]}</b><div><div>${sci[1]}</div><div class="src">${sci[2]}</div></div></div>
+      ${bm ? `<div class="card" style="margin-top:14px;border:1.5px solid rgba(179,134,66,.45)"><p class="eyebrow">You said this held you back</p><h3>${bm.t}</h3><p style="margin:0">${R.fill(bm.b, a)}</p></div>` : ""}
+      <h2 style="margin-top:36px">Your plan: <em>twice a week</em> for twelve weeks.</h2>
+      <p class="muted">The NHS says adults should do strength exercise on at least two days a week, and it names Pilates as an example. Twice a week is also what the published Pilates studies used. Here's what your first twelve weeks look like.</p>
       <div class="wk">${C.weeks.map(w => `<div class="card"><b>${w[0]}</b><h3>${w[1]}</h3><p>${w[2]}</p></div>`).join("")}</div>
-      <h2 style="margin-top:40px">Your founder pack</h2>
-      <div class="packcard" style="margin-top:20px">${R.img(P.imgs[0])}<div class="pb">
-        <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="badge blue">Matched to you</span><span class="badge">${P.badge}</span></div>
-        <h3 style="margin:12px 0 2px;font-size:26px">${P.name}</h3><p class="muted small" style="margin:0 0 8px">${P.tagline}</p>
-        <div class="price"><b>${R.money(P.price)}</b><s>${R.money(P.value)}</s><span class="save">You pay ${R.money(P.save)} less</span></div>
-        <p class="small muted" style="margin:0 0 12px">Against our prices from opening day. ${R.money(P.perClass)} a class.</p>
-        <ul class="ticks small">${R.reasons(a, rec.pack).map(r => `<li>${r}</li>`).join("")}</ul>
-        ${R.placesHtml(rec.pack)}
-        <a class="btn btn-primary btn-block" href="${link}" style="margin-top:8px">Shop my ${P.name} pack</a>
-        <button class="btn btn-ghost btn-block" id="addNow" type="button" style="margin-top:8px">Add to bag · ${R.money(P.price)}</button>
-      </div></div>
-      ${alt ? `<p class="small muted" style="margin:22px 0 0">Also a good fit for you:</p><div class="alt">${alt}</div>` : ""}
-      <p class="center" style="margin-top:22px"><a href="packs.html?from=quiz">Compare all four founder packs</a></p>
+      <div style="margin-top:40px" class="center reveal"><p class="eyebrow">Your recommended founder packs</p><h2>${N ? N + ", here are" : "Here are"} your 3 best options.</h2>
+      <p class="muted">We've put the best value first. The more sessions you buy, the less each one costs. Tap any pack to compare.</p></div>
+      ${R.reassure()}
+      <div class="recos" id="recos">${R3.list.map(recoCard).join("")}</div>
+      <div id="recoCta" style="margin-top:16px"></div>
+      <div style="margin-top:18px">${R.guarantee()}</div>
+      <p class="center" style="margin-top:22px"><a href="packs.html?from=quiz">See all four founder packs</a></p>
     </div>`;
     R.$("#foot").innerHTML = R.footer();
-    R.$("#addNow").onclick = () => R.addToBag(rec.pack);
+    const setSel = (id) => {
+      document.querySelectorAll(".reco").forEach(r => r.classList.toggle("on", r.dataset.id === id));
+      const P = C.packs[id], F = R.frame(id);
+      R.$("#recoCta").innerHTML = `<button class="btn btn-gold btn-block pulse" id="addNow" type="button">Claim ${P.name} · ${F.per} a session</button>
+        <a class="btn btn-ghost btn-block" href="${P.file}?from=quiz" style="margin-top:10px">See everything in ${P.name}</a>
+        <p class="small muted center" style="margin:10px 0 0">🛡️ ${CFG.refundDays} day full refund · 🔒 Secure checkout · 📅 Starts on opening day</p>`;
+      R.$("#addNow").onclick = () => R.addToBag(id);
+    };
+    document.querySelectorAll(".reco").forEach(r => r.onclick = () => { setSel(r.dataset.id); R.track("RecoSelect", { pack: r.dataset.id }, true); });
+    setSel(R3.list[0]);
+    R.animate();
   }
 
   if (CFG.testMode) R.$("#tb").innerHTML = `<div class="testbar">Test mode: leads are logged, payments simulated · <a href="lab.html">Open the Funnel Lab</a></div>`;

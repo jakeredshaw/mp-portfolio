@@ -36,7 +36,8 @@
       .replace(/\{longstop\}/g, CFG.longStopDateText ? "If we ever slipped past " + R.esc(CFG.longStopDateText) + ", you could have a full refund." : "");
   };
   R.money = (v) => "£" + Number(v).toLocaleString("en-GB", { minimumFractionDigits: v % 1 ? 2 : 0, maximumFractionDigits: 2 });
-  R.label = (stepId, val) => {
+  R.label = (stepId, val, full) => {
+    if (!full && C.short && C.short[stepId] && C.short[stepId][val]) return C.short[stepId][val];
     const st = C.steps.find(s => s.id === stepId); if (!st || !st.opts) return val;
     const o = st.opts.find(o => o[0] === val); return o ? o[1] : val;
   };
@@ -152,11 +153,12 @@
       bd.innerHTML = `${justAdded ? `<p class="small" style="color:var(--ok);margin:0 0 14px">✓ Added to your bag${n ? ", " + R.esc(n) : ""}. Great choice.</p>` : ""}
         <div class="line-item">${R.img(P.imgs[0], "", false)}<div><div class="caps" style="color:var(--deep)">${P.name}</div><div class="small muted">${P.classes} Reformer classes · ${P.validity}</div><span class="badge" style="margin-top:8px">${P.badge}</span></div><div style="text-align:right"><b>${R.money(P.price)}</b><br><s class="small muted">${R.money(P.value)}</s></div></div>
         <button class="link-quiet" id="bagRm" type="button" style="padding:8px 0">Remove</button>
-        ${U ? `<div class="card" style="margin-top:18px;background:var(--foam);border-color:var(--sky)"><span class="badge blue">Upgrade and save more</span><h3 style="margin:12px 0 6px;font-size:19px">${U.name} for ${R.money(P.bump.extra)} more</h3><p class="small" style="margin:0 0 12px">${P.bump.line}</p><button class="btn btn-ghost btn-block" id="bagUp" type="button">Upgrade to ${U.name}</button></div>` : ""}
-        <ul class="ticks small" style="margin-top:20px"><li>${CFG.refundDays} day refund window</li><li>Credits start on opening day, so you never lose a class</li><li>3 Guest Passes included for friends</li></ul>`;
+        ${U ? `<div class="card" style="margin-top:18px;background:rgba(234,243,244,.85);border-color:var(--sky)"><span class="badge blue">Upgrade and pay less per session</span><h3 style="margin:12px 0 6px;font-size:19px">${U.name} for ${R.money(P.bump.extra)} more</h3><p style="margin:0 0 6px;font-weight:700;color:var(--deep)">${R.money(U.perClass)} a session instead of ${R.money(P.perClass)}</p><p class="small" style="margin:0 0 12px">${P.bump.line}</p><button class="btn btn-ghost btn-block" id="bagUp" type="button">Upgrade to ${U.name}</button></div>` : ""}
+        <div style="margin-top:18px">${R.guarantee(true)}</div>`;
       ft.innerHTML = `<div style="display:flex;justify-content:space-between;margin-bottom:4px"><span class="caps">Subtotal</span><b>${R.money(P.price)}</b></div>
-        <div class="small" style="color:var(--blue);margin-bottom:12px">You pay ${R.money(P.save)} less than prices from opening day</div>
-        <button class="btn btn-primary btn-block" id="bagGo" type="button">Checkout securely · ${R.money(P.price)}</button>
+        <div class="small" style="color:var(--blue);margin-bottom:12px"><b>${R.money(P.perClass)} a session</b> · You pay ${R.money(P.save)} less than prices from opening day</div>
+        <button class="btn btn-gold btn-block pulse" id="bagGo" type="button">🔒 Checkout securely · ${R.money(P.price)}</button>
+        <p class="small center muted" style="margin:8px 0 0">🛡️ Full refund within ${CFG.refundDays} days. No questions asked.</p>
         <div class="pay"><span>VISA</span><span>MASTERCARD</span><span>AMEX</span><span>APPLE PAY</span><span>GOOGLE PAY</span></div>`;
       R.$("#bagRm").onclick = () => { R.update({ bag: null }); R.renderBadge(); R.openBag(); };
       if (U) R.$("#bagUp").onclick = () => { R.track("BumpAccepted", { from: id, to: U.id, where: "bag" }, true); if (U.call && !CFG.testMode && !CFG.checkout[U.id]) { location.href = U.file; return; } R.update({ bag: U.id }); R.renderBadge(); R.openBag(); };
@@ -211,6 +213,93 @@
   R.footer = () => `<footer class="footer"><img src="assets/logo/reef-lockup-stacked-gold.png" alt="Reeformer Pilates" width="60" height="55">
     <div>reef · Reeformer Pilates · 55 to 57 Wyle Cop, Shrewsbury · <a href="mailto:${CFG.email}">${CFG.email}</a></div>
     <p class="small" style="max-width:640px;margin:14px auto 0">This page shares published research about Pilates. It is information, not personal medical advice. If you have a health condition, are pregnant or are recovering from surgery or injury, speak to your GP, consultant or midwife before starting. Prices from opening day are the standard prices reef will charge once the studio opens. Founder places are limited to the numbers shown and close on opening day.</p></footer>`;
+
+  /* ---------- most expensive first, then 2 more ---------- */
+  R.recommend3 = (a) => {
+    const m = R.recommend(a).pack, out = ["year"];
+    const add = (id) => { if (id && !out.includes(id) && out.length < 3) out.push(id); };
+    add(m === "year" ? "member" : m);
+    const second = out[1];
+    add(C.packs[second].down); add(C.packs[second].bump && C.packs[second].bump.to);
+    ["member", "plus", "founder5"].forEach(add);
+    return { list: out, matched: m };
+  };
+
+  /* ---------- price framing: make every pack feel small ---------- */
+  const WALKIN = 25;
+  C.frames = {
+    year: { weekly: "2 sessions a week, every week, for a whole year", weeks: 52, daily: true },
+    member: { weekly: "about 2 to 3 sessions a week for 3 months", weeks: 13 },
+    plus: { weekly: "2 sessions a week for your first 7 weeks", weeks: 7 },
+    founder5: { weekly: "5 sessions to feel the difference for yourself", weeks: null }
+  };
+  R.frame = (id) => {
+    const P = C.packs[id], f = C.frames[id], per = +P.perClass;
+    const pct = Math.round((1 - per / WALKIN) * 100);
+    return {
+      per: R.money(P.perClass), pct,
+      weekly: f.weekly,
+      perWeek: f.weeks ? R.money((P.price / f.weeks).toFixed(2)) : null,
+      perDay: f.daily ? R.money((P.price / 365).toFixed(2)) : null,
+      line: `That's ${f.weekly}, at just ${R.money(P.perClass)} a session. ${pct}% less than walking in at £${WALKIN} once we open.`,
+      vsLine: `${R.money(P.perClass)} a session, reduced from £${WALKIN}`
+    };
+  };
+  // The big price block: price per session HUGE, full price small
+  R.priceBlock = (id, opts) => {
+    opts = opts || {}; const P = C.packs[id], F = R.frame(id);
+    return `<div class="pblock ${opts.light ? "light" : ""}">
+      <div class="pb-per"><span class="pb-big" data-count="${P.perClass}">${F.per}</span><span class="pb-unit">a session</span></div>
+      <div class="pb-sub"><s>£${WALKIN} a session</s><span class="pill-save">${F.pct}% off</span></div>
+      <div class="pb-total">${R.money(P.price)} total${P.id === "year" ? " · paid once" : ""} <s>${R.money(P.value)}</s></div>
+      <p class="pb-line">That's <b>${F.weekly}</b>${F.perDay ? `. Just <b>${F.perDay} a day</b>, about the price of a coffee` : F.perWeek ? `. About <b>${F.perWeek} a week</b>` : ""}.</p>
+    </div>`;
+  };
+
+  /* ---------- reassurance ---------- */
+  R.guarantee = (compact) => {
+    const G = CFG.guarantee;
+    return `<div class="guar ${compact ? "compact" : ""} reveal"><div class="seal"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="none" stroke="currentColor" stroke-width="2"/><circle class="ring2" cx="32" cy="32" r="23" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 3"/><path d="M21 33l7 7 15-16" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div><div class="g-name">${R.esc(G.name)}</div><div class="g-sub">Zero risk. Fully protected.</div>
+      <ul class="g-list">${G.lines.map(l => `<li>${R.esc(l)}</li>`).join("")}</ul></div></div>`;
+  };
+  R.reassure = () => `<div class="chips-pop">
+    <span class="chip-pop float1">🛡️ 14 day full refund</span><span class="chip-pop float2">🔒 Secure checkout</span>
+    <span class="chip-pop float3">📅 Starts on opening day</span><span class="chip-pop float1">✨ No experience needed</span>
+    <span class="chip-pop float2">💛 Founder price locked</span></div>`;
+  R.ticker = () => {
+    const items = ["14 day full refund, no questions asked", "Your sessions start on opening day", "Founder price, never offered again", "No experience needed", "Open 7am to 10pm", "Secure checkout", "3 free Guest Passes for friends", "Car park 2 minutes away, free after 6pm"];
+    const row = items.map(i => `<span>✦ ${i}</span>`).join("");
+    return `<div class="ticker" aria-label="${items.join(". ")}"><div class="tk-in">${row}${row}</div></div>`;
+  };
+  R.benefitsNow = (id) => {
+    const P = C.packs[id], F = R.frame(id);
+    return `<div class="why-now reveal"><div class="caps" style="color:var(--gold);margin-bottom:10px">Why buy now, not later</div>
+      <ul class="ticks"><li><b>${F.pct}% less per session</b> than our price from opening day. This price disappears when we open.</li>
+      <li><b>First choice of sessions.</b> Founders book before anyone else.</li>
+      <li><b>Nothing to lose.</b> Full refund within ${CFG.refundDays} days, and your sessions wait for you until we open.</li>
+      <li><b>3 free Guest Passes</b> so friends can come with you.</li>
+      <li><b>Only ${CFG.places[id].total} places</b> at this price. When they're gone, they're gone.</li></ul></div>`;
+  };
+
+  /* ---------- motion: reveal on scroll + count up ---------- */
+  R.animate = () => {
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    document.documentElement.classList.add("js-anim");
+    const els = document.querySelectorAll(".reveal:not(.in), .card, .stat, .pcard, .tile, details, .guar, .why-now, .reco");
+    const count = (el) => {
+      const target = parseFloat(el.dataset.count); if (isNaN(target) || el._done) return; el._done = true;
+      if (reduce) return; const m = el.textContent.trim().match(/^(£?)([\d.,]+)(.*)$/); if (!m) return;
+      const t0 = performance.now(), dur = 1100, dec = (m[2].split(".")[1] || "").length, pre = m[1], suf = m[3];
+      const step = (t) => { const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3); el.textContent = pre + (target * e).toFixed(dec) + suf; if (k < 1) requestAnimationFrame(step); };
+      requestAnimationFrame(step);
+    };
+    if (reduce || !("IntersectionObserver" in window)) { els.forEach(e => e.classList.add("in")); return; }
+    const io = new IntersectionObserver((ents) => ents.forEach(en => { if (en.isIntersecting) { en.target.classList.add("in"); en.target.querySelectorAll("[data-count]").forEach(count); io.unobserve(en.target); } }), { threshold: .12, rootMargin: "0px 0px -6% 0px" });
+    els.forEach((e, i) => { e.classList.add("reveal"); e.style.transitionDelay = (i % 4) * 60 + "ms"; io.observe(e); });
+    // safety: anything still hidden after 2.5s becomes visible
+    setTimeout(() => document.querySelectorAll(".reveal:not(.in)").forEach(e => { const r = e.getBoundingClientRect(); if (r.top < innerHeight) e.classList.add("in"); }), 2500);
+  };
 
   window.REEF = R;
   R.initTracking();

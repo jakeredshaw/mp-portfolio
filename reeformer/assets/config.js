@@ -67,6 +67,19 @@ window.REEF_CONFIG = {
   memberMonthlyRate: null,                // TODO founder monthly rate (number) for Founding Member
   memberStandardRate: null,               // TODO standard monthly rate (number)
   refundDays: 14,
+
+  /* ---------- Founders Guarantee ----------
+     Shown on every pack page, in the bag and at checkout. Every line MUST match your real terms.
+     Want it even stronger? e.g. "Love your first class or get your money back" – only add it if you will honour it. */
+  guarantee: {
+    name: "The Founders Guarantee",
+    lines: [
+      "Full refund within 14 days. No questions asked.",
+      "Your sessions don't start until the doors open, so you never lose a single one.",
+      "If opening is ever delayed, your sessions simply wait for you.",
+      "Your founder price is locked. It never goes up for you."
+    ]
+  },
   longStopDateText: "",                   // TODO e.g. "31 January 2027"
 
   /* ---------- People and contact ---------- */

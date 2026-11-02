@@ -11,8 +11,9 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Manrope:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="assets/reef.css">
 <style>
-  .step{display:inline-block;background:var(--gold);color:#fff;font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;padding:6px 10px;margin-bottom:14px}
-  .addon{border:1.5px solid var(--gold);background:#fff;display:grid;grid-template-columns:1fr}
+  .step{display:inline-block;background:var(--gold);color:#fff;font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;padding:6px 12px;border-radius:99px;margin-bottom:14px}
+  .addon{border:1.5px solid var(--gold);background:rgba(255,255,255,.75);backdrop-filter:blur(16px);border-radius:28px;overflow:hidden;box-shadow:0 24px 50px -20px rgba(179,134,66,.6);display:grid;grid-template-columns:1fr}
+  .addon .img{border-radius:0}
   @media(min-width:700px){.addon{grid-template-columns:.8fr 1.2fr}}
   .addon .img{aspect-ratio:4/5}
   .addon .ab{padding:22px 20px}
@@ -83,6 +84,7 @@
   R.header({ noBag: true, ribbon: "Welcome to the founders" });
   R.$("#page").innerHTML = html.join("");
   R.$("#foot").innerHTML = R.footer();
+  R.animate();
 
   const buyAddon = (key) => {
     const x = CFG.addons[key]; R.track("AddonClick", { addon: key, value: x.price }, true);

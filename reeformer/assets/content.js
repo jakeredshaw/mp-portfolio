@@ -83,71 +83,99 @@
   /* ------------------------------------------------------------------ QUIZ */
   // type: single (auto advance), multi, scale, text, hook (interstitial)
   C.steps = [
-    { id: "name", type: "text", q: "First things first. What should we call you?", placeholder: "Your first name", cta: "That's me" },
-    { id: "goal", type: "single", q: "{n}, what would you most love Reformer to do for you?", help: "Pick the one that matters most right now.",
+    { id: "name", type: "text", q: "Hello! Before we start, what's your first name?", help: "We'll use it to build your personal plan.", placeholder: "Your first name", cta: "Start my plan" },
+    { id: "goal", type: "single", q: "{n}, what would you most like Reformer Pilates to help you with?", help: "Pick the one that matters most to you right now.",
       opts: [
-        ["strength", "Get properly strong again", "💪"],
-        ["posture", "Stand taller and ease my back", "🧍"],
-        ["shape", "Tone up and feel great in my body", "✨"],
-        ["calm", "Switch off and find some calm", "🌊"],
-        ["resilient", "Move freely without the twinges", "🦵"],
-        ["comeback", "Feel like me again after a big change", "🌱"]
+        ["strength", "I want to feel strong and capable again.", "💪"],
+        ["posture", "I want to stand taller and stop my back aching.", "🧍"],
+        ["shape", "I want to tone up and feel good in my body.", "✨"],
+        ["calm", "I want to switch off, feel calmer and sleep better.", "🌊"],
+        ["resilient", "I want to move freely without the niggles and twinges.", "🦵"],
+        ["comeback", "I want to feel like myself again after a big life change.", "🌱"]
       ] },
-    { id: "exp", type: "single", q: "How many Pilates or Reformer classes have you done?",
-      opts: [["0", "None at all"], ["1-5", "1 to 5"], ["6-20", "6 to 20"], ["20+", "More than 20"]] },
+    { id: "exp", type: "single", q: "Have you ever done Pilates or Reformer Pilates before?", help: "Be honest. Total beginners are very welcome here.",
+      opts: [["0", "No, never. I would be a complete beginner."], ["1-5", "Yes, a few times (1 to 5 classes)."], ["6-20", "Yes, quite a bit (6 to 20 classes)."], ["20+", "Yes, lots (more than 20 classes)."]] },
     { id: "hook_exp", type: "hook" },
-    { id: "body", type: "multi", q: "Where does your body talk to you the most?", help: "Choose all that apply.",
-      opts: [["back", "Lower back"], ["neck", "Neck and shoulders"], ["hips", "Hips"], ["knees", "Knees"], ["none", "Nowhere yet, and I want to keep it that way"]] },
+    { id: "body", type: "multi", q: "Where in your body do you feel stiff, achy or tight?", help: "Tick everything that applies to you.",
+      opts: [["back", "My lower back aches."], ["neck", "My neck and shoulders feel tight."], ["hips", "My hips feel stiff."], ["knees", "My knees are not what they were."], ["none", "Nowhere yet, and I want to keep it that way."]] },
+    { id: "hook_body", type: "hook" },
     { id: "day", type: "single", q: "What does a normal day look like for you?",
-      opts: [["desk", "Mostly sitting at a desk or driving"], ["feet", "On my feet all day"], ["rush", "A mix, and always rushing"], ["parent", "Busy at home with the family"], ["flex", "Retired, or my days are flexible"]] },
-    { id: "pace", type: "scale", q: "Honestly, how full on is your week right now?", lo: "Calm", hi: "Flat out" },
+      opts: [["desk", "I sit at a desk or drive for most of the day."], ["feet", "I am on my feet all day."], ["rush", "It's a mix, and I am always rushing."], ["parent", "I am busy looking after my family."], ["flex", "I am retired, or my days are flexible."]] },
+    { id: "pace", type: "scale", q: "How busy and stressful is your week right now?", help: "1 means calm and easy. 5 means flat out.", lo: "Calm", hi: "Flat out" },
     { id: "hook_pace", type: "hook" },
-    { id: "metime", type: "single", q: "When did you last have a whole hour that was just for you?",
-      opts: [["week", "Some time this week"], ["month", "Some time this month"], ["cant", "I genuinely can't remember"]] },
-    { id: "barrier", type: "single", q: "What has stopped you starting before?", help: "No judgement. This helps us shape your plan.",
-      opts: [["intimidated", "I felt intimidated walking in"], ["notfit", "I didn't feel fit or flexible enough"], ["time", "Finding the time"], ["cost", "The cost"], ["injury", "An old injury or worry about getting hurt"], ["gym", "The gym never stuck, so why would this?"], ["nearby", "Nothing. There was never a proper studio nearby"]] },
+    { id: "metime", type: "single", q: "When did you last have a whole hour just for yourself?",
+      opts: [["week", "Some time this week."], ["month", "Some time this month."], ["cant", "Honestly, I can't remember."]] },
+    { id: "barrier", type: "single", q: "What has stopped you from starting before now?", help: "There's no wrong answer. This helps us take the worry away.",
+      opts: [["intimidated", "I was nervous I would feel out of place."], ["notfit", "I didn't feel fit or flexible enough."], ["time", "I couldn't find the time."], ["cost", "I was worried about the cost."], ["injury", "I have an old injury and I didn't want to make it worse."], ["gym", "I've tried the gym before and it never stuck."], ["nearby", "Nothing. There just wasn't a proper studio nearby."]] },
     { id: "hook_barrier", type: "hook" },
-    { id: "age", type: "single", q: "Which decade are you in?", help: "Your body's needs change every decade. Your plan will too.",
-      opts: [["20s", "20s"], ["30s", "30s"], ["40s", "40s"], ["50s", "50s"], ["60s", "60s"], ["70s", "70s or wiser"]] },
-    { id: "sex", type: "single", q: "And you are…",
-      opts: [["f", "A woman"], ["m", "A man"], ["x", "Prefer not to say"]] },
-    { id: "freq", type: "single", q: "Realistically, how often could you get to Wyle Cop?", help: "We're open 7am to 10pm, so early birds and night owls both count.",
-      opts: [["1", "Once a week"], ["2", "Twice a week"], ["3", "Three times or more"], ["unsure", "Not sure yet"]] },
-    { id: "ready", type: "single", q: "Last one. How ready are you to make this the winter you start?",
-      opts: [["now", "Ready. I want in"], ["keen", "Very interested, I just need the right plan"], ["curious", "Curious, still finding out"]] },
+    { id: "age", type: "single", q: "Which age group are you in?", help: "Your body needs different things in every decade, so your plan will too.",
+      opts: [["20s", "20s"], ["30s", "30s"], ["40s", "40s"], ["50s", "50s"], ["60s", "60s"], ["70s", "70s or older"]] },
+    { id: "sex", type: "single", q: "Are you a woman or a man?", help: "Reformer is brilliant for both. This just helps us tailor your plan.",
+      opts: [["f", "I am a woman."], ["m", "I am a man."], ["x", "I would rather not say."]] },
+    { id: "freq", type: "single", q: "How many times a week could you realistically come to the studio?", help: "We are open from 7am to 10pm, every day, so early birds and night owls both count.",
+      opts: [["1", "Once a week."], ["2", "Twice a week."], ["3", "Three times a week or more."], ["unsure", "I'm not sure yet."]] },
+    { id: "ready", type: "single", q: "Last question! How ready are you to make this the winter you finally start?",
+      opts: [["now", "I'm ready. I want to start."], ["keen", "I'm very keen. I just need the right plan."], ["curious", "I'm curious and still finding out."]] },
     { id: "capture", type: "capture" }
   ];
 
-  // Interstitial hooks. Each returns {kicker, title, body, stat?}
+  // Short versions of each answer, used when we play answers back on the result and pack pages
+  C.short = {
+    goal: { strength: "Feel strong again", posture: "Stand taller, ease my back", shape: "Tone up and feel great", calm: "Switch off and find calm", resilient: "Move without the twinges", comeback: "Feel like me again" },
+    exp: { "0": "None at all", "1-5": "1 to 5", "6-20": "6 to 20", "20+": "More than 20" },
+    body: { back: "Lower back", neck: "Neck and shoulders", hips: "Hips", knees: "Knees", none: "Nowhere yet" },
+    day: { desk: "Sitting at a desk or driving", feet: "On my feet all day", rush: "Always rushing", parent: "Busy with the family", flex: "Flexible days" },
+    metime: { week: "This week", month: "This month", cant: "Can't remember" },
+    barrier: { intimidated: "Feeling out of place", notfit: "Not fit enough", time: "Finding the time", cost: "The cost", injury: "An old injury", gym: "The gym never stuck", nearby: "No studio nearby" },
+    age: { "20s": "20s", "30s": "30s", "40s": "40s", "50s": "50s", "60s": "60s", "70s": "70s or older" },
+    sex: { f: "Woman", m: "Man", x: "Prefer not to say" },
+    freq: { "1": "Once a week", "2": "Twice a week", "3": "Three times or more", unsure: "Not sure yet" },
+    ready: { now: "Ready to start", keen: "Very keen", curious: "Curious" }
+  };
+
+  // Encouragement screens. Plain English, pin point the pain, flip the objection.
   C.hooks = {
     hook_exp(a) {
-      if (a.exp === "0") return { kicker: "Good news, {n}", title: "Total beginner is exactly who reef is built for.",
-        body: "The springs help you before they challenge you. Every move has an easier version and a harder one, and your first class is with an instructor. Nobody in that room knew what they were doing on day one.",
-        stat: ["Pilates builds flexibility.", "It does not require it."] };
-      if (a.exp === "1-5") return { kicker: "Nice, {n}", title: "You've had a taste. Now let's make it a habit.",
-        body: "A handful of classes is where most people stop, usually because the studio was too far, too booked or too pricey. Your plan will be built so that doesn't happen again." };
-      return { kicker: "Love that, {n}", title: "You already know the shake. Now imagine it ten minutes from home.",
-        body: "Ten or more Reformer beds, your own screen with more than 800 guided sessions, and open 7am to 10pm. Experienced movers get the springs heavy and the progressions harder." };
+      if (a.exp === "0") return { kicker: "Great news, {n}", title: "You don't need any experience. Most of our founders are complete beginners too.",
+        body: "Your first class is with an instructor who sets everything up for you. The springs on the machine help you before they challenge you, and every move has an easier version. Nobody in that room knew what they were doing on their first day.",
+        stat: ["Pilates builds flexibility.", "You don't need it to start."] };
+      if (a.exp === "1-5") return { kicker: "Lovely, {n}", title: "You've already had a taste. This time, it will actually stick.",
+        body: "Most people stop after a few classes because the studio was too far away, always fully booked, or too expensive. reef fixes all three. It's right on Wyle Cop, it's open from 7am to 10pm, and founders pay the lowest price we will ever charge." };
+      return { kicker: "Love that, {n}", title: "You already know how good it feels. Now picture it ten minutes from home.",
+        body: "We have ten or more Reformer beds, your own screen with more than 800 guided sessions, and opening hours from 7am to 10pm. You can go as heavy and as hard as you like." };
+    },
+    hook_body(a) {
+      const b = (a.body || []).filter(x => x !== "none");
+      if (!b.length) return { kicker: "Smart move, {n}", title: "Starting before anything hurts is the best time to start.",
+        body: "Strength and balance are much easier to keep than to win back. The published studies show the biggest changes happen in the first twelve weeks, so you'll feel the difference fast." };
+      const words = { back: "your lower back", neck: "your neck and shoulders", hips: "your hips", knees: "your knees" };
+      const list = b.map(x => words[x]); const where = list.length > 1 ? list.slice(0, -1).join(", ") + " and " + list[list.length - 1] : list[0];
+      if (b.includes("back")) return { kicker: "We hear you, {n}", title: "That ache in " + where + " is really common. And it is not something you just have to live with.",
+        body: "Most back pain isn't caused by one big injury. It usually happens when the muscles that support your spine get weak from sitting and rushing. Reformer Pilates strengthens exactly those muscles, gently and safely.",
+        stat: ["14 points", "Average drop in back pain (out of 100) across ten trials of Pilates.", "Cochrane review, Yamato et al"] };
+      return { kicker: "We hear you, {n}", title: "Stiffness in " + where + " usually means those muscles have stopped being used properly.",
+        body: "The good news is that muscles wake up quickly when you ask them to. Reformer works them through their full range with springs that support you, with no impact and no jumping.",
+        stat: ["0.69", "Average flexibility gain across twelve studies. That is a medium to large effect.", "Bajčetić et al, 2026"] };
     },
     hook_pace(a) {
       const p = +a.pace || 3;
-      if (p >= 4) return { kicker: "Read this twice, {n}", title: "You give everyone else your best hours. This one is yours.",
-        body: "Headphones on, session chosen, springs set. For 50 minutes nobody needs anything from you. Then a coffee in the lounge before you go back to running the world.",
-        stat: ["1.29", "Large drop in anxiety in a meta analysis of Pilates trials", "Fleming and Herring, 2018"] };
-      return { kicker: "Perfect, {n}", title: "A calmer week is the best time to build a routine that lasts.",
-        body: "Routines started on a good week survive the bad ones. Twice a week is the dose the published trials used, and it is what we'll build your plan around." };
+      if (p >= 4) return { kicker: "Please read this, {n}", title: "You give everyone else your time. This hour is just for you.",
+        body: "You put your headphones on, choose your session and the springs are set. For 50 minutes, nobody needs anything from you. Then you can have a coffee in the lounge before you go back to running everything.",
+        stat: ["1.29", "A large drop in anxiety in controlled trials of Pilates.", "Fleming and Herring, 2018"] };
+      return { kicker: "Perfect timing, {n}", title: "A calmer week is the best time to build a habit that lasts.",
+        body: "Habits you start on a good week survive the hard weeks. Twice a week is what the research used, so that is what we will build your plan around." };
     },
     hook_barrier(a) {
       const m = {
-        intimidated: ["We designed the whole building around that feeling.", "The first thing you meet is a coffee bar, not a mirror. Your first class is with an instructor who sets your springs for you. Everyone at reef starts in December, so you are early, not late."],
-        notfit: ["You don't get fit to start. You start to get fit.", "The springs set the effort. A lighter spring can make a move easier, or harder for your core. Beginners and athletes use the same machine on different settings."],
-        time: ["Open 7am to 10pm. Your excuse closes earlier.", "A digital session starts the moment you step on the bed, not on the hour. 50 minutes, a car park two minutes away, and evenings park free after 6pm."],
-        cost: ["Founder pricing is the cheapest reef will ever be.", "Every founder pack works out cheaper than walking in after we open, and it ends for good on opening day. Your plan shows you the price per class, honestly."],
-        injury: ["Low impact. The carriage supports your joints.", "Reformer loads muscle without loading the spine, and the springs can assist as well as resist. If you have a condition, speak to your GP first and tell your instructor on day one."],
-        gym: ["The problem was never you. It was the gym.", "Most training is designed to be endured, so people stop. Pilates was the most rebooked workout in the world in 2025, because people actually enjoy going back."],
-        nearby: ["Then you are exactly on time.", "reef is the first full Reformer studio inside Shrewsbury town centre, with ten or more beds, on Wyle Cop from December."]
+        intimidated: ["You won't feel out of place. We built the whole studio around that feeling.", "The first thing you see is a coffee bar, not a wall of mirrors. You have your own screen and headphones, so nobody is watching you. Your instructor sets your springs for you. And because every founder starts in December, everyone in the room is new together."],
+        notfit: ["You don't need to get fit before you start. You start, and that is how you get fit.", "The springs set how hard each move is. We start you light and build up slowly. Beginners and athletes use exactly the same machine, just on different settings."],
+        time: ["We're open from 7am to 10pm. That's earlier and later than almost anywhere else.", "A digital session starts the moment you step on the bed, not on the hour. It takes 50 minutes. The car park is a two minute walk away, and it's free after 6pm."],
+        cost: ["Founder pricing is the cheapest reef will ever be. When we open, these prices disappear.", "On the bigger packs, a session costs less than £16, compared with £25 when we open. You also get a full 14 day refund if you change your mind, so there's no risk at all."],
+        injury: ["Reformer is one of the gentlest ways to get strong. It's low impact and kind to your joints.", "The springs can support you as well as challenge you, so you can work around a niggle instead of through it. Please check with your GP first if you have a medical condition, and tell your instructor on day one."],
+        gym: ["The gym not sticking wasn't your fault. Most gyms are built to be endured.", "That's why 2 in 3 people quit the gym by month six. Pilates is different. In 2025 it was the most rebooked workout in the world, because people actually look forward to going back."],
+        nearby: ["Then you're right on time. That's exactly why we're building reef.", "reef is the first full Reformer studio inside Shrewsbury town centre, with ten or more beds, on Wyle Cop from December. Founders get first choice before anyone else."]
       }[a.barrier] || ["Got it.", "Your plan will take that into account."];
-      return { kicker: "We hear you, {n}", title: m[0], body: m[1] };
+      return { kicker: "Let's take that worry away, {n}", title: m[0], body: m[1] };
     }
   };
 
