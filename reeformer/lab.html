@@ -111,10 +111,11 @@
 
   /* hooks copy */
   const hk = [];
-  ["0", "1-5", "6-20"].forEach(e => hk.push(["After experience: " + R.label("exp", e), C.hooks.hook_exp({ exp: e })]));
+  ["0", "1-5", "6-20"].forEach(e => hk.push(["After experience: " + R.label("exp", e, true), C.hooks.hook_exp({ exp: e })]));
+  [["back"], ["neck"], ["hips"], ["none"]].forEach(b => hk.push(["After body: " + b.join(", "), C.hooks.hook_body({ body: b })]));
   [2, 5].forEach(p => hk.push(["After week pace: " + p, C.hooks.hook_pace({ pace: p })]));
   C.steps.find(s => s.id === "barrier").opts.forEach(o => hk.push(["After barrier: " + o[1], C.hooks.hook_barrier({ barrier: o[0] })]));
-  H.push(`<section><div class="in"><p class="eyebrow">6 · Every encouragement screen</p><h2>All the in quiz hooks, word for word.</h2><div class="grid g2" style="margin-top:12px">${hk.map(([t, h]) => `<div class="hookcopy"><div class="caps small" style="color:var(--gold)">${t}</div><b>${R.fill(h.title, { name: "Sarah" })}</b><div class="muted">${R.fill(h.body, { name: "Sarah" })}</div></div>`).join("")}</div></div></section>`);
+  H.push(`<section><div class="in"><p class="eyebrow">6 · Every encouragement screen</p><h2>All the in quiz hooks, word for word.</h2><div class="grid g2" style="margin-top:12px">${hk.map(([t, h]) => `<div class="hookcopy"><div class="caps small" style="color:var(--gold)">${t}</div><b>${R.fill(h.title, { name: "Sarah" })}</b>${h.line ? `<div class="muted">${R.fill(h.line, { name: "Sarah" })}</div>` : ""}<ul class="small" style="margin:6px 0 0;padding-left:18px">${(h.facts || []).map(f => `<li><b>${f[0]}</b> ${f[1]}${f[2] ? ` <i class="muted">(${f[2]})</i>` : ""}</li>`).join("")}</ul>${h.quiz ? `<div class="small" style="margin-top:6px">Tap quiz: ${h.quiz.q}</div>` : ""}</div>`).join("")}</div></div></section>`);
 
   /* leads */
   H.push(`<section><div class="in"><p class="eyebrow">7 · Test leads on this device</p><h2>${leads.length ? "What would have been sent to Momence." : "No test leads yet. Complete the quiz to see one here."}</h2>

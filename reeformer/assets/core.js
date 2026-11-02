@@ -53,7 +53,7 @@
     else if (f === "3") pack = (r === "now" && exp >= 1) ? "year" : "member";
     else pack = (r === "now" && exp >= 2) ? "member" : "plus";
     // the cost objection plus not fully ready lands on the lowest risk step
-    if (a.barrier === "cost" && r !== "now" && pack !== "founder5") pack = C.order[Math.max(0, C.order.indexOf(pack) - 1)];
+    if ((a.barrier === "cost" || a.barrier === "pricey") && r !== "now" && pack !== "founder5") pack = C.order[Math.max(0, C.order.indexOf(pack) - 1)];
     const i = C.order.indexOf(pack);
     return { pack, up: C.order[i + 1] || null, down: C.order[i - 1] || null };
   };
@@ -320,7 +320,7 @@
       ${CFG.testMode && V.beats.length ? `<details class="vx-beats"><summary>Script outline</summary><ol>${V.beats.map(b => `<li>${R.esc(b)}</li>`).join("")}</ol></details>` : ""}
     </div>`;
   };
-  R.moves = () => `<p class="swipe-hint">Swipe to see more →</p><div class="moves">${C.moves.map(m => `<figure class="move">${R.img(m[0], "illo", false)}<figcaption><b>${m[1]}</b><span>${m[2]}</span></figcaption></figure>`).join("")}</div>`;
+  R.moves = () => `<p class="swipe-hint">Swipe to see more →</p><div class="moves">${C.moves.map(m => `<figure class="move"><div class="mv-n">${m[0]}</div><figcaption><b>${m[1]}</b><span>${m[2]}</span></figcaption></figure>`).join("")}</div>`;
 
   /* ---------- scroll FX: progress bar, parallax, carriage slide ---------- */
   R.scrollFx = () => {

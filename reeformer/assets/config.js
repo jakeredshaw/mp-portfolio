@@ -62,7 +62,7 @@ window.REEF_CONFIG = {
   },
 
   /* ---------- Dates ---------- */
-  openingDateText: "December 2026",       // TODO swap for the exact date once confirmed, e.g. "Saturday 12 December"
+  openingDateText: "mid to late January 2027", // TODO swap for the exact date once confirmed, e.g. "Saturday 23 January"
   openingDateISO: null,                   // TODO e.g. "2026-12-12T07:00:00Z" turns on an honest countdown to the real close
   memberMonthlyRate: null,                // TODO founder monthly rate (number) for Founding Member
   memberStandardRate: null,               // TODO standard monthly rate (number)

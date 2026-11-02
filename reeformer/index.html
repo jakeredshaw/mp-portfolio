@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Your Reformer Plan · reef</title>
-<meta name="description" content="Answer a few quick questions and get your personal Reformer Pilates plan, plus the founder pack that fits. reef opens December 2026 on Wyle Cop, Shrewsbury.">
+<meta name="description" content="Answer a few quick questions and get your personal Reformer Pilates plan, plus the founder pack that fits. reef opens in January 2027 on Wyle Cop, Shrewsbury.">
 <meta property="og:title" content="How long have you been about to start Reformer?">
 <meta property="og:description" content="Two minutes. Your personal Reformer plan and founder price. reef, Wyle Cop, Shrewsbury.">
 <meta property="og:image" content="assets/logo/reef-lockup-stacked-gold.png">
@@ -168,12 +168,20 @@
     if (!st) return;
     const a = A();
     if (st.type === "hook") {
-      const h = C.hooks[st.id](a);
-      const himg = { hook_exp: "concept-studio", hook_body: "concept-hallway", hook_pace: "concept-lounge", hook_barrier: "concept-coffee" }[st.id];
-      app.innerHTML = `<div class="screen"><div class="hook">${R.img(himg)}<div class="hb">
-        <p class="eyebrow">${R.fill(h.kicker, a)}</p><h2>${R.fill(h.title, a)}</h2><p style="margin:0">${R.fill(h.body, a)}</p>
-        ${h.stat ? (h.stat.length === 3 ? `<div class="hstat"><b>${h.stat[0]}</b><span>${h.stat[1]}<span class="src">${h.stat[2]}</span></span></div>` : `<div class="hstat"><span style="font-size:17px"><b style="font-size:17px;color:#fff">${h.stat[0]}</b> ${h.stat[1]}</span></div>`) : ""}
-      </div></div><div class="cta-row"><button class="btn btn-primary btn-block" id="nx" type="button">Keep building my plan</button></div></div>`;
+      const hk = C.hooks[st.id](a);
+      const facts = (hk.facts || []).map((f, i) => `<div class="hf" style="animation-delay:${150 + i * 180}ms"><b>${R.esc(f[0])}</b><span>${R.esc(f[1])}</span>${f[2] ? `<em class="src">${R.esc(f[2])}</em>` : ""}</div>`).join("");
+      const qz = hk.quiz ? `<div class="hq"><p class="hq-q">${R.esc(hk.quiz.q)}</p><div class="hq-opts">${hk.quiz.opts.map(o => `<button type="button" class="hq-o" data-o="${R.esc(o)}">${R.esc(o)}</button>`).join("")}</div><p class="hq-r" hidden>${R.esc(hk.quiz.reveal)}</p></div>` : "";
+      app.innerHTML = `<div class="screen"><div class="hook"><div class="hb">
+        <p class="eyebrow">${R.fill(hk.kicker, a)}</p><h2>${R.fill(hk.title, a)}</h2>${hk.line ? `<p class="hl">${R.fill(hk.line, a)}</p>` : ""}
+        <div class="hfacts">${facts}</div>${qz}
+      </div></div><div class="cta-row"><button class="btn btn-gold btn-block" id="nx" type="button">Keep going</button></div></div>`;
+      app.querySelectorAll(".hq-o").forEach(b => b.onclick = () => {
+        const ok = b.dataset.o === hk.quiz.answer;
+        app.querySelectorAll(".hq-o").forEach(x => { x.disabled = true; x.classList.toggle("right", x.dataset.o === hk.quiz.answer); });
+        if (!ok) b.classList.add("wrong");
+        const r = app.querySelector(".hq-r"); r.hidden = false; r.textContent = (ok ? "Spot on! " : "Not quite. ") + hk.quiz.reveal;
+        R.$("#nx").classList.add("pulse"); R.track("QuizGuess", { right: ok }, true);
+      });
       R.$("#nx").onclick = next; return;
     }
     if (st.type === "text") {
@@ -184,11 +192,12 @@
       const sub = () => { const v = tx.value.trim(); if (v.length < 1) { R.$("#er").textContent = "Pop your first name in so we can personalise your plan."; return; } a.name = v; save(); next(); };
       R.$("#nx").onclick = sub; tx.onkeydown = e => { if (e.key === "Enter") sub(); }; return;
     }
-    const qillo = { goal: "illo-40s", day: "illo-30s", freq: "illo-20s", ready: "illo-60s", age: "illo-70s" }[st.id];
-    const ib = qillo ? `<div class="img illo decade-illo">` + `<img src="assets/img/${qillo}.jpg" alt=""></div>` : "";
+    const ib = "";
+    const Q = typeof st.q === "function" ? st.q(a) : st.q;
+    const OPTS = st.optsFor ? st.optsFor(a) : st.opts;
     if (st.type === "single") {
-      app.innerHTML = `<div class="screen">${ib}<h2 class="q">${R.fill(st.q, a)}</h2>${st.help ? `<p class="help">${st.help}</p>` : ""}
-        <div class="opts">${st.opts.map(o => `<button class="opt ${a[st.id] === o[0] ? "sel" : ""}" data-v="${o[0]}" type="button">${o[2] ? `<span class="ic">${o[2]}</span>` : ""}<span>${o[1]}</span></button>`).join("")}</div></div>`;
+      app.innerHTML = `<div class="screen">${ib}<h2 class="q">${R.fill(Q, a)}</h2>${st.help ? `<p class="help">${st.help}</p>` : ""}
+        <div class="opts">${OPTS.map(o => `<button class="opt ${a[st.id] === o[0] ? "sel" : ""}" data-v="${o[0]}" type="button">${o[2] ? `<span class="ic">${o[2]}</span>` : ""}<span>${o[1]}</span></button>`).join("")}</div></div>`;
       app.querySelectorAll(".opt").forEach(b => b.onclick = () => {
         app.querySelectorAll(".opt").forEach(x => x.classList.remove("sel")); b.classList.add("sel");
         a[st.id] = b.dataset.v; save(); R.track("QuizAnswer", { q: st.id, a: b.dataset.v }, true); setTimeout(next, 220);
@@ -290,11 +299,11 @@
       <div class="fact reveal" style="margin-top:14px"><b data-count="${parseFloat(sci[0]) || ""}">${sci[0]}</b><div><div>${sci[1]}</div><div class="src">${sci[2]}</div></div></div>
       ${bm ? `<div class="card" style="margin-top:14px;border:1.5px solid rgba(179,134,66,.45)"><p class="eyebrow">You said this held you back</p><h3>${bm.t}</h3><p style="margin:0">${R.fill(bm.b, a)}</p></div>` : ""}
       <div style="margin-top:22px">${R.vsl("result")}</div>
-      ${a.age && C.decadeIllo[a.age] ? `<div class="card" style="margin-top:18px;padding:0;overflow:hidden">${R.img(C.decadeIllo[a.age], "illo decade-illo", false)}<div style="padding:16px 18px"><p class="eyebrow" style="margin-bottom:6px">Built for your ${R.esc(R.label("age", a.age))}</p><p style="margin:0">${C.decadeModules[a.age].b}</p></div></div>` : ""}
+      ${a.age && C.decadeModules[a.age] ? `<div class="card" style="margin-top:18px"><p class="eyebrow" style="margin-bottom:6px">Built for your ${R.esc(R.label("age", a.age))}</p><p style="margin:0">${C.decadeModules[a.age].b}</p></div>` : ""}
       <h2 style="margin-top:36px">Your plan: <em>twice a week</em> for twelve weeks.</h2>
       <p class="muted">The NHS says adults should do strength exercise on at least two days a week, and it names Pilates as an example. Twice a week is also what the published Pilates studies used. Here's what your first twelve weeks look like.</p>
       <div class="wk">${C.weeks.map(w => `<div class="card"><b>${w[0]}</b><h3>${w[1]}</h3><p>${w[2]}</p></div>`).join("")}</div>
-      <p class="eyebrow" style="margin-top:30px">Your first moves</p><h3>Here's what you'll actually do in week one.</h3>
+      <p class="eyebrow" style="margin-top:30px">Your first moves</p><h3>What you'll do in week one.</h3>
       ${R.moves()}
       <div style="margin-top:40px" class="center reveal"><p class="eyebrow">Your recommended founder packs</p><h2>${N ? N + ", here are" : "Here are"} your 3 best options.</h2>
       <p class="muted">We've put the best value first. The more sessions you buy, the less each one costs. Tap any pack to compare.</p></div>
