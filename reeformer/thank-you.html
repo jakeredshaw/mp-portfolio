@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Welcome, Founder · reef</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#FAF6E8">
+<link rel="icon" href="assets/logo/reef-mark-gold.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="stylesheet" href="assets/reef.css">
+<style>
+  .step{display:inline-block;background:var(--gold);color:#fff;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:5px 11px;border-radius:99px;margin-bottom:12px}
+  .addon{border:2px solid var(--gold);border-radius:22px;background:#fff;padding:24px 20px;box-shadow:0 18px 40px rgba(179,134,66,.18)}
+  .price{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:8px 0}
+  .price b{font-size:42px;color:var(--deep);line-height:1}
+  .price s{color:var(--muted);font-size:18px}
+  .save{display:inline-block;background:#E7F2EC;color:var(--ok);font-size:13px;font-weight:700;padding:5px 10px;border-radius:8px}
+  .tl{border-left:2px solid var(--line);margin-left:8px;padding-left:20px}
+  .tl div{position:relative;padding:0 0 18px}
+  .tl div::before{content:"";position:absolute;left:-27px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--gold)}
+</style>
+</head>
+<body>
+<header class="top"><img src="assets/logo/reef-lockup-horizontal-gold.png" alt="Reeformer Pilates" width="100" height="40"><div class="tag">Founder</div></header>
+<main id="page"></main>
+<div id="foot"></div>
+<script src="assets/config.js"></script>
+<script src="assets/content.js"></script>
+<script src="assets/core.js"></script>
+<script>
+(function(){
+  const R = REEF, C = REEF_CONTENT, CFG = REEF_CONFIG;
+  const s = R.fromUrl(), a = s.answers || {}, n = R.first(a), N = n ? R.esc(n) : "";
+  const pid = new URLSearchParams(location.search).get("pack") || s.lastCheckout;
+  const P = C.packs[pid];
+  // fire Purchase once per checkout
+  if (P && s.purchasedAt !== s.lastCheckoutAt) { R.track("Purchase", { value: P.price, currency: "GBP", content_name: P.name }); R.update({ purchasedAt: s.lastCheckoutAt, founderPack: pid }); }
+
+  const link = location.origin + location.pathname.replace(/thank-you\.html$/, "index.html") + "?utm_source=guestpass&utm_medium=whatsapp";
+  const msg = `I've just got a founder place at reef, the new Reformer Pilates studio on Wyle Cop. I've got 3 Guest Passes and I want you to have one. You get a free first class, plus founder pricing until it opens. The pass runs out in 7 days, so have a look tonight? ${link}`;
+  const T = CFG.addons.trio, L = CFG.addons.redlight5;
+  const showAddon = (x) => x && x.price;
+
+  const html = [];
+  html.push(`<section style="padding-top:24px"><div class="narrow center">
+    <img src="assets/logo/reef-mark-gold.png" alt="" width="86" height="90" style="margin:0 auto 14px">
+    <p class="eyebrow">You're in</p><h1>Welcome to the founders${N ? ", " + N : ""}.</h1>
+    <p style="font-size:18px">${P ? `Your <b>${P.name}</b> place is secured.` : "Your founder place is secured."} Check your inbox for your Momence receipt. Your credits start on opening day, ${R.esc(CFG.openingDateText)}, and founders get first choice of sessions.</p>
+  </div></section>`);
+
+  // 1) one time add on (shown first: highest intent moment)
+  if (showAddon(T)) html.push(`<section class="band-white" style="padding-top:40px"><div class="narrow">
+    <span class="step">One time founder offer</span>
+    <h2>${N ? N + ", recover" : "Recover"} like a founder.</h2>
+    <p>The best Reformer results come from training twice a week and recovering properly in between. Add the <b>${R.esc(T.name)}</b> to your founder place now, at a price you'll only see on this page.</p>
+    <div class="addon"><h3 style="margin:0 0 6px">${R.esc(T.name)}</h3>
+      <ul class="ticks">${T.includes.map(i => `<li>${R.esc(i)}</li>`).join("")}<li>Use them any time after opening day</li></ul>
+      <div class="price"><b>${R.money(T.price)}</b><s>${R.money(T.value)}</s><span class="save">You pay ${R.money(T.value - T.price)} less</span></div>
+      <p class="small muted">Against our prices from opening day. Lie back on the red light bed and switch off. Then a slow, steady squeeze through your legs in the recovery boots while you rest.</p>
+      <button class="btn btn-gold btn-block" id="trio" type="button">Yes, add the ${R.esc(T.name)}</button>
+      <button class="link-quiet" id="notrio" type="button" style="display:block;margin:6px auto 0">No thanks, I'll pay full price later</button></div>
+    ${showAddon(L) ? `<div id="alt" class="hide" style="margin-top:18px"><div class="card"><p class="eyebrow">Or just the red light</p><h3>${R.esc(L.name)}</h3><p class="muted">${R.esc(L.includes.join(", "))} for <b>${R.money(L.price)}</b> <s>${R.money(L.value)}</s>.</p><button class="btn btn-primary btn-block" id="rl" type="button">Add ${R.esc(L.name)}</button></div></div>` : ""}
+  </div></section>`);
+
+  // 2) guest passes
+  html.push(`<section><div class="narrow"><span class="step">Your 3 Guest Passes</span>
+    <h2>Who should be on the bed next to you?</h2>
+    <p>Every founder gets 3 Guest Passes. Your friend gets a free first Reformer class and founder pricing on any pack until opening day. You get a class credit worth £25 for every friend who buys, up to £75.</p>
+    <a class="btn btn-gold btn-block" href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener" onclick="REEF.track('GuestPassShare',{},true)">Send a pass on WhatsApp</a>
+    <button class="btn btn-ghost btn-block" id="copy" type="button" style="margin-top:10px">Copy my invite message</button>
+    <p class="small muted" style="margin-top:10px">Passes run out 7 days after you send them.</p></div></section>`);
+
+  // 3) next steps
+  html.push(`<section class="band-foam"><div class="narrow"><h2>What happens next.</h2><div class="tl">
+    <div><b>Today</b><br><span class="muted">Your Momence receipt and founder welcome email land in your inbox.</span></div>
+    <div><b>Before opening</b><br><span class="muted">Build updates from inside the studio, and first access to the timetable when it goes live.</span></div>
+    <div><b>Opening day, ${R.esc(CFG.openingDateText)}</b><br><span class="muted">Your credits start. Book your first instructor led class and we'll set your springs for you.</span></div>
+    <div><b>Week 12</b><br><span class="muted">Where most published Pilates trials finish. And where it becomes a habit.</span></div></div>
+    ${R.callHtml("Questions? Message Ricky")}</div></section>`);
+
+  R.$("#page").innerHTML = html.join("");
+  R.$("#foot").innerHTML = R.footer();
+
+  const buyAddon = (key) => {
+    const x = CFG.addons[key]; R.track("AddonClick", { addon: key, value: x.price }, true);
+    if (!x.checkout) { R.toast("Add on checkout link not set yet (assets/config.js)."); return; }
+    location.href = x.checkout;
+  };
+  if (R.$("#trio")) {
+    R.$("#trio").onclick = () => buyAddon("trio");
+    R.$("#notrio").onclick = () => { const alt = R.$("#alt"); if (alt) { alt.classList.remove("hide"); alt.scrollIntoView({ behavior: "smooth", block: "center" }); } R.$("#notrio").remove(); };
+  }
+  if (R.$("#rl")) R.$("#rl").onclick = () => buyAddon("redlight5");
+  R.$("#copy").onclick = async () => { try { await navigator.clipboard.writeText(msg); R.toast("Copied. Paste it to a friend."); } catch (e) { prompt("Copy this message:", msg); } };
+})();
+</script>
+</body>
+</html>

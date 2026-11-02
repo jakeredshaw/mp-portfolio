@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Your Reformer Plan · reef</title>
+<meta name="description" content="Answer a few quick questions and get your personal Reformer Pilates plan, plus the founder pack that fits. reef opens December 2026 on Wyle Cop, Shrewsbury.">
+<meta property="og:title" content="How long have you been about to start Reformer?">
+<meta property="og:description" content="Two minutes. Your personal Reformer plan and founder price. reef, Wyle Cop, Shrewsbury.">
+<meta property="og:image" content="assets/logo/reef-lockup-stacked-gold.png">
+<meta name="theme-color" content="#FAF6E8">
+<link rel="icon" href="assets/logo/reef-mark-gold.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="stylesheet" href="assets/reef.css">
+<style>
+  body{min-height:100dvh;display:flex;flex-direction:column}
+  .qtop{display:flex;align-items:center;gap:12px;padding:12px 16px;max-width:680px;margin:0 auto;width:100%}
+  .qtop img{height:42px;width:auto}
+  .qtop .back{margin-left:auto;background:none;border:0;color:var(--muted);font-size:14px;padding:8px;visibility:hidden}
+  .prog{max-width:680px;margin:0 auto;width:calc(100% - 32px);height:6px;background:var(--line);border-radius:99px;overflow:hidden}
+  .prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),#d4a35c);transition:width .45s ease}
+  .progtxt{max-width:680px;margin:6px auto 0;width:calc(100% - 32px);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+  main{flex:1;width:100%}
+  .screen{max-width:680px;margin:0 auto;padding:26px 16px 40px;animation:fade .35s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  .q{font-size:clamp(24px,5.4vw,34px);margin:6px 0 8px}
+  .help{color:var(--muted);margin:0 0 18px;font-size:15px}
+  .opts{display:grid;gap:10px;margin-top:18px}
+  .opt{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:17px 18px;font-size:16.5px;color:var(--ink);transition:border-color .15s,transform .1s,background .15s;min-height:60px}
+  .opt:hover{border-color:var(--gold)}
+  .opt:active{transform:scale(.99)}
+  .opt.sel{border-color:var(--deep);background:var(--foam)}
+  .opt .ic{font-size:22px;width:28px;text-align:center;flex:none}
+  .opt .bx{width:22px;height:22px;border:1.5px solid var(--line);border-radius:6px;flex:none;display:grid;place-items:center;background:#fff}
+  .opt.sel .bx{background:var(--deep);border-color:var(--deep)}
+  .opt.sel .bx::after{content:"";width:10px;height:6px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
+  .scale{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:22px}
+  .scale button{aspect-ratio:1;border-radius:14px;border:1.5px solid var(--line);background:#fff;font-size:22px;font-weight:700;color:var(--deep)}
+  .scale button.sel,.scale button:hover{border-color:var(--deep);background:var(--foam)}
+  .scale-l{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;margin-top:8px}
+  input[type=text],input[type=email],input[type=tel]{width:100%;font:inherit;font-size:17px;padding:16px 18px;border-radius:14px;border:1.5px solid var(--line);background:#fff;color:var(--ink);outline:none}
+  input:focus{border-color:var(--deep)}
+  label.f{display:block;font-size:13px;color:var(--muted);margin:14px 0 6px}
+  .chk{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;color:var(--muted);margin:14px 0 4px}
+  .chk input{width:20px;height:20px;margin-top:2px;flex:none;accent-color:var(--deep)}
+  .err{color:var(--warn);font-size:14px;margin-top:8px;min-height:1em}
+  .cta-row{margin-top:22px}
+  /* hero */
+  .hero{max-width:680px;margin:0 auto;padding:18px 16px 40px;text-align:center}
+  .hero h1{margin:10px 0 14px}
+  .hero .sub{font-size:17px;color:var(--muted);max-width:52ch;margin:0 auto 22px}
+  .pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:20px 0 6px}
+  .pill{font-size:12.5px;background:#fff;border:1px solid var(--line);border-radius:99px;padding:7px 12px;color:var(--deep)}
+  .trust{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:28px 0 0}
+  .trust div{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 8px;font-size:12.5px;color:var(--muted);line-height:1.35}
+  .trust b{display:block;color:var(--deep);font-size:18px;margin-bottom:2px}
+  /* hook */
+  .hook{background:var(--deep);color:#E4F0F3;border-radius:22px;padding:30px 22px;margin-top:6px;box-shadow:var(--shadow)}
+  .hook .eyebrow{color:#F3E2C2}
+  .hook h2{color:#fff;font-size:clamp(24px,5vw,32px)}
+  .hook .hstat{border-top:1px solid rgba(255,255,255,.15);margin-top:18px;padding-top:16px;display:flex;gap:14px;align-items:baseline}
+  .hook .hstat b{font-size:30px;color:var(--gold-soft);flex:none}
+  .hook .hstat span{font-size:14px}
+  .hook .hstat .src{color:#A9C3CB;display:block}
+  /* analysing */
+  .anal{text-align:center;padding-top:40px}
+  .ring{width:92px;height:92px;margin:0 auto 24px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--gold);animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .steps{list-style:none;padding:0;margin:20px auto 0;max-width:360px;text-align:left}
+  .steps li{padding:9px 0 9px 34px;position:relative;color:var(--muted);transition:color .3s}
+  .steps li::before{content:"";position:absolute;left:0;top:11px;width:20px;height:20px;border-radius:50%;border:1.5px solid var(--line)}
+  .steps li.done{color:var(--deep)}
+  .steps li.done::before{background:var(--gold);border-color:var(--gold)}
+  /* result */
+  .res-hd{text-align:center}
+  .res-hd .emo{font-size:46px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0}
+  .chip{font-size:13px;background:var(--foam);color:var(--deep);border-radius:99px;padding:7px 12px}
+  .bigstat b{display:block;font-size:38px;color:var(--gold);line-height:1.1;margin-bottom:6px}
+  .wk{display:grid;gap:10px}
+  .wk .card{padding:16px 18px}
+  .wk .card b{color:var(--gold);font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+  .wk .card h3{margin:4px 0 6px;font-size:18px}
+  .wk .card p{margin:0;font-size:14.5px;color:var(--muted)}
+  .packcard{border:2px solid var(--deep);border-radius:22px;background:#fff;padding:24px 20px;box-shadow:0 18px 40px rgba(15,59,76,.16);position:relative}
+  .packcard .badge{position:absolute;top:-13px;left:20px;background:var(--gold);color:#fff;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:6px 12px;border-radius:99px}
+  .price{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:6px 0 4px}
+  .price b{font-size:44px;color:var(--deep);line-height:1}
+  .price s{color:var(--muted);font-size:18px}
+  .save{display:inline-block;background:#E7F2EC;color:var(--ok);font-size:13px;font-weight:700;padding:5px 10px;border-radius:8px}
+  .alt{display:grid;gap:10px;margin-top:14px}
+  .alt a{display:flex;justify-content:space-between;gap:10px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;text-decoration:none;color:var(--ink);font-size:14.5px}
+  .alt a b{color:var(--deep)}
+</style>
+</head>
+<body>
+<div class="ribbon">Founder places are open · <b>205 in total</b> · Prices end for good on opening day</div>
+<header class="qtop" id="qtop"><img src="assets/logo/reef-lockup-horizontal-gold.png" alt="Reeformer Pilates" width="100" height="40"><button class="back" id="back" type="button">Back</button></header>
+<div id="progwrap" class="hide"><div class="prog"><i id="prog"></i></div><div class="progtxt" id="progtxt"></div></div>
+<main id="app"></main>
+<div id="foot"></div>
+
+<script src="assets/config.js"></script>
+<script src="assets/content.js"></script>
+<script src="assets/core.js"></script>
+<script>
+(function(){
+  const R = REEF, C = REEF_CONTENT, CFG = REEF_CONFIG;
+  const app = R.$("#app");
+  let state = R.fromUrl();
+  state.answers = state.answers || {};
+  let idx = -1; // -1 = hero
+  const hist = [];
+  const A = () => state.answers;
+  const steps = C.steps;
+  const qCount = steps.filter(s => !["hook","capture"].includes(s.type)).length;
+
+  function setProgress(){
+    const wrap = R.$("#progwrap"), back = R.$("#back");
+    if (idx < 0) { wrap.classList.add("hide"); back.style.visibility = "hidden"; return; }
+    wrap.classList.remove("hide"); back.style.visibility = hist.length ? "visible" : "hidden";
+    const done = steps.slice(0, idx).filter(s => !["hook","capture"].includes(s.type)).length;
+    const pct = Math.round(8 + (done / qCount) * 92);
+    R.$("#prog").style.width = Math.min(100, pct) + "%";
+    R.$("#progtxt").textContent = pct >= 100 ? "Your plan is ready" : "Your plan is " + pct + "% built";
+  }
+  function go(i, push){ if (push !== false && idx >= 0) hist.push(idx); idx = i; render(); window.scrollTo({top:0,behavior:"smooth"}); }
+  function next(){ go(idx + 1); }
+  R.$("#back").onclick = () => { if (hist.length) { idx = hist.pop(); render(); } };
+  const save = () => R.save(state);
+
+  function hero(){
+    R.$("#foot").innerHTML = R.footer();
+    app.innerHTML = `<section class="hero">
+      <p class="eyebrow">Free Reformer plan · Takes 2 minutes</p>
+      <h1>How long have you been <em>about to start</em> Reformer?</h1>
+      <p class="sub">Answer ${qCount} quick questions. We'll build your personal Reformer plan: what to focus on, how often to come, and the founder pack that fits you best.</p>
+      ${CFG.videos.quiz ? R.videoHtml(CFG.videos.quiz, "A quick hello from reef") + "<div style='height:18px'></div>" : ""}
+      <button class="btn btn-primary btn-block" id="start" type="button">Build my Reformer plan</button>
+      <div class="pills"><span class="pill">No experience needed</span><span class="pill">Every age, every body</span><span class="pill">Men very welcome</span></div>
+      <div class="trust"><div><b>10+</b>Reformer beds on Wyle Cop</div><div><b>7 to 10</b>Open early and late, every day</div><div><b>800+</b>Guided sessions on your own screen</div></div>
+      <p class="small muted" style="margin-top:22px">The first full Reformer studio inside Shrewsbury town centre. Opening ${R.esc(CFG.openingDateText)}.</p>
+    </section>`;
+    R.$("#start").onclick = () => { R.track("QuizStart", {}, true); go(0, false); };
+  }
+
+  function render(){
+    setProgress();
+    if (idx < 0) return hero();
+    R.$("#foot").innerHTML = "";
+    const st = steps[idx];
+    if (!st) return;
+    const a = A();
+    if (st.type === "hook") {
+      const h = C.hooks[st.id](a);
+      app.innerHTML = `<div class="screen"><div class="hook">
+        <p class="eyebrow">${R.fill(h.kicker, a)}</p><h2>${R.fill(h.title, a)}</h2><p style="margin:0">${R.fill(h.body, a)}</p>
+        ${h.stat ? (h.stat.length === 3 ? `<div class="hstat"><b>${h.stat[0]}</b><span>${h.stat[1]}<span class="src">${h.stat[2]}</span></span></div>` : `<div class="hstat"><span style="font-size:17px"><b style="font-size:17px;color:#fff">${h.stat[0]}</b> ${h.stat[1]}</span></div>`) : ""}
+      </div><div class="cta-row"><button class="btn btn-gold btn-block" id="nx" type="button">Keep building my plan</button></div></div>`;
+      R.$("#nx").onclick = next; return;
+    }
+    if (st.type === "text") {
+      app.innerHTML = `<div class="screen"><h2 class="q">${R.fill(st.q, a)}</h2>
+        <input type="text" id="tx" autocomplete="given-name" placeholder="${st.placeholder}" value="${R.esc(a.name || "")}" maxlength="40">
+        <div class="err" id="er"></div><div class="cta-row"><button class="btn btn-primary btn-block" id="nx" type="button">${st.cta}</button></div></div>`;
+      const tx = R.$("#tx"); setTimeout(() => tx.focus(), 50);
+      const sub = () => { const v = tx.value.trim(); if (v.length < 1) { R.$("#er").textContent = "Pop your first name in so we can personalise your plan."; return; } a.name = v; save(); next(); };
+      R.$("#nx").onclick = sub; tx.onkeydown = e => { if (e.key === "Enter") sub(); }; return;
+    }
+    if (st.type === "single") {
+      app.innerHTML = `<div class="screen"><h2 class="q">${R.fill(st.q, a)}</h2>${st.help ? `<p class="help">${st.help}</p>` : ""}
+        <div class="opts">${st.opts.map(o => `<button class="opt ${a[st.id] === o[0] ? "sel" : ""}" data-v="${o[0]}" type="button">${o[2] ? `<span class="ic">${o[2]}</span>` : ""}<span>${o[1]}</span></button>`).join("")}</div></div>`;
+      app.querySelectorAll(".opt").forEach(b => b.onclick = () => {
+        app.querySelectorAll(".opt").forEach(x => x.classList.remove("sel")); b.classList.add("sel");
+        a[st.id] = b.dataset.v; save(); R.track("QuizAnswer", { q: st.id, a: b.dataset.v }, true); setTimeout(next, 220);
+      }); return;
+    }
+    if (st.type === "multi") {
+      const sel = new Set(a[st.id] || []);
+      app.innerHTML = `<div class="screen"><h2 class="q">${R.fill(st.q, a)}</h2>${st.help ? `<p class="help">${st.help}</p>` : ""}
+        <div class="opts">${st.opts.map(o => `<button class="opt ${sel.has(o[0]) ? "sel" : ""}" data-v="${o[0]}" type="button"><span class="bx"></span><span>${o[1]}</span></button>`).join("")}</div>
+        <div class="err" id="er"></div><div class="cta-row"><button class="btn btn-primary btn-block" id="nx" type="button">Continue</button></div></div>`;
+      app.querySelectorAll(".opt").forEach(b => b.onclick = () => {
+        const v = b.dataset.v;
+        if (v === "none") { sel.clear(); sel.add("none"); } else { sel.delete("none"); sel.has(v) ? sel.delete(v) : sel.add(v); }
+        app.querySelectorAll(".opt").forEach(x => x.classList.toggle("sel", sel.has(x.dataset.v)));
+      });
+      R.$("#nx").onclick = () => { if (!sel.size) { R.$("#er").textContent = "Choose at least one."; return; } a[st.id] = [...sel]; save(); next(); }; return;
+    }
+    if (st.type === "scale") {
+      app.innerHTML = `<div class="screen"><h2 class="q">${R.fill(st.q, a)}</h2>
+        <div class="scale">${[1,2,3,4,5].map(v => `<button class="${+a[st.id] === v ? "sel" : ""}" data-v="${v}" type="button">${v}</button>`).join("")}</div>
+        <div class="scale-l"><span>${st.lo}</span><span>${st.hi}</span></div></div>`;
+      app.querySelectorAll(".scale button").forEach(b => b.onclick = () => { a[st.id] = b.dataset.v; save(); b.classList.add("sel"); setTimeout(next, 220); }); return;
+    }
+    if (st.type === "capture") return capture();
+  }
+
+  function capture(){
+    const a = A(), rec = R.recommend(a);
+    state.pack = rec.pack; save();
+    const n = R.first(a);
+    app.innerHTML = `<div class="screen">
+      <p class="eyebrow">All done${n ? ", " + R.esc(n) : ""}</p>
+      <h2 class="q">Your Reformer plan is ready.</h2>
+      <p class="help">We've matched your answers to a profile, a twelve week plan and the founder pack that fits. Where should we send it?</p>
+      <div class="card" style="padding:16px 18px;margin-bottom:6px"><ul class="ticks" style="margin:0">
+        <li>Your Reformer profile and what it means for your body</li>
+        <li>Your twelve week plan, built on the Twice a Week Standard</li>
+        <li>Your matched founder pack and price, held while places last</li></ul></div>
+      <label class="f" for="em">Email address</label>
+      <input type="email" id="em" autocomplete="email" inputmode="email" placeholder="you@example.com" value="${R.esc(state.email || "")}">
+      <label class="f" for="ph">Mobile <span class="muted">(optional, so we can text you if places run low)</span></label>
+      <input type="tel" id="ph" autocomplete="tel" inputmode="tel" placeholder="07..." value="${R.esc(state.phone || "")}">
+      <label class="chk"><input type="checkbox" id="sms"> Yes, text me founder updates. Reply STOP any time.</label>
+      <div class="err" id="er"></div>
+      <div class="cta-row"><button class="btn btn-gold btn-block" id="nx" type="button">Show me my plan</button></div>
+      <p class="small muted center" style="margin-top:12px">We'll email your plan and founder updates from reef. Unsubscribe in one click. We never share your details.</p>
+    </div>`;
+    R.$("#em").focus();
+    R.$("#nx").onclick = async () => {
+      const em = R.$("#em").value.trim(), ph = R.$("#ph").value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)) { R.$("#er").textContent = "Please check your email address."; return; }
+      if (ph && ph.replace(/\D/g, "").length < 10) { R.$("#er").textContent = "That mobile number looks a little short."; return; }
+      state.email = em; state.phone = ph; state.sms = R.$("#sms").checked; state.leadAt = Date.now(); save();
+      R.track("Lead", { content_name: C.packs[state.pack].name, value: C.packs[state.pack].price, currency: "GBP" });
+      R.sendLead(state);
+      analysing();
+    };
+  }
+
+  function analysing(){
+    R.$("#progwrap").classList.add("hide"); R.$("#back").style.visibility = "hidden";
+    const a = A();
+    const lines = ["Reading your answers", "Matching your goals to the research", "Building your twelve week plan", "Checking founder places for you"];
+    app.innerHTML = `<div class="screen anal"><div class="ring"></div><h2 class="q">Building your plan, ${R.esc(R.first(a) || "friend")}…</h2><ul class="steps">${lines.map(l => `<li>${l}</li>`).join("")}</ul></div>`;
+    const li = app.querySelectorAll(".steps li");
+    li.forEach((el, i) => setTimeout(() => el.classList.add("done"), 650 * (i + 1)));
+    setTimeout(result, 650 * lines.length + 500);
+  }
+
+  function result(){
+    const a = A(), rec = R.recommend(a), P = C.packs[rec.pack], prof = C.profiles[a.goal || "strength"];
+    const pname = C.profileName(a), n = R.first(a);
+    R.track("QuizComplete", { profile: pname, pack: P.name }, true);
+    const chips = [
+      R.label("goal", a.goal), a.exp === "0" ? "Brand new to Reformer" : R.label("exp", a.exp) + " classes so far",
+      ...(a.body || []).filter(b => b !== "none").map(b => R.label("body", b)),
+      R.label("day", a.day), "Week pace " + a.pace + " of 5", R.label("freq", a.freq)
+    ].filter(Boolean);
+    const sci = C.science[prof.science[0]];
+    const link = P.file + "?from=quiz";
+    const alt = [rec.down, rec.up].filter(Boolean).map(id => {
+      const X = C.packs[id];
+      return `<a href="${X.file}?from=quiz"><span><b>${X.name}</b> · ${X.classes} classes</span><span>${R.money(X.price)} →</span></a>`;
+    }).join("");
+    app.innerHTML = `<div class="screen">
+      <div class="res-hd"><div class="emo">${prof.emoji}</div><p class="eyebrow">Your Reformer profile</p>
+      <h1 style="font-size:clamp(28px,6vw,42px)">${n ? R.esc(n) + ", you're" : "You're"} <em>${pname}</em></h1>
+      <p style="font-size:18px;color:var(--deep)">${prof.line}</p></div>
+      <div class="card" style="margin-top:18px"><p class="eyebrow">What you told us</p><div class="chips">${chips.map(c => `<span class="chip">${R.esc(c)}</span>`).join("")}</div>
+      <p style="margin:16px 0 0">${prof.why}</p></div>
+      <div class="card" style="margin-top:14px"><div class="bigstat"><b>${sci[0]}</b><div><div>${sci[1]}</div><div class="src">${sci[2]}</div></div></div></div>
+      <h2 style="margin-top:36px">Your plan: <em>twice a week</em> for twelve weeks</h2>
+      <p class="muted">The NHS advises strength work on at least two days a week and names Pilates as an example. Twice a week is also the dose the published Pilates trials used. Here's how your first twelve weeks look.</p>
+      <div class="wk">${C.weeks.map(w => `<div class="card"><b>${w[0]}</b><h3>${w[1]}</h3><p>${w[2]}</p></div>`).join("")}</div>
+      <h2 style="margin-top:40px">Your founder pack</h2>
+      <div class="packcard" style="margin-top:20px"><span class="badge">Matched to you</span>
+        <h3 style="margin:6px 0 2px;font-size:26px">${P.name}</h3><p class="muted" style="margin:0 0 8px">${P.tagline}</p>
+        <div class="price"><b>${R.money(P.price)}</b><s>${R.money(P.value)}</s><span class="save">You pay ${R.money(P.save)} less</span></div>
+        <p class="small muted" style="margin:0 0 14px">Against our prices from opening day. ${R.money(P.perClass)} a class.</p>
+        <ul class="ticks">${R.reasons(a, rec.pack).map(r => `<li>${r}</li>`).join("")}</ul>
+        ${R.placesHtml(rec.pack)}
+        <a class="btn btn-primary btn-block" href="${link}" style="margin-top:8px">See my ${P.name} plan <small>&nbsp;→</small></a>
+      </div>
+      ${alt ? `<p class="small muted" style="margin:22px 0 0">Also a good fit for you:</p><div class="alt">${alt}</div>` : ""}
+      <p class="center" style="margin-top:22px"><a href="packs.html?from=quiz">Compare all four founder packs</a></p>
+    </div>`;
+    R.$("#foot").innerHTML = R.footer();
+  }
+
+  // returning visitors who already finished go straight to their result
+  if (state.leadAt && state.answers.ready && !new URLSearchParams(location.search).has("restart")) { idx = steps.length - 1; result(); }
+  else render();
+})();
+</script>
+</body>
+</html>

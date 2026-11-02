@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Founder Packs · reef</title>
+<meta name="description" content="Four founder packs at reef, Wyle Cop, Shrewsbury. 205 places in total. Founder prices end for good on opening day.">
+<meta name="theme-color" content="#FAF6E8">
+<link rel="icon" href="assets/logo/reef-mark-gold.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="stylesheet" href="assets/reef.css">
+<style>
+  .packs{display:grid;gap:16px;margin-top:28px}
+  @media(min-width:900px){.packs{grid-template-columns:repeat(4,1fr);align-items:stretch}}
+  .pk{background:#fff;border:1px solid var(--line);border-radius:20px;padding:24px 18px;display:flex;flex-direction:column;position:relative;box-shadow:var(--shadow)}
+  .pk.hot{border:2px solid var(--deep);transform:translateY(-6px)}
+  .pk .badge{position:absolute;top:-12px;left:18px;background:var(--gold);color:#fff;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;padding:6px 11px;border-radius:99px}
+  .pk.hot .badge{background:var(--deep)}
+  .pk h3{margin:8px 0 2px}
+  .pk .pr{font-size:38px;font-weight:700;color:var(--deep);line-height:1;margin:10px 0 2px}
+  .pk .pr s{font-size:15px;color:var(--muted);font-weight:400;margin-left:6px}
+  .pk ul{list-style:none;padding:0;margin:14px 0;font-size:14px;flex:1}
+  .pk li{padding:6px 0;border-bottom:1px solid #f1ece2}
+  .pk .btn{margin-top:10px}
+  .save{display:inline-block;background:#E7F2EC;color:var(--ok);font-size:12.5px;font-weight:700;padding:4px 9px;border-radius:8px}
+</style>
+</head>
+<body>
+<div class="ribbon">205 founder places in total · <b>Prices end for good on opening day</b></div>
+<header class="top"><a href="index.html"><img src="assets/logo/reef-lockup-horizontal-gold.png" alt="Reeformer Pilates" width="100" height="40"></a><div class="tag">55 to 57 Wyle Cop<br>Shrewsbury</div></header>
+<main><section style="padding-top:20px"><div class="wrap">
+  <div class="narrow center" style="padding:0"><p class="eyebrow" id="eb">Founder packs</p><h1 id="h">Choose your founder pack.</h1>
+  <p class="muted" id="sub">Every pack is cheaper than walking in after we open. Every pack comes with 3 Guest Passes for friends. And every price on this page disappears on opening day.</p></div>
+  <div class="packs" id="packs"></div>
+  <p class="center small muted" style="margin-top:26px">Prices compared with our prices from opening day: Reformer class £25, hyperbaric £75, red light £65, recovery boots £50.</p>
+</div></section></main>
+<div id="foot"></div>
+<script src="assets/config.js"></script>
+<script src="assets/content.js"></script>
+<script src="assets/core.js"></script>
+<script>
+(function(){
+  const R = REEF, C = REEF_CONTENT;
+  const s = R.fromUrl(), a = s.answers || {}, n = R.first(a);
+  const rec = a.goal ? R.recommend(a).pack : "plus";
+  if (n) { R.$("#eb").textContent = n + "'s founder packs"; R.$("#h").textContent = n + ", here are all four founder packs."; }
+  const items = {
+    founder5: ["5 Reformer classes", "£19.80 a class", "Valid 3 months from opening", "3 Guest Passes"],
+    plus: ["14 Reformer classes", "1 red light + 1 recovery boots", "reef tote", "£13.14 a class with wellness counted", "3 Guest Passes"],
+    member: ["30 classes over 3 months", "Hyperbaric, red light + recovery boots", "Founder merch bundle", "Founder monthly rate locked 12 months", "3 Guest Passes"],
+    year: ["96 classes over 12 months", "12 wellness sessions", "Full merch collection", "Your name on the Founders Wall", "About £125 a month, paid once"]
+  };
+  R.$("#packs").innerHTML = C.order.map(id => {
+    const P = C.packs[id], hot = id === rec;
+    return `<div class="pk ${hot ? "hot" : ""}"><span class="badge">${hot && a.goal ? "Matched to you" : P.badge}</span>
+      <h3>${P.name}</h3><div class="small muted">${R.placesShort(id)}</div>
+      <div class="pr">${R.money(P.price)}<s>${R.money(P.value)}</s></div><span class="save">You pay ${R.money(P.save)} less</span>
+      <ul>${items[id].map(i => `<li>${i}</li>`).join("")}</ul>
+      <a class="btn ${hot ? "btn-gold" : "btn-primary"} btn-block" href="${P.file}${location.search}">${P.call ? "See " + P.name : "Choose " + P.name}</a></div>`;
+  }).join("");
+  R.$("#foot").innerHTML = R.footer();
+  R.track("ViewContent", { content_name: "Founder packs" });
+})();
+</script>
+</body>
+</html>

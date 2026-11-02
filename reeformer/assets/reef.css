@@ -34,7 +34,7 @@ section{padding-block:clamp(48px,8vw,88px)}
 
 /* header */
 .top{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;max-width:1080px;margin:0 auto}
-.top img{height:40px;width:auto}
+.top img{height:46px;width:auto}
 .top .tag{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);text-align:right}
 .ribbon{background:var(--deep);color:#F3E2C2;text-align:center;font-size:12.5px;letter-spacing:.06em;padding:9px 12px}
 .ribbon b{color:#fff}
@@ -67,7 +67,7 @@ section{padding-block:clamp(48px,8vw,88px)}
 .ticks li::before{content:"";position:absolute;left:0;top:10px;width:20px;height:20px;border-radius:50%;background:var(--gold) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5 10.5l3.2 3L15 7' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/100% no-repeat}
 
 /* video placeholder */
-.vsl{position:relative;aspect-ratio:9/16;max-height:78vh;margin:0 auto;border-radius:18px;overflow:hidden;background:linear-gradient(160deg,var(--deep),#174f63 60%,var(--blue));display:grid;place-items:center;color:#fff;text-align:center;box-shadow:var(--shadow)}
+.vsl{position:relative;aspect-ratio:4/5;max-height:62vh;width:100%;margin:0 auto;border-radius:18px;overflow:hidden;background:linear-gradient(160deg,var(--deep),#174f63 60%,var(--blue));display:grid;place-items:center;color:#fff;text-align:center;box-shadow:var(--shadow)}
 @media(min-width:760px){.vsl{aspect-ratio:16/9;max-height:none}}
 .vsl .play{width:78px;height:78px;border-radius:50%;background:rgba(250,246,232,.95);display:grid;place-items:center;margin:0 auto 14px;box-shadow:0 0 0 12px rgba(250,246,232,.18)}
 .vsl .play::after{content:"";border-left:24px solid var(--deep);border-top:15px solid transparent;border-bottom:15px solid transparent;margin-left:6px}
@@ -105,3 +105,13 @@ details p{margin:10px 0 0;color:var(--muted)}
 .footer{padding:40px 16px 120px;text-align:center;color:var(--muted);font-size:12.5px}
 .footer img{height:44px;margin:0 auto 12px;width:auto}
 .hide{display:none!important}
+
+/* price + savings (shared) */
+.price{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:6px 0 4px}
+.price b{font-size:44px;color:var(--deep);line-height:1}
+.price s{color:var(--muted);font-size:18px}
+.save{display:inline-block;align-self:flex-start;background:#E7F2EC;color:var(--ok);font-size:13px;font-weight:700;padding:5px 10px;border-radius:8px}
+/* white cards inside dark bands keep normal colours */
+.band-deep .card{color:var(--ink)}
+.band-deep .card .muted,.band-deep .card .src,.band-deep .card .spots .lbl{color:var(--muted)}
+.band-deep .card h2,.band-deep .card h3{color:var(--deep)}
