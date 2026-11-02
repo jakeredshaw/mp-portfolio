@@ -2,6 +2,22 @@
 
 A static site with no build step. Upload the `reeformer/` folder to reeformer.com, for example at `/founders/`, on Vercel.
 
+## Testing everything (test mode)
+`assets/config.js` has `testMode: true` while you test:
+- a light blue bar on every page links to **`lab.html` (the Funnel Lab)**
+- every Add to bag and Checkout button runs a simulated checkout (`checkout.html`) and then the thank-you page with its one-time offers
+- quiz leads are logged on your device, not sent to Momence (the Lab shows them)
+
+The Funnel Lab has:
+- an answer builder that predicts the outcome and opens any page
+- 8 ready-made customers
+- all 96 routes to a pack
+- all 7 result profiles
+- every product page, checkout and thank-you page per pack
+- the copy of every encouragement screen
+
+Set `testMode: false` to go live.
+
 ## Pages
 | Page | What it does |
 |---|---|
@@ -11,6 +27,8 @@ A static site with no build step. Upload the `reeformer/` folder to reeformer.co
 | `founding-member.html` | Founding Member, £549 (launch gate: needs the monthly rate and terms first) |
 | `founding-year.html` | Founding Year, £1,499 (long letter, with a buy button or a call with Ricky) |
 | `packs.html` | All four packs side by side. The visitor's matched pack is highlighted |
+| `checkout.html` | Test mode only: Shopify-style checkout with order summary and an upgrade checkbox. When live, buyers go straight to Momence |
+| `lab.html` | Funnel Lab for testing (noindex) |
 | `thank-you.html` | After purchase: one-time Recovery Trio offer, then Red Light Five if they decline, then Guest Passes on WhatsApp |
 
 ## How the personalisation works
@@ -30,10 +48,14 @@ Answers are saved in the browser. Pages can also be personalised from a link:
 - `founder-plus.html?n=Sarah&goal=posture&day=desk&barrier=time&age=40s` lets you send ad-specific landing pages.
 - `?r=<code>` restores a full set of answers. The code is `REEF.shareCode(answers)`; use it in emails.
 
-## Upsell and downsell flow
-- **Pack page checkout button:** order bump to the next pack up (Founder 5 to Plus +£200, Plus to Member +£250, Member to Year).
-- **Exit intent:** offers the next pack down. On Founder 5 it offers a call with Ricky.
-- **After purchase:** Recovery Trio. If declined, Red Light Five. Then Guest Passes.
+## Upsell and downsell flow (retail style)
+- **Product page:** Add to bag opens a slide-in bag with an upgrade card (Founder 5 to Plus +£200, Plus to Member +£250, Member to Year +£950).
+- **Checkout (test):** an upgrade checkbox in the order summary.
+- **Exit intent:** offers the next pack down as a quick add. On Founder 5 it offers a call with Ricky.
+- **After purchase:** Recovery Trio (one-time offer). If declined, Red Light Five. Then Guest Passes on WhatsApp.
+
+## Imagery
+`assets/img/concept-*.jpg` are the four concept renders from The Reeformer Pilates Manual, and they are always labelled "Concept visual". Swap in real studio photos when you have them, keeping the same file names.
 
 ## Before going live (all in `assets/config.js`)
 1. **Momence leads:** go to Marketing > Leads > Collect Leads using API, then paste `hostId`, `token` and `sourceId`.

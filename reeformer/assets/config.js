@@ -4,6 +4,12 @@
    ===================================================================== */
 window.REEF_CONFIG = {
 
+  /* ---------- TEST MODE ----------
+     true  = every checkout button runs a simulated checkout (no payment, no Momence) and leads are logged, not sent.
+              A light blue bar on every page links to the Funnel Lab (lab.html) to test every route.
+     false = live: leads go to Momence and checkout buttons go to your Momence links. */
+  testMode: true,
+
   /* ---------- Momence: leads ----------
      Momence > Marketing > Leads > Collect Leads using API.
      Copy your host id, the token and the lead source id for "Quiz funnel". */

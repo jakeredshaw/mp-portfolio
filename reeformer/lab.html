@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Funnel Lab · reef</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/logo/reef-mark-gold.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Manrope:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/reef.css">
+<style>
+  body{background:#fff}
+  .lab h2{font-size:26px;margin:0 0 6px}
+  .lab section{padding-block:40px;border-bottom:1px solid var(--line)}
+  .lab .in{max-width:1180px;margin:0 auto;padding-inline:16px}
+  .sel{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(min(100%,210px),1fr))}
+  .sel label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .sel select,.sel input{display:block;width:100%;margin-top:4px;font:inherit;font-size:14px;padding:10px;border:1px solid var(--stone);background:#fff;border-radius:0}
+  .out{background:var(--foam);border:1px solid var(--sky);padding:18px;margin-top:16px}
+  .btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .btns a,.btns button{min-height:42px;padding:10px 14px;font-size:11px}
+  table.t{width:100%;border-collapse:collapse;font-size:13px}
+  table.t th,table.t td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  table.t th{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--deep);position:sticky;top:0;background:#fff}
+  .pk{display:inline-block;padding:3px 8px;font-size:11px;font-weight:700;letter-spacing:.06em}
+  .pk.founder5{background:#F3ECDF;color:#7a5a26}.pk.plus{background:var(--gold);color:#fff}.pk.member{background:var(--blue);color:#fff}.pk.year{background:var(--deep);color:#fff}
+  .persona{border:1px solid var(--line);padding:16px;background:var(--shell)}
+  .hookcopy{border-left:3px solid var(--gold);padding:10px 14px;background:var(--shell);margin-bottom:10px;font-size:13.5px}
+  .kpi{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:14px}
+  .kpi div{border:1px solid var(--line);padding:14px;background:var(--shell)}
+  .kpi b{display:block;font-family:var(--serif);font-size:28px;color:var(--deep);font-weight:400}
+</style>
+</head>
+<body class="lab">
+<div class="testbar">Funnel Lab · Test mode is <b id="tm"></b> in assets/config.js</div>
+<header style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line);max-width:1180px;margin:0 auto">
+  <img src="assets/logo/reef-lockup-horizontal-gold.png" alt="Reeformer Pilates" width="100" height="40" style="height:40px;width:auto">
+  <div class="btns" style="margin:0"><a class="btn btn-primary" href="index.html?restart=1">Start quiz fresh</a><button class="btn btn-ghost" id="reset" type="button">Reset test data</button></div>
+</header>
+<main id="lab"></main>
+<script src="assets/config.js"></script>
+<script src="assets/content.js"></script>
+<script src="assets/core.js"></script>
+<script>
+(function(){
+  const R = REEF, C = REEF_CONTENT, CFG = REEF_CONFIG;
+  R.$("#tm").textContent = CFG.testMode ? "ON" : "OFF";
+  R.$("#reset").onclick = () => { try { localStorage.clear(); sessionStorage.clear(); } catch (e) {} R.toast("All test data cleared."); setTimeout(() => location.reload(), 600); };
+  const steps = C.steps.filter(s => s.opts || s.type === "scale");
+  const base = { name: "Sarah", goal: "posture", exp: "0", body: ["back", "neck"], day: "desk", pace: "4", metime: "cant", barrier: "intimidated", age: "40s", sex: "f", freq: "2", ready: "now" };
+  const code = (a) => encodeURIComponent(R.shareCode(a));
+  const links = (a, pack) => {
+    const c = code(a);
+    return { result: `index.html?r=${c}&view=result`, pack: `${C.packs[pack].file}?r=${c}`, packs: `packs.html?r=${c}`, checkout: `checkout.html?pack=${pack}`, thanks: `thank-you.html?pack=${pack}&r=${c}` };
+  };
+  const pk = (id) => `<span class="pk ${id}">${C.packs[id].name}</span>`;
+  const H = [];
+
+  /* overview */
+  const leads = (R.load().testLeads || []);
+  H.push(`<section><div class="in"><p class="eyebrow">Funnel Lab</p><h2>Test every route, every outcome, every page.</h2>
+    <p class="muted" style="max-width:760px">Everything here runs in test mode. Checkout buttons go to a simulated checkout, then the thank you page with its one time offers. Leads are logged on this device instead of being sent to Momence. Open any link, then press back to return here.</p>
+    <div class="kpi"><div><b>${C.steps.filter(s => !["hook", "capture"].includes(s.type)).length}</b>Quiz questions</div><div><b>3 × ${4 + 2 + 7}</b>Encouragement screens</div><div><b>7</b>Result profiles</div><div><b>4</b>Packs</div><div><b>96</b>Routes to a pack</div><div><b>${leads.length}</b>Test leads captured</div></div></div></section>`);
+
+  /* builder */
+  H.push(`<section><div class="in"><p class="eyebrow">1 · Build any answer set</p><h2>Pick answers, see the outcome, open any page.</h2>
+    <div class="sel" id="builder" style="margin-top:16px">
+      <label>Name<input id="f_name" value="${base.name}"></label>
+      ${steps.map(s => s.type === "scale" ? `<label>${s.id} (week pace)<select id="f_${s.id}">${[1,2,3,4,5].map(v => `<option ${String(base[s.id]) === String(v) ? "selected" : ""}>${v}</option>`).join("")}</select></label>`
+        : `<label>${s.id}<select id="f_${s.id}" ${s.type === "multi" ? "multiple size=5" : ""}>${s.opts.map(o => `<option value="${o[0]}" ${(Array.isArray(base[s.id]) ? base[s.id].includes(o[0]) : base[s.id] === o[0]) ? "selected" : ""}>${o[1]}</option>`).join("")}</select></label>`).join("")}
+    </div><div class="out" id="out"></div></div></section>`);
+
+  /* personas */
+  const personas = [
+    ["Sarah, 40s desk worker, total beginner", base],
+    ["Tom, 50s runner, experienced, 3x a week", { name: "Tom", goal: "resilient", exp: "20+", body: ["knees"], day: "feet", pace: "3", metime: "week", barrier: "injury", age: "50s", sex: "m", freq: "3", ready: "now" }],
+    ["Jo, 30s mum, once a week, cost worry", { name: "Jo", goal: "calm", exp: "1-5", body: ["none"], day: "parent", pace: "4", metime: "month", barrier: "cost", age: "30s", sex: "f", freq: "1", ready: "keen" }],
+    ["Ann, 70s, just curious", { name: "Ann", goal: "strength", exp: "0", body: ["hips"], day: "flex", pace: "2", metime: "week", barrier: "notfit", age: "70s", sex: "x", freq: "unsure", ready: "curious" }],
+    ["Kim, 20s, done 6 to 20, twice a week", { name: "Kim", goal: "shape", exp: "6-20", body: ["back"], day: "rush", pace: "4", metime: "cant", barrier: "gym", age: "20s", sex: "f", freq: "2", ready: "now" }],
+    ["Mo, 30s, comeback, 3x a week keen", { name: "Mo", goal: "comeback", exp: "0", body: ["back"], day: "parent", pace: "5", metime: "cant", barrier: "time", age: "30s", sex: "f", freq: "3", ready: "keen" }],
+    ["Dave, 60s, posture, never had a studio", { name: "Dave", goal: "posture", exp: "1-5", body: ["neck", "back"], day: "flex", pace: "2", metime: "week", barrier: "nearby", age: "60s", sex: "m", freq: "2", ready: "keen" }],
+    ["Priya, 40s lawyer, flat out, 3x ready", { name: "Priya", goal: "calm", exp: "6-20", body: ["neck"], day: "desk", pace: "5", metime: "cant", barrier: "intimidated", age: "40s", sex: "f", freq: "3", ready: "now" }]
+  ];
+  H.push(`<section><div class="in"><p class="eyebrow">2 · Ready made people</p><h2>Eight test customers covering every pack and profile.</h2>
+    <div class="grid g2" style="margin-top:16px">${personas.map(([t, a]) => { const r = R.recommend(a), L = links(a, r.pack); return `<div class="persona"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><b>${t}</b>${pk(r.pack)}</div><div class="small muted" style="margin-top:4px">${C.profileName(a)} · barrier: ${a.barrier} · ${a.age}${a.sex === "m" ? " · man" : ""}</div>
+      <div class="btns"><a class="btn btn-primary" href="${L.result}">Result screen</a><a class="btn btn-ghost" href="${L.pack}">Pack page</a><a class="btn btn-ghost" href="${L.packs}">Shop page</a><a class="btn btn-ghost" href="${L.checkout}">Checkout</a><a class="btn btn-ghost" href="${L.thanks}">Thank you</a></div></div>`; }).join("")}</div></div></section>`);
+
+  /* every route */
+  const rows = [];
+  ["1", "2", "3", "unsure"].forEach(freq => ["now", "keen", "curious"].forEach(ready => ["0", "1-5", "6-20", "20+"].forEach(exp => [false, true].forEach(cost => {
+    const a = Object.assign({}, base, { freq, ready, exp, barrier: cost ? "cost" : "intimidated" }); const r = R.recommend(a); const L = links(a, r.pack);
+    rows.push(`<tr><td>${R.label("freq", freq)}</td><td>${R.label("ready", ready)}</td><td>${R.label("exp", exp)}</td><td>${cost ? "Cost" : "Other"}</td><td>${pk(r.pack)}</td><td class="small">${r.down ? C.packs[r.down].name : "none"} / ${r.up ? C.packs[r.up].name : "none"}</td><td><a href="${L.result}">Result</a> · <a href="${L.pack}">Pack</a></td></tr>`);
+  }))));
+  H.push(`<section><div class="in"><p class="eyebrow">3 · Every route</p><h2>All 96 routes to a pack.</h2>
+    <p class="muted small">The pack is decided by how often they can come, how ready they are, their experience, and whether cost held them back. Everything else personalises the copy.</p>
+    <div style="max-height:520px;overflow:auto;border:1px solid var(--line);margin-top:12px"><table class="t"><thead><tr><th>How often</th><th>Readiness</th><th>Experience</th><th>Barrier</th><th>Pack</th><th>Down / up sell</th><th>Open</th></tr></thead><tbody>${rows.join("")}</tbody></table></div></div></section>`);
+
+  /* every profile */
+  const profs = [];
+  Object.keys(C.profiles).forEach(g => { [g === "posture" ? ["desk", "flex"] : ["desk"]][0].forEach(day => { const a = Object.assign({}, base, { goal: g, day }); const L = links(a, R.recommend(a).pack); profs.push(`<tr><td>${R.label("goal", g)}${g === "posture" ? ` (${day === "desk" ? "desk job" : "not desk"})` : ""}</td><td><b>${C.profileName(a)}</b></td><td class="small muted">${C.profiles[g].line}</td><td><a href="${L.result}">Result</a> · <a href="${L.pack}">Pack</a></td></tr>`); }); });
+  H.push(`<section><div class="in"><p class="eyebrow">4 · Every result profile</p><h2>Seven profiles.</h2><table class="t" style="margin-top:12px"><thead><tr><th>Goal</th><th>Profile</th><th>Line</th><th>Open</th></tr></thead><tbody>${profs.join("")}</tbody></table></div></section>`);
+
+  /* every page */
+  H.push(`<section><div class="in"><p class="eyebrow">5 · Every page, every pack</p><h2>Product pages, checkouts and thank you pages.</h2>
+    <table class="t" style="margin-top:12px"><thead><tr><th>Pack</th><th>Product page (cold visitor)</th><th>Product page (personalised as Sarah)</th><th>Simulated checkout</th><th>Thank you + one time offers</th></tr></thead><tbody>
+    ${C.order.map(id => `<tr><td>${pk(id)} ${R.money(C.packs[id].price)}</td><td><a href="${C.packs[id].file}?cold=1" onclick="localStorage.removeItem('reef_founder_quiz_v1')">Open</a></td><td><a href="${C.packs[id].file}?r=${code(base)}">Open</a></td><td><a href="checkout.html?pack=${id}">Open</a></td><td><a href="thank-you.html?pack=${id}">Open</a></td></tr>`).join("")}
+    </tbody></table>
+    <div class="btns" style="margin-top:16px"><a class="btn btn-ghost" href="index.html?restart=1">Quiz from the start</a><a class="btn btn-ghost" href="packs.html">Shop all packs</a><a class="btn btn-ghost" href="founder-plus.html?bag=1">Product page with bag open</a></div>
+    <p class="small muted" style="margin-top:12px">Tip: on any product page, scroll to the bottom fast then flick back up (or move your mouse off the top of the window on desktop) to trigger the exit offer. It shows once per session; Reset test data to see it again.</p></div></section>`);
+
+  /* hooks copy */
+  const hk = [];
+  ["0", "1-5", "6-20"].forEach(e => hk.push(["After experience: " + R.label("exp", e), C.hooks.hook_exp({ exp: e })]));
+  [2, 5].forEach(p => hk.push(["After week pace: " + p, C.hooks.hook_pace({ pace: p })]));
+  C.steps.find(s => s.id === "barrier").opts.forEach(o => hk.push(["After barrier: " + o[1], C.hooks.hook_barrier({ barrier: o[0] })]));
+  H.push(`<section><div class="in"><p class="eyebrow">6 · Every encouragement screen</p><h2>All the in quiz hooks, word for word.</h2><div class="grid g2" style="margin-top:12px">${hk.map(([t, h]) => `<div class="hookcopy"><div class="caps small" style="color:var(--gold)">${t}</div><b>${R.fill(h.title, { name: "Sarah" })}</b><div class="muted">${R.fill(h.body, { name: "Sarah" })}</div></div>`).join("")}</div></div></section>`);
+
+  /* leads */
+  H.push(`<section><div class="in"><p class="eyebrow">7 · Test leads on this device</p><h2>${leads.length ? "What would have been sent to Momence." : "No test leads yet. Complete the quiz to see one here."}</h2>
+    ${leads.length ? `<table class="t" style="margin-top:12px"><thead><tr><th>When</th><th>Email</th><th>Mobile</th><th>Profile</th><th>Pack</th></tr></thead><tbody>${leads.slice().reverse().map(l => `<tr><td class="small">${R.esc(l.at.replace("T", " ").slice(0, 16))}</td><td>${R.esc(l.email)}</td><td>${R.esc(l.phone || "")}</td><td>${R.esc(l.profile)}</td><td>${R.esc(l.pack)}</td></tr>`).join("")}</tbody></table>` : ""}</div></section>`);
+
+  R.$("#lab").innerHTML = H.join("");
+
+  /* builder logic */
+  const read = () => { const a = { name: R.$("#f_name").value }; steps.forEach(s => { const el = R.$("#f_" + s.id); a[s.id] = s.type === "multi" ? [...el.selectedOptions].map(o => o.value) : el.value; }); if (!a.body.length) a.body = ["none"]; return a; };
+  const upd = () => {
+    const a = read(), r = R.recommend(a), L = links(a, r.pack);
+    R.$("#out").innerHTML = `<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="caps">Outcome</span>${pk(r.pack)}<b>${C.profileName(a)}</b><span class="small muted">Down sell: ${r.down ? C.packs[r.down].name : "none"} · Up sell: ${r.up ? C.packs[r.up].name : "none"}</span></div>
+      <ul class="ticks small" style="margin:12px 0 0">${R.reasons(a, r.pack).map(x => `<li>${x}</li>`).join("")}</ul>
+      <div class="btns"><a class="btn btn-primary" href="${L.result}">Open result screen</a><a class="btn btn-ghost" href="${L.pack}">Matched pack page</a>${C.order.filter(id => id !== r.pack).map(id => `<a class="btn btn-ghost" href="${C.packs[id].file}?r=${code(a)}">${C.packs[id].name} page</a>`).join("")}<a class="btn btn-ghost" href="${L.packs}">Shop page</a><a class="btn btn-ghost" href="${L.checkout}">Checkout</a><a class="btn btn-ghost" href="${L.thanks}">Thank you</a></div>`;
+  };
+  R.$("#builder").addEventListener("change", upd); R.$("#builder").addEventListener("input", upd); upd();
+})();
+</script>
+</body>
+</html>

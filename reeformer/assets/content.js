@@ -7,7 +7,7 @@
   /* ------------------------------------------------------------------ PACKS */
   C.packs = {
     founder5: {
-      id: "founder5", file: "founder-5.html", name: "Founder 5", price: 99, badge: "Best first step",
+      id: "founder5", file: "founder-5.html", imgs: ["concept-studio-pr", "concept-coffee-pl", "concept-lounge-pc"], name: "Founder 5", price: 99, badge: "Best first step",
       classes: 5, value: 125, save: 26, perClass: "19.80", perClassWellness: null,
       validity: "Valid for 3 months from opening day",
       tagline: "Five Reformer classes. £99. No experience needed.",
@@ -23,7 +23,7 @@
       call: false
     },
     plus: {
-      id: "plus", file: "founder-plus.html", name: "Founder Plus", price: 299, badge: "Our pick",
+      id: "plus", file: "founder-plus.html", imgs: ["concept-lounge-pc", "concept-studio-pc", "concept-coffee-pc"], name: "Founder Plus", price: 299, badge: "Our pick",
       classes: 14, value: 465, save: 166, perClass: "21.36", perClassWellness: "13.14",
       validity: "Credits valid for 6 months from opening day",
       tagline: "14 Reformer classes, red light, recovery boots and a tote. £299.",
@@ -40,7 +40,7 @@
       call: false
     },
     member: {
-      id: "member", file: "founding-member.html", name: "Founding Member", price: 549, badge: "Build the habit",
+      id: "member", file: "founding-member.html", imgs: ["concept-studio-pl", "concept-hallway-pr", "concept-lounge-pr"], name: "Founding Member", price: 549, badge: "Build the habit",
       classes: 30, value: 940, save: 391, perClass: "18.30", perClassWellness: "11.97",
       validity: "3 months of membership from opening day, then your founder rate locked for 12 months",
       tagline: "Thirty classes. Three months. Then your founder rate, locked for a year.",
@@ -59,7 +59,7 @@
       call: true
     },
     year: {
-      id: "year", file: "founding-year.html", name: "Founding Year", price: 1499, badge: "The Founding 25",
+      id: "year", file: "founding-year.html", imgs: ["concept-coffee-pl", "concept-studio-pr", "concept-lounge-pc", "concept-hallway-pc"], name: "Founding Year", price: 1499, badge: "The Founding 25",
       classes: 96, value: 3160, save: 1661, perClass: "15.61", perClassWellness: null,
       validity: "12 months from opening day. About £125 a month, paid once",
       tagline: "Your strongest year starts on Wyle Cop.",

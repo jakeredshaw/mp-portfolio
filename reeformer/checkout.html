@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Checkout · reef</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#FAF6E8">
+<link rel="icon" href="assets/logo/reef-mark-gold.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Manrope:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/reef.css">
+<style>
+  .co-top{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line);background:var(--shell)}
+  .co-top img{height:38px;width:auto}
+  .co{display:grid;max-width:1100px;margin:0 auto}
+  @media(min-width:900px){.co{grid-template-columns:1.1fr .9fr}}
+  .co-main{padding:22px 16px 40px}
+  @media(min-width:900px){.co-main{padding:40px 48px 60px}}
+  .co-side{background:var(--sand);border-left:1px solid var(--line);padding:22px 16px}
+  @media(min-width:900px){.co-side{padding:40px 36px;order:2}}
+  @media(max-width:899px){.co-side{order:-1;border-left:0;border-bottom:1px solid var(--line)}}
+  .sumtoggle{display:flex;justify-content:space-between;width:100%;background:none;border:0;padding:0;color:var(--blue);font-size:14px}
+  @media(min-width:900px){.sumtoggle{display:none}.sumbody{display:block!important}}
+  .co h2{font-size:22px;margin:28px 0 12px}
+  .fld{display:block;width:100%;font:inherit;font-size:15px;padding:14px;border:1px solid var(--stone);background:#fff;border-radius:0;outline:none;color:var(--ink)}
+  .fld:focus{border-color:var(--deep);box-shadow:0 0 0 1px var(--deep)}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .stack3{display:grid;gap:10px}
+  .express{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .express button{min-height:48px;border:0;font-weight:700;font-size:15px;letter-spacing:.02em}
+  .or{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:12px;margin:22px 0 4px;text-transform:uppercase;letter-spacing:.14em}
+  .or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+  .bump{border:1.5px dashed var(--gold);background:#FFFBF1;padding:16px;margin-top:22px;display:flex;gap:12px;align-items:flex-start;cursor:pointer}
+  .bump input{width:22px;height:22px;flex:none;accent-color:var(--gold);margin-top:2px}
+  .chk{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;color:var(--muted);margin:12px 0}
+  .chk input{width:18px;height:18px;margin-top:2px;flex:none;accent-color:var(--deep)}
+  .sumrow{display:flex;justify-content:space-between;font-size:14px;padding:6px 0}
+  .tot{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line);margin-top:10px;padding-top:14px}
+  .tot b{font-size:24px;color:var(--deep)}
+  .err{color:var(--warn);font-size:13px;min-height:1em;margin-top:8px}
+  .proc{position:fixed;inset:0;background:rgba(250,246,232,.96);z-index:90;display:none;place-items:center;text-align:center}
+  .proc.on{display:grid}
+  .ring{width:64px;height:64px;margin:0 auto 18px;border-radius:50%;border:2px solid var(--line);border-top-color:var(--gold);animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div id="tb"></div>
+<header class="co-top"><a href="javascript:history.back()" class="small muted" style="text-decoration:none">← Back</a><img src="assets/logo/reef-lockup-horizontal-gold.png" alt="Reeformer Pilates" width="96" height="38"><span class="caps small" style="font-size:10px;display:flex;gap:6px;align-items:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="11" width="14" height="10"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Secure</span></header>
+<main class="co" id="co"></main>
+<div class="proc" id="proc"><div><div class="ring"></div><div class="caps">Securing your founder place</div><p class="small muted" style="margin-top:8px">Please don't close this page.</p></div></div>
+<script src="assets/config.js"></script>
+<script src="assets/content.js"></script>
+<script src="assets/core.js"></script>
+<script>
+(function(){
+  const R = REEF, C = REEF_CONTENT, CFG = REEF_CONFIG;
+  const s = R.load(), a = s.answers || {};
+  let pid = new URLSearchParams(location.search).get("pack") || s.bag || "plus";
+  if (!C.packs[pid]) pid = "plus";
+  if (!CFG.testMode) { if (CFG.checkout[pid]) location.replace(CFG.checkout[pid]); else document.body.innerHTML = "<p style='padding:40px'>Checkout link not set in assets/config.js</p>"; return; }
+  R.$("#tb").innerHTML = `<div class="testbar">Test checkout: no payment is taken. Use any details. · <a href="lab.html">Funnel Lab</a></div>`;
+  let bump = false;
+  const parts = String(a.name || "").trim().split(/\s+/);
+
+  function render(){
+    const P = C.packs[pid], U = P.bump ? C.packs[P.bump.to] : null;
+    const cur = bump && U ? U : P;
+    R.$("#co").innerHTML = `
+    <aside class="co-side">
+      <button class="sumtoggle" id="st" type="button"><span>Show order summary ▾</span><b style="color:var(--deep)">${R.money(cur.price)}</b></button>
+      <div class="sumbody" id="sb" style="display:none;margin-top:14px">
+        <div class="line-item">${R.img(cur.imgs[0], "", false)}<div><div class="caps" style="color:var(--deep)">${cur.name}</div><div class="small muted">${cur.classes} Reformer classes</div><div class="small muted">${cur.validity}</div></div><b>${R.money(cur.price)}</b></div>
+        <div style="margin-top:18px">
+          <div class="sumrow"><span>Value at prices from opening day</span><s class="muted">${R.money(cur.value)}</s></div>
+          <div class="sumrow" style="color:var(--blue)"><span>Founder saving</span><span>${R.money(cur.save)}</span></div>
+          <div class="sumrow"><span>Subtotal</span><span>${R.money(cur.price)}</span></div>
+          <div class="tot"><span class="caps">Total</span><b>${R.money(cur.price)} <span class="small muted" style="font-weight:400">GBP</span></b></div>
+        </div>
+        <ul class="ticks small" style="margin-top:18px"><li>${CFG.refundDays} day refund window</li><li>Credits start on opening day, ${R.esc(CFG.openingDateText)}</li><li>3 Guest Passes for friends</li><li>Founder price, never available again</li></ul>
+      </div>
+    </aside>
+    <section class="co-main" style="padding-top:22px">
+      <p class="caps small muted" style="margin:0 0 10px">Express checkout</p>
+      <div class="express"><button type="button" class="js-exp" style="background:#000;color:#fff"> Pay</button><button type="button" class="js-exp" style="background:#fff;color:#3c4043;border:1px solid #dadce0">G Pay</button></div>
+      <div class="or">or pay by card</div>
+      <h2>Contact</h2>
+      <div class="stack3">
+        <input class="fld" id="em" type="email" placeholder="Email" autocomplete="email" value="${R.esc(s.email || "")}">
+        <label class="chk"><input type="checkbox" checked> Email me founder news and build updates</label>
+      </div>
+      <h2>Your details</h2>
+      <div class="stack3"><div class="row2"><input class="fld" id="fn" placeholder="First name" autocomplete="given-name" value="${R.esc(parts[0] || "")}"><input class="fld" placeholder="Last name" autocomplete="family-name" value="${R.esc(parts.slice(1).join(" "))}"></div>
+      <input class="fld" type="tel" placeholder="Mobile (for booking reminders)" autocomplete="tel" value="${R.esc(s.phone || "")}"></div>
+      <h2>Payment</h2>
+      <p class="small muted" style="margin-top:-6px">All transactions are secure and encrypted.</p>
+      <div class="stack3" style="border:1px solid var(--stone);background:var(--sand);padding:12px">
+        <input class="fld" id="cc" inputmode="numeric" placeholder="Card number" value="4242 4242 4242 4242">
+        <div class="row2"><input class="fld" placeholder="Expiry (MM / YY)" value="12 / 29"><input class="fld" placeholder="Security code" value="123"></div>
+        <input class="fld" placeholder="Name on card" value="${R.esc(a.name || "")}">
+      </div>
+      ${U ? `<label class="bump"><input type="checkbox" id="bp" ${bump ? "checked" : ""}><span><b style="color:var(--deep)">Yes, upgrade me to ${U.name} for ${R.money(P.bump.extra)} more.</b><br><span class="small">${P.bump.line}</span></span></label>` : ""}
+      ${bump && U ? `<p class="small" style="color:var(--ok);margin-top:8px">✓ Upgraded to ${U.name}. Your total is now ${R.money(U.price)}.</p>` : ""}
+      <div class="err" id="er"></div>
+      <button class="btn btn-primary btn-block" id="pay" type="button" style="margin-top:16px">Pay ${R.money(cur.price)} securely</button>
+      <p class="small muted center" style="margin-top:12px">By paying you agree to the founder pack terms. Full ${CFG.refundDays} day refund window. Questions? <a href="mailto:${CFG.email}">${CFG.email}</a></p>
+      <div class="pay"><span>VISA</span><span>MASTERCARD</span><span>AMEX</span><span>APPLE PAY</span><span>GOOGLE PAY</span></div>
+    </section>`;
+    R.$("#st").onclick = () => { const sb = R.$("#sb"); const o = sb.style.display === "none"; sb.style.display = o ? "block" : "none"; R.$("#st span").textContent = o ? "Hide order summary ▴" : "Show order summary ▾"; };
+    if (R.$("#bp")) R.$("#bp").onchange = (e) => { bump = e.target.checked; if (bump) R.track("BumpAccepted", { from: pid, to: U.id, where: "checkout" }, true); render(); };
+    const done = () => {
+      const em = R.$("#em").value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)) { R.$("#er").textContent = "Please enter your email so we can send your receipt."; R.$("#em").focus(); return; }
+      const final = bump && U ? U.id : pid;
+      R.update({ email: em, lastCheckout: final, lastCheckoutAt: Date.now(), bag: null });
+      R.$("#proc").classList.add("on");
+      setTimeout(() => location.href = "thank-you.html?pack=" + final, 1600);
+    };
+    R.$("#pay").onclick = done;
+    document.querySelectorAll(".js-exp").forEach(b => b.onclick = () => { if (!R.$("#em").value.trim()) R.$("#em").value = "test@reeformer.com"; done(); });
+  }
+  render();
+})();
+</script>
+</body>
+</html>

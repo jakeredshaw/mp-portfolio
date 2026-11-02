@@ -76,6 +76,10 @@
   /* ---------- Momence lead ---------- */
   R.sendLead = async (s) => {
     const a = s.answers || {}, m = CFG.momence;
+    if (CFG.testMode) {
+      const log = (R.load().testLeads || []); log.push({ at: new Date().toISOString(), email: s.email, phone: s.phone, profile: C.profileName(a), pack: C.packs[s.pack].name, answers: a });
+      R.update({ testLeads: log.slice(-50) }); console.info("[reef TEST] lead captured, not sent", log[log.length - 1]); return;
+    }
     const parts = String(a.name || "").trim().split(/\s+/);
     const base = { token: m.token, sourceId: m.sourceId, firstName: parts[0] || "", lastName: parts.slice(1).join(" ") || "", email: s.email, phoneNumber: s.phone || "" };
     const extra = {
@@ -119,20 +123,78 @@
   };
   R.placesShort = (packId) => { const p = CFG.places[packId]; return p && p.left != null ? `${p.left} of ${p.total} places left` : `${p.total} places only`; };
 
-  /* ---------- checkout ---------- */
+  /* ---------- bag + checkout ---------- */
+  R.img = (name, cls, cv) => `<div class="img ${cls || ""}"><img src="assets/img/${name}.jpg" alt="Concept visual of reef on Wyle Cop" loading="lazy">${cv === false ? "" : `<span class="cv">Concept visual</span>`}</div>`;
+  R.bagCount = () => (R.load().bag ? 1 : 0);
+  R.addToBag = (packId) => {
+    R.update({ bag: packId });
+    const P = C.packs[packId];
+    R.track("AddToCart", { value: P.price, currency: "GBP", content_name: P.name });
+    R.renderBadge(); R.openBag(true);
+  };
+  R.renderBadge = () => { const el = document.querySelector(".nav .bag i"); if (el) { el.textContent = R.bagCount(); el.style.display = R.bagCount() ? "" : "none"; } };
+  R.ensureDrawer = () => {
+    if (R.$("#bag")) return;
+    const d = document.createElement("div");
+    d.innerHTML = `<div class="scrim" id="bagScrim"></div><aside class="drawer" id="bag" aria-label="Your bag"><div class="hd"><span class="caps">Your bag</span><button class="x" id="bagX" aria-label="Close" type="button">×</button></div><div class="bd" id="bagBd"></div><div class="ft" id="bagFt"></div></aside>`;
+    document.body.appendChild(d);
+    R.$("#bagScrim").onclick = R.closeBag; R.$("#bagX").onclick = R.closeBag;
+  };
+  R.closeBag = () => { R.$("#bag").classList.remove("open"); R.$("#bagScrim").classList.remove("open"); };
+  R.openBag = (justAdded) => {
+    R.ensureDrawer();
+    const s = R.load(), id = s.bag, bd = R.$("#bagBd"), ft = R.$("#bagFt");
+    if (!id) {
+      bd.innerHTML = `<p class="muted" style="margin-top:20px">Your bag is empty.</p><a class="btn btn-ghost btn-block" href="packs.html">Shop founder packs</a><p class="small muted center" style="margin-top:14px">Not sure which? <a href="index.html?restart=1">Take the 2 minute quiz</a></p>`;
+      ft.innerHTML = "";
+    } else {
+      const P = C.packs[id], U = P.bump ? C.packs[P.bump.to] : null, n = R.first(s.answers);
+      bd.innerHTML = `${justAdded ? `<p class="small" style="color:var(--ok);margin:0 0 14px">✓ Added to your bag${n ? ", " + R.esc(n) : ""}. Great choice.</p>` : ""}
+        <div class="line-item">${R.img(P.imgs[0], "", false)}<div><div class="caps" style="color:var(--deep)">${P.name}</div><div class="small muted">${P.classes} Reformer classes · ${P.validity}</div><span class="badge" style="margin-top:8px">${P.badge}</span></div><div style="text-align:right"><b>${R.money(P.price)}</b><br><s class="small muted">${R.money(P.value)}</s></div></div>
+        <button class="link-quiet" id="bagRm" type="button" style="padding:8px 0">Remove</button>
+        ${U ? `<div class="card" style="margin-top:18px;background:var(--foam);border-color:var(--sky)"><span class="badge blue">Upgrade and save more</span><h3 style="margin:12px 0 6px;font-size:19px">${U.name} for ${R.money(P.bump.extra)} more</h3><p class="small" style="margin:0 0 12px">${P.bump.line}</p><button class="btn btn-ghost btn-block" id="bagUp" type="button">Upgrade to ${U.name}</button></div>` : ""}
+        <ul class="ticks small" style="margin-top:20px"><li>${CFG.refundDays} day refund window</li><li>Credits start on opening day, so you never lose a class</li><li>3 Guest Passes included for friends</li></ul>`;
+      ft.innerHTML = `<div style="display:flex;justify-content:space-between;margin-bottom:4px"><span class="caps">Subtotal</span><b>${R.money(P.price)}</b></div>
+        <div class="small" style="color:var(--blue);margin-bottom:12px">You pay ${R.money(P.save)} less than prices from opening day</div>
+        <button class="btn btn-primary btn-block" id="bagGo" type="button">Checkout securely · ${R.money(P.price)}</button>
+        <div class="pay"><span>VISA</span><span>MASTERCARD</span><span>AMEX</span><span>APPLE PAY</span><span>GOOGLE PAY</span></div>`;
+      R.$("#bagRm").onclick = () => { R.update({ bag: null }); R.renderBadge(); R.openBag(); };
+      if (U) R.$("#bagUp").onclick = () => { R.track("BumpAccepted", { from: id, to: U.id, where: "bag" }, true); if (U.call && !CFG.testMode && !CFG.checkout[U.id]) { location.href = U.file; return; } R.update({ bag: U.id }); R.renderBadge(); R.openBag(); };
+      R.$("#bagGo").onclick = () => R.goCheckout(id);
+    }
+    R.$("#bag").classList.add("open"); R.$("#bagScrim").classList.add("open");
+  };
   R.goCheckout = (packId) => {
-    const s = R.update({ lastCheckout: packId, lastCheckoutAt: Date.now() });
+    R.update({ lastCheckout: packId, lastCheckoutAt: Date.now() });
     const P = C.packs[packId];
     R.track("InitiateCheckout", { value: P.price, currency: "GBP", content_name: P.name });
+    if (CFG.testMode) { location.href = "checkout.html?pack=" + packId; return; }
     const url = CFG.checkout[packId];
     if (!url) { R.toast("Checkout link for " + P.name + " is not set yet (assets/config.js)."); return; }
     location.href = url;
   };
   R.toast = (msg) => {
     let t = R.$("#reef-toast");
-    if (!t) { t = document.createElement("div"); t.id = "reef-toast"; t.style.cssText = "position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#0F3B4C;color:#FAF6E8;padding:12px 18px;border-radius:12px;font-size:14px;z-index:99;max-width:90vw;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.25)"; document.body.appendChild(t); }
+    if (!t) { t = document.createElement("div"); t.id = "reef-toast"; t.className = "toast"; document.body.appendChild(t); }
     t.textContent = msg; t.style.display = "block"; clearTimeout(t._h); t._h = setTimeout(() => t.style.display = "none", 4000);
   };
+
+  /* ---------- header ---------- */
+  R.header = (opts) => {
+    opts = opts || {};
+    const el = document.getElementById("hdr"); if (!el) return;
+    el.innerHTML = `${CFG.testMode ? `<div class="testbar">Test mode: payments are simulated · <a href="lab.html">Open the Funnel Lab</a></div>` : ""}
+      <div class="ribbon">${opts.ribbon || "Founder pricing ends for good on opening day · <b>205 places</b>"}</div>
+      <nav class="nav"><div class="in"><div class="l"><a href="packs.html">Shop packs</a><a class="hide-m" href="index.html?restart=1">Take the quiz</a></div>
+      <a class="logo" href="index.html"><img src="assets/logo/reef-lockup-horizontal-gold.png" alt="Reeformer Pilates" width="100" height="40"></a>
+      <div class="r">${opts.noBag ? "" : `<button class="bag" type="button" aria-label="Open bag">Bag <i>0</i></button>`}</div></div></nav>`;
+    const b = el.querySelector(".bag"); if (b) b.onclick = () => R.openBag();
+    R.renderBadge();
+  };
+  R.trustRow = () => `<div class="trust">
+    <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v4h4"/></svg>${CFG.refundDays} day refund window</div>
+    <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="16"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Credits start on opening day</div>
+    <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="11" width="14" height="10"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Secure checkout</div></div>`;
 
   /* ---------- video ---------- */
   R.videoHtml = (url, label) => {
@@ -140,13 +202,13 @@
       if (/\.(mp4|webm|mov)(\?|$)/i.test(url)) return `<div class="vsl"><video src="${R.esc(url)}" controls playsinline preload="metadata"></video></div>`;
       return `<div class="vsl"><iframe src="${R.esc(url)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="${R.esc(label)}"></iframe></div>`;
     }
-    return `<div class="vsl" role="img" aria-label="Video coming soon"><div><div class="play"></div><div class="ph">${R.esc(label)}</div></div></div>`;
+    return `<div class="vsl" role="img" aria-label="Video coming soon"><img src="assets/img/concept-studio.jpg" alt=""><div><div class="play"></div><div class="ph">${R.esc(label)}</div></div></div>`;
   };
 
   R.callHtml = (txt) => CFG.callBookingUrl ? `<a class="btn btn-ghost btn-block" href="${R.esc(CFG.callBookingUrl)}" target="_blank" rel="noopener" onclick="REEF.track('Schedule',{},false)">${txt || "Book a 10 minute call with Ricky"}</a>` :
     (CFG.whatsappNumber ? `<a class="btn btn-ghost btn-block" href="https://wa.me/${CFG.whatsappNumber}?text=${encodeURIComponent("Hi Ricky, I've just done the reef quiz and I'd love a quick chat about founder packs.")}" target="_blank" rel="noopener">${txt || "Message Ricky on WhatsApp"}</a>` : "");
 
-  R.footer = () => `<footer class="footer"><img src="assets/logo/reef-mark-gold.png" alt="reef" width="44" height="46">
+  R.footer = () => `<footer class="footer"><img src="assets/logo/reef-lockup-stacked-gold.png" alt="Reeformer Pilates" width="60" height="55">
     <div>reef · Reeformer Pilates · 55 to 57 Wyle Cop, Shrewsbury · <a href="mailto:${CFG.email}">${CFG.email}</a></div>
     <p class="small" style="max-width:640px;margin:14px auto 0">This page shares published research about Pilates. It is information, not personal medical advice. If you have a health condition, are pregnant or are recovering from surgery or injury, speak to your GP, consultant or midwife before starting. Prices from opening day are the standard prices reef will charge once the studio opens. Founder places are limited to the numbers shown and close on opening day.</p></footer>`;
 
