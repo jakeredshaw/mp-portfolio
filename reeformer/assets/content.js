@@ -136,7 +136,7 @@
   // Encouragement screens. Plain English, pin point the pain, flip the objection.
   C.hooks = {
     hook_exp(a) {
-      if (a.exp === "0") return { kicker: "Great news, {n}", title: "You don't need any experience. Most of our founders are complete beginners too.",
+      if (a.exp === "0") return { kicker: "Great news, {n}", title: "You don't need any experience. Everyone starts together in December, so you won't be the only beginner.",
         body: "Your first class is with an instructor who sets everything up for you. The springs on the machine help you before they challenge you, and every move has an easier version. Nobody in that room knew what they were doing on their first day.",
         stat: ["Pilates builds flexibility.", "You don't need it to start."] };
       if (a.exp === "1-5") return { kicker: "Lovely, {n}", title: "You've already had a taste. This time, it will actually stick.",
@@ -289,6 +289,35 @@
     ["Weeks 5 to 8", "Feel the change", "Moves that shook you start to feel steady. Posture, core control and flexibility are where the trials start reporting change, and you'll notice it on the stairs and at your desk."],
     ["Weeks 9 to 12", "Own it", "Twelve weeks is where most published Pilates trials finish, and where people report better sleep, lower anxiety and more energy. It stops being a plan and becomes a habit."]
   ];
+
+  /* ------------------------------------------------------------- VSLs
+     One talking head video per page. Placeholders show the hook + outline until you paste a video URL into config.js */
+  C.vsls = {
+    quiz:     { len: "45 sec", who: "Founder", title: "A quick hello from reef", hook: "How long have you been about to start Reformer?",
+                beats: ["Hook: How long have you been about to start Reformer?", "Who we are: a family building reef on Wyle Cop", "What the quiz does: 2 minutes, your own plan", "Call to action: tap the button and start"] },
+    result:   { len: "60 sec", who: "Founder", title: "Your plan, explained", hook: "This is exactly how your first twelve weeks will feel.",
+                beats: ["Congratulate them on taking the first step", "Twice a week: what the research used", "Why the bigger packs cost less per session", "The Founders Guarantee: zero risk", "Pick your pack below"] },
+    packs:    { len: "60 sec", who: "Founder", title: "Which founder pack is right for you?", hook: "The more sessions you choose, the less each one costs.",
+                beats: ["The four packs in one sentence each", "Price per session, from £15.61", "Why founder prices end on opening day", "14 day full refund"] },
+    founder5: { len: "45 sec", who: "Instructor", title: "Your first five sessions", hook: "Five sessions. That is all it takes to know.",
+                beats: ["What happens in your first class", "Springs set for you, no experience needed", "Most people know by session three", "£19.80 a session, fully refundable for 14 days"] },
+    plus:     { len: "45 sec", who: "Founder", title: "Why Founder Plus is our pick", hook: "This is where you'll get stronger. I'd love you to be one of our first.",
+                beats: ["Hand on a Reformer bed inside the studio", "14 sessions: twice a week for seven weeks", "Red light and recovery boots included", "60 places, then never again"] },
+    member:   { len: "3 to 4 min", who: "Founder", title: "The habit that changes everything", hook: "When did the stairs start feeling like a decision?",
+                beats: ["The strength cliff: why it happens", "Thirty sessions takes you through the twelve week window", "Your founder rate, locked for a year", "The Founders Guarantee", "Book a call or claim your place"] },
+    year:     { len: "4 to 5 min", who: "Founder", title: "Your strongest year", hook: "The one rule about getting fit we were all taught backwards.",
+                beats: ["You don't get fit to start. You start to get fit.", "96 sessions: twice a week for a whole year", "£15.61 a session, £4.11 a day", "Your name on the Founders Wall", "25 places. Zero risk."] },
+    thanks:   { len: "30 sec", who: "Founder", title: "Welcome to the founders", hook: "Thank you. You're one of the first.",
+                beats: ["Genuine thank you", "What happens between now and opening day", "Send your Guest Passes to two friends"] }
+  };
+
+  C.moves = [
+    ["ex-footwork", "Footwork", "Lying on your back, you press the carriage away and control it home. It warms up your legs, glutes and core."],
+    ["ex-hundred", "The Hundred", "Head and shoulders lifted, arms pumping while you breathe. It switches your deep core on."],
+    ["ex-frog", "Frog and leg circles", "Feet in the straps, and the spring carries your legs. Your hips open gently and safely."],
+    ["ex-shortspine", "Short spine", "You roll your spine up and down one bone at a time. It feels like a massage from the inside."]
+  ];
+  C.decadeIllo = { "20s": "illo-20s", "30s": "illo-30s", "40s": "illo-40s", "50s": "illo-50s", "60s": "illo-60s", "70s": "illo-70s" };
 
   window.REEF_CONTENT = C;
 })();

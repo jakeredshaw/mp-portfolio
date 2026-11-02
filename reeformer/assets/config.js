@@ -91,7 +91,10 @@ window.REEF_CONFIG = {
 
   /* ---------- Videos (paste YouTube/Vimeo embed URL or an .mp4 URL) ---------- */
   videos: {
-    quiz:     "",   // optional 20 second welcome on the quiz start screen
+    quiz:     "",   // 45 sec welcome on the quiz start screen
+    result:   "",   // 60 sec "your plan, explained" on the result screen
+    packs:    "",   // 60 sec on the shop page
+    thanks:   "",   // 30 sec welcome after purchase
     founder5: "",   // TODO
     plus:     "",   // TODO 45 second founder video
     member:   "",   // TODO about 4.5 minute VSL

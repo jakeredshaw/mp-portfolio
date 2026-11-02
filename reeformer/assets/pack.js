@@ -26,7 +26,7 @@
   const sec = [];
 
   /* ================= PDP: gallery + buy box ================= */
-  const slides = [R.videoHtml(CFG.videos[packId], packId === "plus" ? "45 second founder video" : "Founder video"), ...P.imgs.map(i => R.img(i))];
+  const slides = [R.vsl(packId), ...P.imgs.map(i => R.img(i)), R.img("illo-40s", "illo", false)];
   const brandTile = `<div class="img" style="background:var(--deep);display:grid;place-items:center"><div class="center" style="color:#F3E2C2;padding:20px"><img src="assets/logo/reef-mark-shell.png" alt="" width="110" height="115" style="margin:0 auto 18px;opacity:.95"><div class="caps" style="color:#fff">${P.name}</div><div style="font-family:var(--serif);font-size:30px;color:var(--gold-soft);margin-top:6px">${R.money(P.price)}</div><div class="small" style="margin-top:4px">${P.classes} Reformer classes</div></div></div>`;
   slides.push(brandTile);
   const variants = C.order.slice().reverse().map(id => { const X = C.packs[id]; return `<a class="vr ${id === packId ? "on" : ""}" href="${X.file}${q}" aria-label="${X.name}">${id === "year" ? `<span class="vr-best">Best value</span>` : ""}<b>${R.money(X.perClass)}</b><span>a session</span><em>${X.classes} sessions</em></a>`; }).join("");
@@ -109,6 +109,7 @@
     <div style="border-top:1px solid rgba(255,255,255,.2);padding-top:14px"><div class="caps" style="color:#F3E2C2">The Reeformer Loop</div><p class="small" style="margin:6px 0 0">Learn it with a teacher. Own it on the screen. Come back stronger.</p></div></div>
   </div></div></section>`);
 
+  sec.push(`<section><div class="wrap"><div class="narrow center" style="padding:0"><p class="eyebrow">Your first moves</p><h2>Here's what you'll actually do.</h2><p class="muted">Every move has an easier version and a harder one. Your instructor shows you each one.</p></div><div style="margin-top:22px">${R.moves()}</div></div></section>`);
   const sciKeys = [...new Set([...(prof ? prof.science : ["backPain", "core228", "classpass"]), ...(["60s", "70s"].includes(a.age) ? ["balance"] : []), ...(a.barrier === "gym" ? ["gym"] : [])])].slice(0, 4);
   sec.push(`<section><div class="wrap"><div class="narrow center" style="padding:0"><p class="eyebrow">The evidence</p>
     <h2>We printed the studies. Including the one that disagrees with us.</h2>
@@ -122,6 +123,7 @@
   if (a.sex === "m") extra.push(C.menModule);
   if (a.exp && C.expModules[a.exp]) extra.push({ t: a.exp === "0" ? "Brand new to it" : "Your experience", b: C.expModules[a.exp] });
   if (extra.length) sec.push(`<section class="band-foam"><div class="wrap"><div class="narrow center" style="padding:0"><p class="eyebrow" style="color:var(--blue)">Built for you</p><h2>${N ? N + ", here's" : "Here's"} what this means for you.</h2></div>
+    ${a.age && C.decadeIllo[a.age] ? `<div style="max-width:760px;margin:22px auto 0">${R.img(C.decadeIllo[a.age], "illo decade-illo", false)}</div>` : ""}
     <div class="grid ${extra.length > 1 ? "g" + Math.min(3, extra.length) : ""}" style="margin-top:26px">${extra.map(x => `<div class="card" style="border-color:var(--sky)"><h3>${x.t}</h3><p class="muted" style="margin:0">${x.b}</p></div>`).join("")}</div></div></section>`);
 
   if (packId === "member") {

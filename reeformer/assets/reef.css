@@ -348,3 +348,124 @@ details{border-color:rgba(228,217,200,.8)}
 .vr{position:relative;padding-top:14px}
 .vr b{font-size:16px}
 .vr-best{position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--gold);color:#fff;font-size:8.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:3px 7px;border-radius:99px;white-space:nowrap}
+
+/* =====================================================================
+   v4 · POP PALETTE · VSL · ILLUSTRATIONS · SCROLL FX · MOBILE FIRST
+   ===================================================================== */
+:root{
+  --sun:#F2B84B; --sun-2:#E39A2E; --aqua:#22B3D6; --aqua-2:#0E8FB5; --sky:#C9EEF6; --foam:#E4F6FA;
+  --blue:#1690BA; --pink-sand:#F7E3CF;
+}
+body{background:
+  radial-gradient(700px 520px at 0% -5%,rgba(242,184,75,.45),transparent 62%),
+  radial-gradient(720px 560px at 105% 12%,rgba(34,179,214,.32),transparent 62%),
+  radial-gradient(640px 520px at 20% 105%,rgba(201,238,246,.95),transparent 60%),
+  radial-gradient(520px 420px at 95% 95%,rgba(247,227,207,.9),transparent 60%),
+  var(--shell);background-attachment:fixed}
+@media(max-width:760px){body{background-attachment:scroll}}
+.btn-gold{background:linear-gradient(135deg,#F7C463 0%,#E9A93F 45%,#C98A30 100%);color:#fff;text-shadow:0 1px 1px rgba(120,70,0,.25);box-shadow:0 14px 30px -10px rgba(227,154,46,.75)}
+.btn-primary{background:linear-gradient(135deg,#1FA5CC 0%,#137A9E 45%,#0F3B4C 100%);box-shadow:0 14px 30px -10px rgba(22,144,186,.7)}
+.badge{background:linear-gradient(135deg,#F2B84B,#D9952E)}
+.badge.blue{background:linear-gradient(135deg,#2EC4E6,#1690BA)}
+.badge.foam{background:var(--sky);color:var(--deep)}
+.ribbon{background:linear-gradient(90deg,#0F3B4C,#1690BA,#0F3B4C);background-size:200% 100%;animation:slide-bg 9s linear infinite}
+@keyframes slide-bg{to{background-position:200% 0}}
+.testbar{background:linear-gradient(90deg,#C9EEF6,#FFF1D6)}
+.band-foam{background:linear-gradient(160deg,rgba(201,238,246,.85),rgba(228,246,250,.7))}
+.band-sand{background:linear-gradient(160deg,rgba(255,236,204,.75),rgba(247,227,207,.55))}
+.band-deep{background:linear-gradient(150deg,#0F3B4C 0%,#135f7a 60%,#1690BA 130%)}
+.pb-big{background:linear-gradient(135deg,#0F3B4C 10%,#1690BA 60%,#22B3D6);-webkit-background-clip:text;background-clip:text}
+.pill-save{background:linear-gradient(135deg,#F7C463,#E39A2E)}
+.fact{background:linear-gradient(135deg,#0F3B4C,#1690BA 70%,#22B3D6)}
+.fact b{color:#FFD98A}
+.pblock{background:linear-gradient(150deg,rgba(255,255,255,.95),rgba(201,238,246,.75))}
+.save{background:var(--sky);color:var(--aqua-2)}
+.eyebrow{color:var(--sun-2)}
+.spots .bar i{background:linear-gradient(90deg,#F7C463,#E39A2E,#22B3D6)}
+em{color:var(--sun-2)}
+.guar{border-color:rgba(227,154,46,.55);box-shadow:0 18px 44px -18px rgba(227,154,46,.6)}
+.guar .seal{color:var(--sun-2)}
+.reco.on{border-color:var(--sun);box-shadow:0 24px 50px -18px rgba(227,154,46,.6)}
+.reco.on .radio{border-color:var(--sun-2);background:var(--sun-2)}
+.chip-pop{box-shadow:0 10px 24px -12px rgba(22,144,186,.55)}
+
+/* scroll progress */
+#sbar{position:fixed;top:0;left:0;right:0;height:3px;z-index:100;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,#F7C463,#E39A2E,#22B3D6)}
+
+/* reveal variants */
+.js-anim .reveal.rv-l{transform:translateX(-36px)}
+.js-anim .reveal.rv-r{transform:translateX(36px)}
+.js-anim .reveal.rv-zoom{transform:scale(.94)}
+.js-anim .reveal.rv-li{transform:translateX(-14px)}
+.js-anim .reveal.in{transform:none}
+.hero-img > img{will-change:transform;transform:scale(1.08)}
+.img.illo{background:#F6EFE5;border-radius:var(--r)}
+.img.illo img{object-fit:contain;transition:transform .2s linear;will-change:transform}
+
+/* ---------- VSL placeholder: talking head ---------- */
+.vslx{position:relative;aspect-ratio:9/14;width:100%;max-width:440px;margin:0 auto;border-radius:28px;overflow:hidden;color:#fff;box-shadow:0 30px 60px -24px rgba(15,59,76,.6);isolation:isolate}
+.vslx.wide{max-width:none}
+@media(min-width:760px){.vslx.wide{aspect-ratio:16/9}}
+.vx-bg{position:absolute;inset:0;z-index:-2;background:linear-gradient(160deg,#135f7a,#0F3B4C 55%,#0b2a36),url(img/concept-studio.jpg) center/cover;background-blend-mode:multiply}
+.vx-person{position:absolute;left:50%;bottom:0;width:72%;max-width:330px;transform:translateX(-50%);z-index:-1;fill:rgba(250,246,232,.14)}
+.vx-top{position:absolute;top:14px;left:14px;right:14px;display:flex;justify-content:space-between;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+.vx-live{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.18);backdrop-filter:blur(8px);padding:6px 10px;border-radius:99px}
+.vx-live i{width:8px;height:8px;border-radius:50%;background:#FF5A5A;animation:pulse-dot 1.4s ease-in-out infinite}
+@keyframes pulse-dot{50%{opacity:.3}}
+.vx-len{background:rgba(255,255,255,.18);backdrop-filter:blur(8px);padding:6px 10px;border-radius:99px}
+.vx-mid{position:absolute;inset:0;display:grid;place-content:center;text-align:center;padding:0 24px}
+.vx-play{width:78px;height:78px;border-radius:50%;margin:0 auto 14px;background:rgba(255,255,255,.95);display:grid;place-items:center;box-shadow:0 0 0 0 rgba(255,255,255,.5);animation:ring 2.2s ease-out infinite}
+.vx-play::after{content:"";border-left:24px solid var(--deep);border-top:15px solid transparent;border-bottom:15px solid transparent;margin-left:7px}
+@keyframes ring{0%{box-shadow:0 0 0 0 rgba(255,255,255,.55)}100%{box-shadow:0 0 0 26px rgba(255,255,255,0)}}
+.vx-t{font-family:var(--serif);font-size:22px;line-height:1.2}
+.vx-w{font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.8;margin-top:6px}
+.vx-cap{position:absolute;left:14px;right:14px;bottom:16px;text-align:center}
+.vx-cap span{display:inline;background:rgba(0,0,0,.55);padding:5px 9px;border-radius:8px;font-size:15px;font-weight:700;line-height:1.7;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.vx-beats{position:absolute;left:12px;right:12px;top:52px;background:rgba(255,255,255,.94);color:var(--ink);border-radius:16px;padding:8px 14px;border:0;font-size:12.5px;z-index:2}
+.vx-beats summary{font-size:10.5px;color:var(--deep)}
+.vx-beats ol{margin:6px 0 4px;padding-left:18px}
+.gal .slide .vslx{aspect-ratio:4/5;max-width:none;border-radius:0}
+@media(min-width:960px){.gal .slide .vslx{border-radius:var(--r)}}
+
+/* ---------- first moves carousel ---------- */
+.moves{display:grid;grid-auto-flow:column;grid-auto-columns:82%;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 16px 14px;margin:0 -16px;scrollbar-width:none}
+.moves::-webkit-scrollbar{display:none}
+@media(min-width:760px){.moves{grid-auto-flow:row;grid-template-columns:1fr 1fr;grid-auto-columns:auto;overflow:visible;margin:0;padding:0}}
+.move{margin:0;scroll-snap-align:center;background:var(--glass);border:1px solid var(--glass-line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.move .img{aspect-ratio:16/7;border-radius:0}
+.move figcaption{padding:14px 16px 16px;font-size:14px}
+.move figcaption b{display:block;color:var(--deep);font-size:16px;margin-bottom:2px}
+.decade-illo{aspect-ratio:16/6;margin-bottom:12px}
+
+/* ---------- MOBILE FIRST polish ---------- */
+@media(max-width:600px){
+  body{font-size:15.5px}
+  h1{font-size:clamp(30px,8.4vw,40px)}
+  h2{font-size:clamp(24px,6.8vw,30px)}
+  section{padding-block:44px}
+  .ribbon{font-size:9.5px;letter-spacing:.14em;padding:8px 10px}
+  .testbar{font-size:11px;padding:6px 10px}
+  .hero-img{min-height:78svh!important}
+  .hero-img .in{padding-bottom:30px}
+  .btn{min-height:56px;font-size:12.5px;padding:15px 20px}
+  .card{padding:18px}
+  .nav .in{padding:8px 14px}
+  .nav .logo img{height:38px}
+  .nav .l a:not(:first-child){display:none}
+  .trust div{font-size:10.5px}
+  .pay span{font-size:9px;padding:3px 6px}
+  .guar{padding:16px;gap:12px}
+  .guar .seal{width:46px;height:46px}
+  .vr b{font-size:14px}.vr em{font-size:11px}.vr span{font-size:8.5px}
+  .chips-pop{gap:6px}.chip-pop{font-size:11.5px;padding:7px 11px}
+  .sticky .btn{min-height:50px}
+  .footer{padding-bottom:140px}
+}
+input,select,textarea,.fld{font-size:16px!important}
+html,body{overflow-x:clip}
+.vx-person{width:58%;fill:rgba(250,246,232,.09)}
+.swipe-hint{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--aqua-2);margin:0 0 8px}
+@media(min-width:760px){.swipe-hint{display:none}}
+.moves .move{opacity:1}
+.vx-person{bottom:-20%}
+.gal .slide .vx-cap{bottom:44px}

@@ -47,6 +47,7 @@
   html.push(`<section class="hero-img" style="min-height:min(62vh,560px)"><img src="assets/img/concept-lounge.jpg" alt="Concept visual of the reef lounge"><div class="in">
     <p class="eyebrow">You're in · Order confirmed</p><h1>Welcome to the founders${N ? ", " + N : ""}.</h1>
     <p>${P ? `Your <b>${P.name}</b> place is secured.` : "Your founder place is secured."} Your credits start on opening day, ${R.esc(CFG.openingDateText)}, and founders get first choice of sessions.</p></div></section>`);
+  html.push(`<section style="padding-block:28px 0"><div class="narrow">${R.vsl("thanks")}</div></section>`);
   if (P) html.push(`<section style="padding-block:28px"><div class="narrow"><div class="card"><div class="caps muted" style="margin-bottom:12px">${CFG.testMode ? "Test order (no payment taken)" : "Your order"}</div>
     <div class="line-item">${R.img(P.imgs[0], "", false)}<div><div class="caps" style="color:var(--deep)">${P.name}</div><div class="small muted">${P.classes} Reformer classes · ${P.validity}</div></div><b>${R.money(P.price)}</b></div>
     <p class="small muted" style="margin:14px 0 0">A receipt is on its way to ${R.esc(s.email || "your inbox")}.</p></div></div></section>`);

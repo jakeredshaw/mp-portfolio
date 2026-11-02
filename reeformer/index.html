@@ -136,7 +136,7 @@
 
   function hero(){
     R.$("#foot").innerHTML = R.footer();
-    app.innerHTML = `<section class="hero-img" style="min-height:min(72vh,640px)"><img src="assets/img/concept-studio.jpg" alt="Concept visual of the reef Reformer studio"><div class="in">
+    app.innerHTML = `<section class="hero-img" style="min-height:min(78svh,660px)"><img src="assets/img/concept-studio.jpg" alt="Concept visual of the reef Reformer studio"><div class="in">
       <p class="eyebrow">Free Reformer plan · Takes 2 minutes</p>
       <h1>How long have you been <em style="color:var(--gold-soft)">about to start</em> Reformer?</h1>
       <p style="font-size:16px;opacity:.95;max-width:46ch;margin:0 auto 22px">Answer ${qCount} quick questions. Get your personal Reformer plan and the founder pack that fits you best.</p>
@@ -144,16 +144,23 @@
       <p class="small" style="margin:14px 0 0;opacity:.85">Concept visual · 55 to 57 Wyle Cop, Shrewsbury</p></div></section>
       ${R.ticker()}
       <section class="hero" style="padding-top:28px">
-      ${CFG.videos.quiz ? R.videoHtml(CFG.videos.quiz, "A quick hello from reef") + "<div style='height:18px'></div>" : ""}
+      ${state.leadAt && state.answers && state.answers.ready ? `<div class="card" style="margin-bottom:18px;text-align:left"><p class="eyebrow" style="margin-bottom:6px">Welcome back${R.first(state.answers) ? ", " + R.esc(R.first(state.answers)) : ""}</p><p style="margin:0 0 12px">Your Reformer plan is saved.</p><div style="display:grid;gap:8px"><button class="btn btn-primary btn-block" id="seePlan" type="button">See my plan</button><button class="btn btn-ghost btn-block" id="redo" type="button">Start the quiz again</button></div></div>` : ""}
+      <p class="eyebrow">Watch first · 45 seconds</p>
+      ${R.vsl("quiz")}
+      <div style="height:18px"></div>
       ${R.reassure()}
       <div class="htrust"><div><b>10+</b>Reformer beds on Wyle Cop</div><div><b>7 to 10</b>Open early and late, every day</div><div><b>800+</b>Guided sessions on your own screen</div></div>
       <p class="small muted" style="margin-top:22px">The first full Reformer studio inside Shrewsbury town centre. Opening ${R.esc(CFG.openingDateText)}.</p>
     </section>`;
     R.animate();
-    R.$("#start").onclick = () => { R.track("QuizStart", {}, true); go(0, false); };
+    const fresh = () => { const utm = state.utm; state = { answers: {}, utm }; R.save(state); };
+    R.$("#start").onclick = () => { fresh(); R.track("QuizStart", {}, true); go(0, false); };
+    if (R.$("#seePlan")) R.$("#seePlan").onclick = () => { idx = steps.length - 1; result(); scrollTo(0, 0); };
+    if (R.$("#redo")) R.$("#redo").onclick = () => { fresh(); R.track("QuizRestart", {}, true); go(0, false); };
   }
 
   function render(){
+    const rs = document.getElementById("rsticky"); if (rs) rs.remove();
     setProgress();
     if (idx < 0) return hero();
     R.$("#foot").innerHTML = "";
@@ -177,8 +184,10 @@
       const sub = () => { const v = tx.value.trim(); if (v.length < 1) { R.$("#er").textContent = "Pop your first name in so we can personalise your plan."; return; } a.name = v; save(); next(); };
       R.$("#nx").onclick = sub; tx.onkeydown = e => { if (e.key === "Enter") sub(); }; return;
     }
+    const qillo = { goal: "illo-40s", day: "illo-30s", freq: "illo-20s", ready: "illo-60s", age: "illo-70s" }[st.id];
+    const ib = qillo ? `<div class="img illo decade-illo">` + `<img src="assets/img/${qillo}.jpg" alt=""></div>` : "";
     if (st.type === "single") {
-      app.innerHTML = `<div class="screen"><h2 class="q">${R.fill(st.q, a)}</h2>${st.help ? `<p class="help">${st.help}</p>` : ""}
+      app.innerHTML = `<div class="screen">${ib}<h2 class="q">${R.fill(st.q, a)}</h2>${st.help ? `<p class="help">${st.help}</p>` : ""}
         <div class="opts">${st.opts.map(o => `<button class="opt ${a[st.id] === o[0] ? "sel" : ""}" data-v="${o[0]}" type="button">${o[2] ? `<span class="ic">${o[2]}</span>` : ""}<span>${o[1]}</span></button>`).join("")}</div></div>`;
       app.querySelectorAll(".opt").forEach(b => b.onclick = () => {
         app.querySelectorAll(".opt").forEach(x => x.classList.remove("sel")); b.classList.add("sel");
@@ -266,7 +275,7 @@
       const P = C.packs[id], F = R.frame(id), isM = id === R3.matched;
       const tag = i === 0 ? `<span class="badge">Best value · Lowest price per session</span>` : isM ? `<span class="badge blue">Matched to your answers</span>` : `<span class="badge foam">${P.badge}</span>`;
       return `<button type="button" class="reco ${i === 0 ? "on" : ""}" data-id="${id}"><span class="rk">${tag}</span>
-        <div class="rh">${R.img(P.imgs[0], "", false)}<div style="min-width:0"><div class="rn">${i + 1}. ${P.name}</div><div class="rd">${P.classes} Reformer sessions${P.stack[1] ? " + " + (id === "year" ? "12 wellness sessions" : id === "member" ? "3 wellness sessions" : "red light + boots") : ""}</div>
+        <div class="rh">${R.img(P.imgs[0], "", false)}<div style="min-width:0"><div class="rn">${i + 1}. ${P.name}</div><div class="rd">${({ year: "96 Reformer sessions + 12 wellness sessions", member: "30 Reformer sessions + 3 wellness sessions", plus: "14 Reformer sessions + red light + recovery boots", founder5: "5 Reformer sessions to try it" })[id]}</div>
         <div class="rmini"><b>${F.per}</b><span>a session · ${R.money(P.price)} total</span></div></div><span class="radio"></span></div>
         <div class="rbody">${R.priceBlock(id)}
           <ul class="ticks small" style="margin:6px 0 10px">${R.reasons(a, id).slice(0, 3).map(r => `<li>${r}</li>`).join("")}</ul>
@@ -280,9 +289,13 @@
       <p style="margin:14px 0 0">${prof.why}</p></div>
       <div class="fact reveal" style="margin-top:14px"><b data-count="${parseFloat(sci[0]) || ""}">${sci[0]}</b><div><div>${sci[1]}</div><div class="src">${sci[2]}</div></div></div>
       ${bm ? `<div class="card" style="margin-top:14px;border:1.5px solid rgba(179,134,66,.45)"><p class="eyebrow">You said this held you back</p><h3>${bm.t}</h3><p style="margin:0">${R.fill(bm.b, a)}</p></div>` : ""}
+      <div style="margin-top:22px">${R.vsl("result")}</div>
+      ${a.age && C.decadeIllo[a.age] ? `<div class="card" style="margin-top:18px;padding:0;overflow:hidden">${R.img(C.decadeIllo[a.age], "illo decade-illo", false)}<div style="padding:16px 18px"><p class="eyebrow" style="margin-bottom:6px">Built for your ${R.esc(R.label("age", a.age))}</p><p style="margin:0">${C.decadeModules[a.age].b}</p></div></div>` : ""}
       <h2 style="margin-top:36px">Your plan: <em>twice a week</em> for twelve weeks.</h2>
       <p class="muted">The NHS says adults should do strength exercise on at least two days a week, and it names Pilates as an example. Twice a week is also what the published Pilates studies used. Here's what your first twelve weeks look like.</p>
       <div class="wk">${C.weeks.map(w => `<div class="card"><b>${w[0]}</b><h3>${w[1]}</h3><p>${w[2]}</p></div>`).join("")}</div>
+      <p class="eyebrow" style="margin-top:30px">Your first moves</p><h3>Here's what you'll actually do in week one.</h3>
+      ${R.moves()}
       <div style="margin-top:40px" class="center reveal"><p class="eyebrow">Your recommended founder packs</p><h2>${N ? N + ", here are" : "Here are"} your 3 best options.</h2>
       <p class="muted">We've put the best value first. The more sessions you buy, the less each one costs. Tap any pack to compare.</p></div>
       ${R.reassure()}
@@ -290,6 +303,7 @@
       <div id="recoCta" style="margin-top:16px"></div>
       <div style="margin-top:18px">${R.guarantee()}</div>
       <p class="center" style="margin-top:22px"><a href="packs.html?from=quiz">See all four founder packs</a></p>
+      <p class="center"><button class="link-quiet" id="retake" type="button">Retake the quiz</button></p>
     </div>`;
     R.$("#foot").innerHTML = R.footer();
     const setSel = (id) => {
@@ -299,9 +313,15 @@
         <a class="btn btn-ghost btn-block" href="${P.file}?from=quiz" style="margin-top:10px">See everything in ${P.name}</a>
         <p class="small muted center" style="margin:10px 0 0">🛡️ ${CFG.refundDays} day full refund · 🔒 Secure checkout · 📅 Starts on opening day</p>`;
       R.$("#addNow").onclick = () => R.addToBag(id);
+      let st = R.$("#rsticky");
+      if (!st) { st = document.createElement("div"); st.id = "rsticky"; st.className = "sticky"; document.body.appendChild(st);
+        addEventListener("scroll", () => { const r = R.$("#recos"); if (!r) return; const b = r.getBoundingClientRect(); st.classList.toggle("show", b.top < innerHeight * .9); }, { passive: true }); }
+      st.innerHTML = `<div class="p"><b>${F.per} a session</b>${P.name} · 🛡️ ${CFG.refundDays} day refund</div><button class="btn btn-gold" type="button">Claim</button>`;
+      st.querySelector("button").onclick = () => R.addToBag(id);
     };
     document.querySelectorAll(".reco").forEach(r => r.onclick = () => { setSel(r.dataset.id); R.track("RecoSelect", { pack: r.dataset.id }, true); });
     setSel(R3.list[0]);
+    R.$("#retake").onclick = () => { const utm = state.utm; state = { answers: {}, utm }; R.save(state); const s = R.$("#rsticky"); if (s) s.remove(); idx = -1; hist.length = 0; render(); scrollTo(0, 0); };
     R.animate();
   }
 
@@ -310,8 +330,7 @@
   if (qp.has("restart")) { state = { answers: {}, utm: state.utm }; R.save(state); }
   // Funnel Lab / email links: ?r=CODE&view=result jumps straight to that result
   if (qp.get("view") === "result" && state.answers.ready) { idx = steps.length - 1; result(); }
-  // returning visitors who already finished go straight to their result
-  else if (state.leadAt && state.answers.ready && !qp.has("restart")) { idx = steps.length - 1; result(); }
+  // refreshing always starts on the welcome screen (returning visitors get "See my plan" or "Start again")
   else render();
 })();
 </script>

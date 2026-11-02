@@ -286,7 +286,12 @@
   R.animate = () => {
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
     document.documentElement.classList.add("js-anim");
-    const els = document.querySelectorAll(".reveal:not(.in), .card, .stat, .pcard, .tile, details, .guar, .why-now, .reco");
+    R.scrollFx();
+    document.querySelectorAll(".ticks").forEach(ul => ul.querySelectorAll("li").forEach((li, i) => { li.classList.add("reveal", "rv-li"); li.style.transitionDelay = (i * 70) + "ms"; }));
+    document.querySelectorAll(".split > div:first-child").forEach(e => e.classList.add("reveal", "rv-l"));
+    document.querySelectorAll(".split > div:last-child").forEach(e => e.classList.add("reveal", "rv-r"));
+    document.querySelectorAll(".img:not(.illo)").forEach(e => e.classList.add("reveal", "rv-zoom"));
+    const els = document.querySelectorAll(".reveal:not(.in), .card, .stat, .pcard, .tile, details, .guar, .why-now, .reco, .vslx, .fact, .pblock, .chip-pop");
     const count = (el) => {
       const target = parseFloat(el.dataset.count); if (isNaN(target) || el._done) return; el._done = true;
       if (reduce) return; const m = el.textContent.trim().match(/^(£?)([\d.,]+)(.*)$/); if (!m) return;
@@ -296,9 +301,42 @@
     };
     if (reduce || !("IntersectionObserver" in window)) { els.forEach(e => e.classList.add("in")); return; }
     const io = new IntersectionObserver((ents) => ents.forEach(en => { if (en.isIntersecting) { en.target.classList.add("in"); en.target.querySelectorAll("[data-count]").forEach(count); io.unobserve(en.target); } }), { threshold: .12, rootMargin: "0px 0px -6% 0px" });
-    els.forEach((e, i) => { e.classList.add("reveal"); e.style.transitionDelay = (i % 4) * 60 + "ms"; io.observe(e); });
+    els.forEach((e, i) => { e.classList.add("reveal"); if (!e.style.transitionDelay) e.style.transitionDelay = (i % 4) * 60 + "ms"; io.observe(e); });
     // safety: anything still hidden after 2.5s becomes visible
     setTimeout(() => document.querySelectorAll(".reveal:not(.in)").forEach(e => { const r = e.getBoundingClientRect(); if (r.top < innerHeight) e.classList.add("in"); }), 2500);
+  };
+
+  /* ---------- VSL slot (talking head) ---------- */
+  R.vsl = (key, opts) => {
+    opts = opts || {}; const V = C.vsls[key] || { title: "Video", hook: "", beats: [], len: "", who: "" };
+    const url = CFG.videos[key];
+    if (url) return R.videoHtml(url, V.title);
+    return `<div class="vslx ${opts.wide ? "wide" : ""}" role="img" aria-label="${R.esc(V.title)}: video coming soon">
+      <div class="vx-bg"></div>
+      <svg class="vx-person" viewBox="0 0 200 240" aria-hidden="true"><circle cx="100" cy="78" r="38"/><path d="M28 240c0-52 32-86 72-86s72 34 72 86z"/></svg>
+      <div class="vx-top"><span class="vx-live"><i></i>VSL</span><span class="vx-len">${R.esc(V.len)}</span></div>
+      <div class="vx-mid"><div class="vx-play"></div><div class="vx-t">${R.esc(V.title)}</div><div class="vx-w">${R.esc(V.who)} speaking to camera · coming soon</div></div>
+      <div class="vx-cap"><span>${R.esc(V.hook)}</span></div>
+      ${CFG.testMode && V.beats.length ? `<details class="vx-beats"><summary>Script outline</summary><ol>${V.beats.map(b => `<li>${R.esc(b)}</li>`).join("")}</ol></details>` : ""}
+    </div>`;
+  };
+  R.moves = () => `<p class="swipe-hint">Swipe to see more →</p><div class="moves">${C.moves.map(m => `<figure class="move">${R.img(m[0], "illo", false)}<figcaption><b>${m[1]}</b><span>${m[2]}</span></figcaption></figure>`).join("")}</div>`;
+
+  /* ---------- scroll FX: progress bar, parallax, carriage slide ---------- */
+  R.scrollFx = () => {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let bar = document.getElementById("sbar");
+    if (!bar) { bar = document.createElement("div"); bar.id = "sbar"; document.body.appendChild(bar); }
+    let ticking = false;
+    const run = () => {
+      const y = scrollY, h = document.documentElement.scrollHeight - innerHeight;
+      bar.style.transform = `scaleX(${h > 0 ? Math.min(1, y / h) : 0})`;
+      document.querySelectorAll(".hero-img > img").forEach(img => { const r = img.parentElement.getBoundingClientRect(); if (r.bottom > 0 && r.top < innerHeight) img.style.transform = `translateY(${(-r.top * 0.18).toFixed(1)}px) scale(1.08)`; });
+      document.querySelectorAll(".img.illo img").forEach(img => { const r = img.getBoundingClientRect(); if (r.bottom > 0 && r.top < innerHeight) { const p = (r.top + r.height / 2) / innerHeight - .5; img.style.transform = `translateX(${(p * -26).toFixed(1)}px) scale(1.06)`; } });
+      ticking = false;
+    };
+    addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(run); } }, { passive: true });
+    run();
   };
 
   window.REEF = R;

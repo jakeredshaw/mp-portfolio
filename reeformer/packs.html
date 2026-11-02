@@ -43,6 +43,7 @@
     <p class="eyebrow" id="eb">The founder collection · Concept visual</p><h1 id="h">Founder packs.</h1>
     <p id="sub">The more sessions you choose, the less each one costs. Every pack is fully refundable for 14 days and disappears on opening day.</p></div></section>
   <div id="tick"></div>
+  <section style="padding-block:28px 0"><div class="narrow"><div id="pvsl"></div></div></section>
   <section style="padding-top:34px"><div class="wrap">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><span class="caps muted" id="cnt">4 packs · 205 places</span><a class="link" href="index.html?restart=1">Not sure? Take the quiz</a></div>
     <div class="coll" id="coll"></div>
@@ -95,6 +96,7 @@
   R.$("#cmp").innerHTML = `<thead><tr><th></th>${ORD.map(id => `<th class="${id === (rec || "year") ? "hot" : ""}">${C.packs[id].name}</th>`).join("")}</tr></thead><tbody>${rows.map(r => `<tr><td class="small muted">${r[0]}</td>${ORD.map(id => `<td class="${id === (rec || "year") ? "hot" : ""}">${r[1](id)}</td>`).join("")}</tr>`).join("")}</tbody>`;
   R.$("#guar").innerHTML = R.guarantee() + R.reassure();
   R.$("#tick").innerHTML = R.ticker();
+  R.$("#pvsl").innerHTML = R.vsl("packs", { wide: true });
   R.$("#foot").innerHTML = R.footer();
   R.animate();
   R.track("ViewContent", { content_name: "Founder packs" });
