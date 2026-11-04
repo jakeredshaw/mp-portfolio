@@ -29,15 +29,15 @@
   const slides = [R.vsl(packId), ...P.imgs.map(i => R.img(i))];
   const brandTile = `<div class="img" style="background:var(--deep);display:grid;place-items:center"><div class="center" style="color:#F3E2C2;padding:20px"><img src="assets/logo/reef-mark-shell.png" alt="" width="110" height="115" style="margin:0 auto 18px;opacity:.95"><div class="caps" style="color:#fff">${P.name}</div><div style="font-family:var(--serif);font-size:30px;color:var(--gold-soft);margin-top:6px">${R.money(P.price)}</div><div class="small" style="margin-top:4px">${P.classes} Reformer classes</div></div></div>`;
   slides.push(brandTile);
-  const variants = C.order.slice().reverse().map(id => { const X = C.packs[id]; return `<a class="vr ${id === packId ? "on" : ""}" href="${X.file}${q}" aria-label="${X.name}">${id === "year" ? `<span class="vr-best">Best value</span>` : ""}<b>${R.money(X.perClass)}</b><span>a session</span><em>${X.classes} sessions</em></a>`; }).join("");
+  const variants = C.order.slice().reverse().map(id => { const X = C.packs[id]; return `<a class="vr ${id === packId ? "on" : ""}" href="${X.file}${q}" aria-label="${X.name}">${id === "year" ? `<span class="vr-best">Best value</span>` : ""}<b>${R.money(X.perClass)}</b><span>a class</span><em>${X.classes} classes</em></a>`; }).join("");
   const keyPoints = P.stack.slice(0, 4).map(r => `<li>${r[0]}</li>`).join("");
   const reasons = personal ? R.reasons(a, packId).slice(0, 2) : [];
 
   const accordions = [
-    ["What's included", `<table class="stack">${P.stack.map(r => `<tr><td>${r[0]}</td><td>${r[1] ? R.money(r[1]) : `<span class="muted small">Included</span>`}</td></tr>`).join("")}<tr><td><b>At prices from opening day</b></td><td><s>${R.money(P.value)}</s></td></tr><tr><td><b>Your founder price</b></td><td><b>${R.money(P.price)}</b></td></tr></table><p class="small muted" style="margin-top:10px">${P.validity}.</p>`],
-    ["How it works", `<p>Book instructor led classes on the timetable, or step on any free bed for a guided session on your own screen. Every move has an easier version and a harder one, and your first class is with an instructor who sets your springs and footbar for you.</p><p>Open 7am to 10pm. Sessions are about 50 minutes.</p>`],
+    ["What's included", `<table class="stack">${P.stack.map(r => `<tr><td>${r[0]}</td><td>${r[1] ? R.money(r[1]) : `<span class="muted small">Included</span>`}</td></tr>`).join("")}<tr><td><b>At prices from opening day</b></td><td>${R.money(P.value)}</td></tr><tr><td><b>Your founder price</b></td><td><b>${R.money(P.price)}</b></td></tr></table><p class="small muted" style="margin-top:10px">${P.validity}.</p>`],
+    ["How it works", `<p>Book instructor led classes on the timetable, or step on any free bed for a guided session on your own screen. Every move has an easier version and a harder one, and your first class is with an instructor who sets your springs and footbar for you.</p><p>We are open 5am to 10pm, and a class runs about 50 minutes.</p>`],
     ["Your first twelve weeks", C.weeks.map(w => `<p><b>${w[0]}: ${w[1]}.</b> ${w[2]}</p>`).join("")],
-    ["The studio and parking", `<p>55 to 57 Wyle Cop, Shrewsbury. Coffee bar, lounge, changing rooms, ten or more Reformer beds, red light, recovery boots and hyperbaric on site.</p><p>St Julian's Friars car park is 122 metres away, about a two minute walk, and free after 6pm.</p>`],
+    ["The studio and parking", `<p>57 Wyle Cop, Shrewsbury. Coffee bar, lounge, changing rooms, nine Reformer beds, red light, recovery boots and hyperbaric on site.</p><p>St Julian's Friars car park is about a two minute walk away, and at the time of writing it is free after 6pm.</p>`],
     ["Refunds and terms", `<p>Full ${CFG.refundDays} day refund window on online purchases. Credits start on opening day, ${R.esc(CFG.openingDateText)}, so you never lose time to building work.${CFG.longStopDateText ? ` If opening ever slipped past ${R.esc(CFG.longStopDateText)}, you could have a full refund.` : ""}</p><p>Founder prices and places end on opening day and never return.</p>`]
   ];
 
@@ -49,14 +49,14 @@
       <h1 style="font-size:clamp(28px,4vw,38px);margin-bottom:6px">${P.name}</h1>
       <p class="muted" style="margin:0 0 12px">${P.tagline}</p>
       ${R.priceBlock(packId)}
-      <p class="small" style="margin:0;color:var(--blue);font-weight:700">Reduced from ${R.money(P.value)}. You pay ${R.money(P.save)} less.${P.perClassWellness ? ` Only ${R.money(P.perClassWellness)} a session once your wellness sessions are counted.` : ""}</p>
+      <p class="small" style="margin:0;color:var(--blue);font-weight:700">All of that comes to ${R.money(P.value)} at our opening day prices. You are paying ${R.money(P.price)}.${P.perClassWellness ? ` Put the recovery sessions at what they cost on their own and your classes land at ${R.money(P.perClassWellness)} each.` : ""}</p>
       ${R.placesHtml(packId)}
       <div class="caps" style="margin:22px 0 10px;color:var(--deep)">Choose your pack: <span style="color:var(--muted)">${P.name}</span></div>
       <div class="vrs">${variants}</div>
       <a class="link" href="index.html?restart=1" style="display:inline-block;margin:12px 0 0;font-size:10.5px">Which pack is right for me? Take the quiz</a>
       <ul class="ticks small" style="margin:18px 0 18px">${keyPoints}</ul>
       <button class="btn btn-gold btn-block js-buy pulse" type="button">Claim my founder place · ${R.money(P.price)}</button>
-      <p class="small center" style="margin:8px 0 0;color:var(--muted)">🛡️ Zero risk. Full refund within ${CFG.refundDays} days.</p>
+      <p class="small center" style="margin:8px 0 0;color:var(--muted)">🛡️ You have your usual ${CFG.refundDays} days to change your mind.</p>
       ${P.call ? `<div style="margin-top:10px">${R.callHtml("Book a 10 minute call with Ricky") || ""}</div>` : ""}
       <div style="margin-top:16px">${R.guarantee(true)}</div>
       ${R.trustRow()}
@@ -93,27 +93,27 @@
 
   const bodies = (a.body && a.body.length ? a.body : ["back", "neck"]).slice(0, 3);
   sec.push(`<section class="band-white"><div class="wrap"><div class="narrow center" style="padding:0"><p class="eyebrow">The real problem</p>
-    <h2>${personal ? "It isn't your age. It's what your body hasn't been asked to do." : "Most bodies aren't weak. They're under asked."}</h2>
+    <h2>${personal ? "It is less about your age than about what your body has not been asked to do in a while." : "Most bodies are not weak so much as never really asked to do anything."}</h2>
     <p class="muted">${personal && C.dayModules[a.day] ? C.dayModules[a.day] : "Most of us sit too long, rush too much and train in ways we can't keep up. The deep muscles that hold your spine and pelvis quietly switch off, and the creaks start."}</p></div>
     <div class="grid ${bodies.length > 1 ? "g" + Math.min(3, bodies.length) : ""}" style="margin-top:28px">${bodies.map(b => C.bodyModules[b] ? `<div class="card"><h3>${C.bodyModules[b].t}</h3><p style="margin:0" class="muted">${C.bodyModules[b].b}</p></div>` : "").join("")}</div>
   </div></section>`);
 
   { const F = R.frame(packId);
-    sec.push(`<section><div class="narrow"><div class="fact reveal"><b data-count="${F.pct}">${F.pct}%</b><div>Less per session than walking in once we open. That's <b>${F.per}</b> instead of £25, every single time you come.</div></div></div></section>`); }
+    sec.push(`<section><div class="narrow"><div class="fact reveal"><b>${F.per}</b><div>That is what a class costs you on this pack. From opening day a single class is £25, and that is what you would pay every time you came.</div></div></div></section>`); }
   sec.push(`<section class="band-deep" style="padding:0"><div class="split flush"><div>${R.img("concept-studio-pc", "", true)}</div><div style="padding:clamp(40px,7vw,80px) 20px">
     <p class="eyebrow" style="color:#F3E2C2">Why Reformer works</p>
     <h2>A bed on rails, a set of springs, and nowhere to hide.</h2>
     <p>You push the carriage out and control it back. Muscles work on the way out and on the way back, so there's no momentum to cheat with. Because the bed moves, your body stabilises itself the entire time.</p>
     <p>The springs can help you or fight you. So total beginners and athletes use the same machine, on different settings.</p>
-    <div class="grid" style="margin-top:22px"><div style="border-top:1px solid rgba(255,255,255,.2);padding-top:14px"><div class="caps" style="color:#F3E2C2">The Twice a Week Standard</div><p class="small" style="margin:6px 0 0">The NHS advises strength work on at least two days a week and names Pilates as an example. Twice a week is the dose the trials used.</p></div>
-    <div style="border-top:1px solid rgba(255,255,255,.2);padding-top:14px"><div class="caps" style="color:#F3E2C2">The Reeformer Loop</div><p class="small" style="margin:6px 0 0">Learn it with a teacher. Own it on the screen. Come back stronger.</p></div></div>
+    <div class="grid" style="margin-top:22px"><div style="border-top:1px solid rgba(255,255,255,.2);padding-top:14px"><div class="caps" style="color:#F3E2C2">Why twice a week</div><p class="small" style="margin:6px 0 0">The NHS advises strength work on at least two days a week and names Pilates as an example. Twice a week is the dose the trials used.</p></div>
+    <div style="border-top:1px solid rgba(255,255,255,.2);padding-top:14px"><div class="caps" style="color:#F3E2C2">How it works here</div><p class="small" style="margin:6px 0 0">You learn each move with a teacher, then you own it on your own screen whenever you fancy coming back.</p></div></div>
   </div></div></section>`);
 
   sec.push(`<section><div class="wrap"><div class="narrow center" style="padding:0"><p class="eyebrow">Your first moves</p><h2>Here's what you'll actually do.</h2><p class="muted">Every move has an easier version and a harder one. Your instructor shows you each one.</p></div><div style="margin-top:22px">${R.moves()}</div></div></section>`);
   const sciKeys = [...new Set([...(prof ? prof.science : ["backPain", "core228", "classpass"]), ...(["60s", "70s"].includes(a.age) ? ["balance"] : []), ...(a.barrier === "gym" ? ["gym"] : [])])].slice(0, 4);
   sec.push(`<section><div class="wrap"><div class="narrow center" style="padding:0"><p class="eyebrow">The evidence</p>
     <h2>We printed the studies. Including the one that disagrees with us.</h2>
-    <p class="muted">Every number comes from published research, collected in The Reeformer Pilates Manual.</p></div>
+    <p class="muted">Every number comes from published research, collected in The Reformer Pilates Manual.</p></div>
     <div class="grid ${sciKeys.length > 3 ? "g4" : "g3"}" style="margin-top:28px">${sciKeys.map(k => { const x = C.science[k]; return `<div class="card stat"><b data-count="${parseFloat(x[0]) || ""}">${x[0]}</b><span>${x[1]}</span><div class="src" style="margin-top:8px">${x[2]}</div></div>`; }).join("")}</div>
     <p class="small muted center" style="max-width:640px;margin:22px auto 0"><b style="color:var(--deep)">The honest one:</b> Pilates holds bone, it doesn't build it. A meta analysis of 11 studies in women aged 45 to 78 found bone density barely moved. <span class="src">Fernández Rodríguez et al, PLOS ONE, 2021</span></p>
   </div></section>`);
@@ -129,27 +129,27 @@
     const rate = CFG.memberMonthlyRate, std = CFG.memberStandardRate;
     sec.push(`<section class="band-white"><div class="narrow center"><p class="eyebrow">The part nobody else can buy</p><h2>Your founder rate, locked for a year.</h2>
       <p class="muted">Three months of membership takes you right through the twelve week window where habits form. Then your founder monthly rate is locked for the next 12 months.</p>
-      ${rate ? `<div class="price" style="justify-content:center"><b>${R.money(rate)} a month</b>${std ? `<s>${R.money(std)}</s>` : ""}</div>` : ""}
+      ${rate ? `<div class="price" style="justify-content:center"><b>${R.money(rate)} a month</b>${std ? `<span class="small muted">standard rate ${R.money(std)}</span>` : ""}</div>` : ""}
       <p class="small muted">Once the doors open, this rate is gone for good. 40 places.</p></div></section>`);
   }
   if (packId === "year") {
     sec.push(`<section class="band-white"><div class="narrow"><p class="eyebrow">A letter about your strongest year</p>
       <h2>The one rule about getting fit we were all taught backwards.</h2>
-      <p>We were taught to get fit first, then start. It's backwards. You don't get fit to start. You start to get fit.</p>
-      <p>And the people who change most aren't the ones who start hardest. They're the ones who keep going. Twice a week. Every week. For a year.</p>
-      <p>That's Founding Year. 96 Reformer classes, eight a month for twelve months. Twelve wellness sessions to recover properly. The full reef merch collection. And your name on <b>The Founding 25</b> panel of the Founders Wall on Wyle Cop. A permanent mark that you were here first.</p>
-      <div class="card center" style="margin:26px 0;background:var(--sand)"><div class="caps muted">At prices from opening day</div><div style="font-size:28px;color:var(--muted)"><s>£3,160</s></div>
+      <p>We were all taught to get fit before we start, which is backwards, because you start in order to get fit.</p>
+      <p>And the people who change most over a year are not the ones who go hardest in January. They are the ones still turning up in June.</p>
+      <p>That is what Founding Year is for. Eight classes a month for twelve months, twelve recovery sessions to go with them, the full reef merch collection, and your name on <b>The Founding 25</b> panel of the Founders Wall on Wyle Cop, which stays there.</p>
+      <div class="card center" style="margin:26px 0;background:var(--sand)"><div class="caps muted">At prices from opening day</div><div style="font-size:28px;color:var(--muted)">£3,160</div>
       <div class="caps" style="margin-top:14px;color:var(--gold)">As one of The Founding 25</div><div style="font-family:var(--serif);font-size:46px;color:var(--deep);line-height:1.1">£1,499</div><div class="small muted">paid once · about £125 a month · £15.61 a class</div></div>
       <p>Peak slots, early mornings and evenings, are open to every founder on equal terms. 25 places. When they're gone, this pack never comes back.</p></div></section>`);
   }
 
   { const F = R.frame(packId);
     sec.push(`<section class="band-foam"><div class="narrow center">
-      <p class="eyebrow" style="color:var(--blue)">The maths</p><h2>Less than you think. Much less.</h2>
+      <p class="eyebrow" style="color:var(--blue)">The maths</p><h2>Here is what it actually comes to each week.</h2>
       <div style="max-width:440px;margin:18px auto 0">${R.priceBlock(packId)}</div>
       <p class="muted" style="margin-top:14px">${F.line}</p>
       ${R.reassure()}
-      <button class="btn btn-gold js-buy" type="button" style="margin-top:6px">Claim ${P.name} · ${F.per} a session</button>
+      <button class="btn btn-gold js-buy" type="button" style="margin-top:6px">Start with ${P.name}, ${R.money(P.price)}</button>
     </div></section>`); }
   const bm = C.barrierModules[a.barrier];
   sec.push(`<section><div class="narrow">
@@ -159,8 +159,8 @@
   </div></section>`);
 
   sec.push(`<section class="hero-img" style="min-height:min(70vh,620px)"><img src="assets/img/concept-coffee.jpg" alt="Concept visual of the reef coffee bar"><div class="in">
-    <p class="eyebrow">55 to 57 Wyle Cop · Concept visual</p><h2 style="color:#fff">Warm, quiet, and built to be stayed in.</h2>
-    <p>The first thing you meet at reef is a coffee bar, not a mirror. The Reformers are further in. That order is deliberate.</p></div></section>`);
+    <p class="eyebrow">57 Wyle Cop · Concept visual</p><h2 style="color:#fff">Warm, quiet, and built to be stayed in.</h2>
+    <p>The first thing you meet at reef is a coffee bar, not a mirror, and the Reformers are further in. We did that on purpose.</p></div></section>`);
 
   sec.push(`<section class="band-white"><div class="narrow center"><p class="eyebrow">A note from us</p><h2>Why we're building reef.</h2>
     <p>We're a family building reef on Wyle Cop for one reason. We want Shrewsbury and Shropshire healthy in every way.</p>
@@ -169,15 +169,15 @@
 
   const others = C.order.slice().reverse().filter(id => id !== packId);
   sec.push(`<section><div class="wrap"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap"><h2 style="margin:0">You may also like</h2><a class="link" href="packs.html${q}">Shop all packs</a></div>
-    <div class="grid g3" style="margin-top:24px">${others.map(id => { const X = C.packs[id]; return `<a class="pcard" href="${X.file}${q}">${R.img(X.imgs[0], "", false)}<div class="pc-b"><span class="badge ${rec && rec.pack === id ? "blue" : ""}">${rec && rec.pack === id ? "Matched to you" : X.badge}</span><div class="caps" style="margin-top:10px;color:var(--deep)">${X.name}</div><div class="small muted">${X.classes} Reformer classes</div><div style="margin-top:6px"><b style="font-size:20px">${R.money(X.perClass)}</b> <span class="small muted">a session · ${R.money(X.price)}</span></div></div></a>`; }).join("")}</div></div></section>`);
+    <div class="grid g3" style="margin-top:24px">${others.map(id => { const X = C.packs[id]; return `<a class="pcard" href="${X.file}${q}">${R.img(X.imgs[0], "", false)}<div class="pc-b"><span class="badge ${rec && rec.pack === id ? "blue" : ""}">${rec && rec.pack === id ? "Matched to you" : X.badge}</span><div class="caps" style="margin-top:10px;color:var(--deep)">${X.name}</div><div class="small muted">${X.classes} Reformer classes</div><div style="margin-top:6px"><b style="font-size:20px">${R.money(X.perClass)}</b> <span class="small muted">a class · ${R.money(X.price)}</span></div></div></a>`; }).join("")}</div></div></section>`);
 
   const down = P.down ? C.packs[P.down] : null;
   sec.push(`<section class="band-sand"><div class="narrow center">
     <img src="assets/logo/reef-mark-gold.png" alt="" width="64" height="67" style="margin:0 auto 14px">
-    <h2>Zero risk${N ? ", " + N : ""}. Fully protected.</h2>
+    <h2>${N ? N + ", what" : "What"} happens if you change your mind.</h2>
     <div style="text-align:left;margin:18px 0">${R.guarantee()}</div>
     <p class="muted">Founder prices end the day we open, ${R.esc(CFG.openingDateText)}. ${R.placesShort(packId)} at this price.</p>
-    <button class="btn btn-gold btn-block js-buy pulse" type="button" style="max-width:420px;margin:18px auto 0">Claim ${P.name} · ${R.money(P.perClass)} a session</button>
+    <button class="btn btn-gold btn-block js-buy pulse" type="button" style="max-width:420px;margin:18px auto 0">Start with ${P.name}, ${R.money(P.price)}</button>
     ${down ? `<p style="margin-top:18px"><a href="${down.file}${q}">Not ready? Start with ${down.name} for ${R.money(down.price)}</a></p>` : ""}
   </div></section>`);
 
@@ -191,7 +191,7 @@
 
   /* sticky add to bag */
   const st = document.createElement("div"); st.className = "sticky";
-  st.innerHTML = `<div class="p"><b>${R.money(P.perClass)} a session</b>${P.name} · ${R.money(P.price)} · 🛡️ ${CFG.refundDays} day refund</div><button class="btn btn-gold js-buy" type="button">Claim my place</button>`;
+  st.innerHTML = `<div class="p"><b>${R.money(P.perClass)} a class</b>${P.name} · ${R.money(P.price)} · 🛡️ ${CFG.refundDays} day refund</div><button class="btn btn-gold js-buy" type="button">Claim my place</button>`;
   document.body.appendChild(st);
   const firstBuy = R.$(".buy .js-buy");
   addEventListener("scroll", () => { const r = firstBuy.getBoundingClientRect(); st.classList.toggle("show", r.bottom < 0); }, { passive: true });
@@ -217,7 +217,7 @@
       R.$("#d-yes").onclick = () => { close(); R.addToBag(down.id); };
     } else {
       open(`<span class="badge">Before you go</span><h2 style="font-size:26px;margin-top:14px">Got a question first${N ? ", " + N : ""}?</h2>
-        <p>Most people know after the third class whether Reformer is for them. Five classes for £99, a ${CFG.refundDays} day refund window, and credits that don't start until opening day.</p>
+        <p>Five classes is enough to know whether Reformer is for you. £99, your usual ${CFG.refundDays} days to change your mind, and credits that do not start until opening day.</p>
         <button class="btn btn-primary btn-block" id="d-yes" type="button">Add Founder 5 to bag</button>
         ${R.callHtml() ? `<div style="margin-top:10px">${R.callHtml("Ask Ricky a question")}</div>` : ""}`);
       R.$("#d-yes").onclick = () => { close(); R.addToBag("founder5"); };

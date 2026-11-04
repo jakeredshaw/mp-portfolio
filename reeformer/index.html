@@ -1,12 +1,13 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <!doctype html>
 <html lang="en-GB">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Your Reformer Plan · reef</title>
-<meta name="description" content="Answer a few quick questions and get your personal Reformer Pilates plan, plus the founder pack that fits. reef opens in January 2027 on Wyle Cop, Shrewsbury.">
-<meta property="og:title" content="How long have you been about to start Reformer?">
-<meta property="og:description" content="Two minutes. Your personal Reformer plan and founder price. reef, Wyle Cop, Shrewsbury.">
+<meta name="description" content="A free two minute quiz. Find your Pilates type, get a twelve week Reformer plan and see the founder place that fits. reef opens in January 2027 on Wyle Cop, Shrewsbury.">
+<meta property="og:title" content="Find your Pilates type · reef, Shrewsbury">
+<meta property="og:description" content="A free two minute quiz that tells you where to start with Reformer Pilates, and what it costs. reef, Wyle Cop, Shrewsbury.">
 <meta property="og:image" content="assets/logo/reef-lockup-stacked-gold.png">
 <meta name="theme-color" content="#FAF6E8">
 <link rel="icon" href="assets/logo/reef-mark-gold.png">
@@ -15,9 +16,6 @@
 <link rel="stylesheet" href="assets/reef.css">
 <style>
   body{min-height:100dvh;display:flex;flex-direction:column}
-  .qtop{display:flex;align-items:center;gap:12px;padding:12px 16px;max-width:680px;margin:0 auto;width:100%}
-  .qtop img{height:42px;width:auto}
-  .qtop .back{margin-left:auto;background:none;border:0;color:var(--muted);font-size:14px;padding:8px;visibility:hidden}
   .prog{max-width:680px;margin:0 auto;width:calc(100% - 32px);height:8px;border-radius:99px;background:rgba(228,217,200,.7);overflow:hidden}
   .prog i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#d4a35c,var(--gold),#1F7A99);transition:width .55s cubic-bezier(.2,.7,.2,1)}
   .progtxt{max-width:680px;margin:6px auto 0;width:calc(100% - 32px);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
@@ -95,12 +93,160 @@
     .alt{display:grid;gap:10px;margin-top:14px}
   .alt a{display:flex;justify-content:space-between;gap:10px;background:var(--glass);border:1px solid var(--glass-line);border-radius:16px;padding:14px 16px;text-decoration:none;color:var(--ink);font-size:14.5px}
   .alt a b{color:var(--deep)}
+  /* ---------- quiz shell: one question, one screen, nothing else ---------- */
+  .qbar{width:100%}
+  body.inquiz .ribbon{display:none}
+  body.inquiz .qbar{position:sticky;top:0;z-index:30;background:rgba(250,246,232,.92);backdrop-filter:blur(14px);
+    border-bottom:1px solid rgba(228,217,200,.7);padding-bottom:8px}
+  .qtop{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;padding:12px 14px;max-width:680px;margin:0 auto;width:100%}
+  .qtop img{height:40px;width:auto;grid-column:2;margin:0 auto}
+  body.inquiz .qtop{padding:9px 12px 7px}
+  body.inquiz .qtop img{height:28px}
+  .qtop .back{grid-column:1;justify-self:start;display:inline-flex;align-items:center;gap:3px;background:none;border:0;
+    color:var(--muted);font-size:14px;min-height:48px;min-width:52px;padding:0 12px;margin:-6px 0 -6px -8px;visibility:hidden;border-radius:14px}
+  .qtop .back svg{width:19px;height:19px}
+  .qtop .back:active{background:rgba(15,59,76,.07)}
+  .qstep{grid-column:3;justify-self:end;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+  @media(max-width:400px){.qtop .back span{display:none}}
+
+  body.inquiz main{display:flex;flex-direction:column;justify-content:safe center}
+  /* a transform on .screen would make it the containing block for the fixed button bar, so fade only */
+  body.inquiz .screen{animation:fadeonly .28s ease}
+  @keyframes fadeonly{from{opacity:0}to{opacity:1}}
+  body.inquiz .screen{display:flex;flex-direction:column;width:100%;padding:20px 16px 20px;min-height:0}
+  body.inquiz .q{font-size:clamp(23px,5.4vw,33px);margin:2px 0 6px;line-height:1.2;text-wrap:balance}
+  body.inquiz .help{margin:0 0 4px;font-size:14.5px}
+  .opts{gap:clamp(7px,1.3vh,11px);margin-top:clamp(12px,2.4vh,20px)}
+  .opt{min-height:clamp(52px,7.4vh,62px);padding:13px 16px;font-size:16px;position:relative}
+  .opt>span:not(.ic):not(.bx){flex:1;min-width:0}
+  .opts.n6 .opt,.opts.n7 .opt{min-height:clamp(48px,6.6vh,58px);padding:11px 15px;font-size:15.5px}
+  .opts.n6 .opt .ic,.opts.n7 .opt .ic{font-size:19px;width:24px}
+
+  .cta-row.stick{position:fixed;left:0;right:0;bottom:0;z-index:25;width:100%;max-width:680px;margin:0 auto;
+    padding:18px 16px calc(12px + env(safe-area-inset-bottom));
+    background:linear-gradient(to top,var(--shell) 62%,rgba(250,246,232,.86) 86%,rgba(250,246,232,0))}
+  body.inquiz .screen:has(.cta-row.stick){padding-bottom:104px}
+  .cta-row.stick .btn:not(.ready){opacity:.45;pointer-events:none}
+  .tapnote{text-align:center;color:var(--muted);font-size:13px;margin:22px 0 0}
+  .scale{gap:clamp(6px,1.6vw,10px);margin-top:clamp(18px,3vh,26px)}
+  .scale button{min-height:60px;font-size:26px}
+  @media (hover:none){.scale button:hover:not(.sel){border-color:var(--glass-line);background:var(--glass-strong)}
+    .opt:hover:not(.sel){border-color:var(--glass-line)}}
+  .scale-l{font-size:12.5px;gap:10px}
+  .chk-big{align-items:center;background:var(--glass);border:1.5px solid var(--glass-line);border-radius:16px;
+    padding:14px 16px;margin:18px 0 0;font-size:14.5px;color:var(--ink);min-height:56px}
+  .chk-big input{width:22px;height:22px;margin:0}
+  #phwrap{animation:fade .25s ease}
+  .cta-row.stick .cap-legal{margin:10px 0 0;font-size:11.5px;line-height:1.45;color:var(--muted);text-align:center}
+  @media (max-height:740px){
+    body.inquiz .screen{padding-top:14px}
+    body.inquiz .q{font-size:clamp(21px,5vw,27px)}
+    body.inquiz .hook .hb{padding:13px 16px}
+    body.inquiz .hf{padding:9px 13px}
+    body.inquiz .hf span{font-size:13.5px}
+    body.inquiz .hook h2{font-size:21px}
+    body.inquiz .hook .hl{font-size:13.5px}
+    .cap-card{padding:10px 16px}
+    .cap-card .ticks li{padding-top:3px;padding-bottom:3px}
+    .chk-big{margin-top:12px;min-height:50px;padding:11px 14px}
+    body.inquiz .hfacts .hf:nth-child(n+3){display:none}
+    body.inquiz .screen:has(.cta-row.stick){padding-bottom:126px}
+    .cta-row.stick{padding:12px 16px calc(10px + env(safe-area-inset-bottom))}
+  }
+
+  body.inquiz .hook{margin-top:2px}
+  body.inquiz .hook .hb{padding:clamp(15px,2.4vh,24px) 18px}
+  body.inquiz .hook h2{font-size:clamp(21px,5vw,29px);line-height:1.2}
+  body.inquiz .hook .hl{font-size:14.5px}
+  body.inquiz .hfacts{gap:clamp(7px,1.2vh,10px);margin-top:clamp(11px,2vh,16px)}
+  body.inquiz .hf{padding:clamp(10px,1.7vh,14px) 14px}
+  body.inquiz .hf span{font-size:14px}
+  body.inquiz .hq{margin-top:clamp(10px,1.7vh,14px);padding:13px}
+  body.inquiz .cta-row{margin-top:clamp(14px,2.4vh,22px)}
+  .cap-card{padding:14px 18px;margin-bottom:4px}
+  .cap-card .ticks li{padding-top:5px;padding-bottom:5px}
+  .cap-legal{margin-top:12px;font-size:12px;line-height:1.5}
+  /* ---------- result: you, then the price, straight away ---------- */
+  .res-hd .emo{font-size:46px;line-height:1}
+  .res-name{font-size:clamp(27px,6.4vw,42px);margin:4px 0 10px;line-height:1.14}
+  .res-line{font-size:17.5px;color:var(--deep);margin:0}
+  .res-you{margin-top:18px}
+  .res-you .res-why{margin:14px 0 0}
+  .res-obj{margin-top:14px;border:1.5px solid rgba(179,134,66,.45)}
+  .res-obj h3{margin:2px 0 8px;font-size:20px}
+  .res-obj p{margin:0}
+
+  .pickzone{margin-top:34px;padding:26px 18px 24px;border-radius:30px;
+    background:linear-gradient(170deg,rgba(255,251,241,.96),rgba(234,243,244,.72));
+    border:1.5px solid rgba(179,134,66,.3);box-shadow:0 30px 60px -30px rgba(15,59,76,.4)}
+  .pick-h{font-size:clamp(24px,5.6vw,34px);margin:2px 0 8px;line-height:1.15}
+  .pick-sub{color:var(--muted);margin:0 0 20px;font-size:15px}
+
+  .pickcard{background:#fff;border:1.5px solid var(--line);border-radius:24px;padding:22px 20px 20px;
+    box-shadow:0 18px 44px -24px rgba(15,59,76,.45);position:relative}
+  .pickcard.is-match{border-color:var(--gold);box-shadow:0 22px 50px -22px rgba(179,134,66,.55)}
+  .pc-badge{margin-bottom:12px}
+  .pc-name{font-size:25px;margin:0 0 4px}
+  .pc-tag{margin:0 0 16px;color:var(--muted);font-size:14.5px}
+  .pc-money{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:16px 0}
+  .pc-per{display:flex;align-items:baseline;gap:9px}
+  .pc-per b{font-family:var(--sans);font-weight:800;font-size:clamp(46px,13vw,62px);line-height:.95;color:var(--deep);letter-spacing:-.02em}
+  .pc-per span{font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+  .pc-off{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px}
+  .pc-off s{color:var(--muted);font-size:13.5px}
+  .pc-total{margin-top:12px;font-size:16px;color:var(--ink)}
+  .pc-total b{font-size:19px;color:var(--deep)}
+  .pc-total s{color:var(--muted);font-size:14px}
+  .pc-line{margin:10px 0 0;font-size:14.5px;color:var(--muted)}
+  .pc-line b{color:var(--deep)}
+  .pc-why{margin:16px 0 18px!important}
+  .pc-why li{font-size:14px;padding-top:5px;padding-bottom:5px}
+  .pc-re{margin:12px 0 0;font-size:12.5px;color:var(--muted);text-align:center;line-height:1.5}
+  .pc-more{display:block;text-align:center;margin-top:10px;padding:13px 8px;min-height:46px;font-size:13.5px;color:var(--deep);text-decoration:underline;text-underline-offset:3px}
+
+  .size-lab{margin:22px 0 10px;font-size:13px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);text-align:center}
+  .sizes{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  @media(min-width:620px){.sizes{grid-template-columns:repeat(4,1fr)}}
+  .size{position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;padding:18px 8px 13px;
+    border:1.5px solid var(--glass-line);border-radius:18px;background:rgba(255,255,255,.72);min-height:104px;
+    line-height:1.2;transition:border-color .15s,background .15s,transform .12s}
+  .size:active{transform:scale(.98)}
+  .size b{font-family:var(--sans);font-weight:800;font-size:21px;color:var(--deep)}
+  .size span{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .size em{font-style:normal;font-size:12.5px;font-weight:600;color:var(--ink);margin-top:4px}
+  .size i{font-style:normal;font-size:11.5px;color:var(--muted)}
+  .size.on{border-color:var(--gold);background:#fff;box-shadow:0 10px 26px -14px rgba(179,134,66,.7)}
+  .size-tag{position:absolute;top:-10px;left:50%;transform:translateX(-50%);white-space:nowrap;
+    background:var(--gold);color:#fff;font-size:8.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;border-radius:99px}
+  .size-tag.alt{background:var(--deep)}
+  .pick-guar{margin-top:20px}
+
+  .planzone{margin-top:38px}
+  .planzone .eyebrow{margin-bottom:4px}
+  .cmp{display:grid;gap:10px;margin-top:18px}
+  .res .center a{display:inline-block;padding:13px 10px;min-height:46px}
+  .cmp-row{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:16px 18px;
+    border:1.5px solid var(--glass-line);border-radius:20px;background:var(--glass-strong);
+    box-shadow:0 8px 24px -16px rgba(15,59,76,.35);transition:border-color .15s,transform .12s}
+  .cmp-row:active{transform:scale(.995)}
+  .cmp-row:hover{border-color:var(--stone)}
+  .cr-n{flex:1;min-width:0;font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--deep)}
+  .cr-n em{display:block;font-style:normal;font-size:12.5px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--muted);margin-top:4px;line-height:1.4}
+  .cr-p{flex:none;text-align:right;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .cr-p b{display:block;font-size:22px;font-weight:800;letter-spacing:-.01em;text-transform:none;color:var(--deep);line-height:1.1}
+  .cr-p i{display:block;font-style:normal;font-size:11px;letter-spacing:0;text-transform:none;margin-top:3px}
 </style>
 </head>
 <body>
-<div id="tb"></div><div class="ribbon">Founder places are open · <b>205 in total</b> · Prices end on opening day</div>
-<header class="qtop" id="qtop"><img src="assets/logo/reef-lockup-horizontal-gold.png" alt="Reeformer Pilates" width="100" height="40"><button class="back" id="back" type="button">Back</button></header>
-<div id="progwrap" class="hide"><div class="prog"><i id="prog"></i></div><div class="progtxt" id="progtxt"></div></div>
+<div id="tb"></div><div class="ribbon" id="ribbon">Founder places are open · Prices end on opening day</div>
+<div class="qbar" id="qbar">
+  <header class="qtop" id="qtop">
+    <button class="back" id="back" type="button" aria-label="Go back one question"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg><span>Back</span></button>
+    <img src="assets/logo/reef-lockup-horizontal-gold.png" alt="reef" width="100" height="40">
+    <span class="qstep" id="qstep" aria-hidden="true"></span>
+  </header>
+  <div id="progwrap" class="hide"><div class="prog"><i id="prog"></i></div></div>
+</div>
 <main id="app"></main>
 <style>.hero-img .in h1{font-size:clamp(32px,7vw,56px)}</style>
 <div id="foot"></div>
@@ -121,13 +267,15 @@
   const qCount = steps.filter(s => !["hook","capture"].includes(s.type)).length;
 
   function setProgress(){
-    const wrap = R.$("#progwrap"), back = R.$("#back");
-    if (idx < 0) { wrap.classList.add("hide"); back.style.visibility = "hidden"; return; }
+    const wrap = R.$("#progwrap"), back = R.$("#back"), step = R.$("#qstep");
+    const inQuiz = idx >= 0 && steps[idx] && !["capture", "hook"].includes(steps[idx].type);
+    document.body.classList.toggle("inquiz", idx >= 0);
+    if (idx < 0) { wrap.classList.add("hide"); back.style.visibility = "hidden"; step.textContent = ""; return; }
     wrap.classList.remove("hide"); back.style.visibility = hist.length ? "visible" : "hidden";
     const done = steps.slice(0, idx).filter(s => !["hook","capture"].includes(s.type)).length;
     const pct = Math.round(8 + (done / qCount) * 92);
     R.$("#prog").style.width = Math.min(100, pct) + "%";
-    R.$("#progtxt").textContent = pct >= 100 ? "Your plan is ready" : "Your plan is " + pct + "% built";
+    step.textContent = steps[idx].type === "capture" ? "" : (inQuiz ? (done + 1) : done) + " of " + qCount;
   }
   function go(i, push){ if (push !== false && idx >= 0) hist.push(idx); idx = i; render(); window.scrollTo({top:0,behavior:"smooth"}); }
   function next(){ go(idx + 1); }
@@ -137,11 +285,11 @@
   function hero(){
     R.$("#foot").innerHTML = R.footer();
     app.innerHTML = `<section class="hero-img" style="min-height:min(78svh,660px)"><img src="assets/img/concept-studio.jpg" alt="Concept visual of the reef Reformer studio"><div class="in">
-      <p class="eyebrow">Free Reformer plan · Takes 2 minutes</p>
-      <h1>How long have you been <em style="color:var(--gold-soft)">about to start</em> Reformer?</h1>
-      <p style="font-size:16px;opacity:.95;max-width:46ch;margin:0 auto 22px">Answer ${qCount} quick questions. Get your personal Reformer plan and the founder pack that fits you best.</p>
-      <button class="btn btn-light btn-block" id="start" type="button" style="max-width:420px;margin:0 auto">Build my Reformer plan</button>
-      <p class="small" style="margin:14px 0 0;opacity:.85">Concept visual · 55 to 57 Wyle Cop, Shrewsbury</p></div></section>
+      <p class="eyebrow">Free quiz · About two minutes</p>
+      <h1>Find your <em style="color:var(--gold-soft)">Pilates type</em>.</h1>
+      <p style="font-size:16px;opacity:.95;max-width:46ch;margin:0 auto 22px">${qCount} easy questions about your body and your week, and we will show you where to start, how often to come, and what it costs.</p>
+      <button class="btn btn-light btn-block" id="start" type="button" style="max-width:420px;margin:0 auto">Find my Pilates type</button>
+      <p class="small" style="margin:14px 0 0;opacity:.85">Concept visual · 57 Wyle Cop, Shrewsbury</p></div></section>
       ${R.ticker()}
       <section class="hero" style="padding-top:28px">
       ${state.leadAt && state.answers && state.answers.ready ? `<div class="card" style="margin-bottom:18px;text-align:left"><p class="eyebrow" style="margin-bottom:6px">Welcome back${R.first(state.answers) ? ", " + R.esc(R.first(state.answers)) : ""}</p><p style="margin:0 0 12px">Your Reformer plan is saved.</p><div style="display:grid;gap:8px"><button class="btn btn-primary btn-block" id="seePlan" type="button">See my plan</button><button class="btn btn-ghost btn-block" id="redo" type="button">Start the quiz again</button></div></div>` : ""}
@@ -149,8 +297,8 @@
       ${R.vsl("quiz")}
       <div style="height:18px"></div>
       ${R.reassure()}
-      <div class="htrust"><div><b>10+</b>Reformer beds on Wyle Cop</div><div><b>7 to 10</b>Open early and late, every day</div><div><b>800+</b>Guided sessions on your own screen</div></div>
-      <p class="small muted" style="margin-top:22px">The first full Reformer studio inside Shrewsbury town centre. Opening ${R.esc(CFG.openingDateText)}.</p>
+      <div class="htrust"><div><b>9</b>Reformer beds on Wyle Cop</div><div><b>5am</b>to 10pm, every single day</div><div><b>800+</b>Guided sessions on your own screen</div></div>
+      <p class="small muted" style="margin-top:22px">A Reformer studio in the middle of Shrewsbury, opening ${R.esc(CFG.openingDateText)}.</p>
     </section>`;
     R.animate();
     const fresh = () => { const utm = state.utm; state = { answers: {}, utm }; R.save(state); };
@@ -169,18 +317,19 @@
     const a = A();
     if (st.type === "hook") {
       const hk = C.hooks[st.id](a);
-      const facts = (hk.facts || []).map((f, i) => `<div class="hf" style="animation-delay:${150 + i * 180}ms"><b>${R.esc(f[0])}</b><span>${R.esc(f[1])}</span>${f[2] ? `<em class="src">${R.esc(f[2])}</em>` : ""}</div>`).join("");
+      const facts = (hk.facts || []).slice(0, hk.quiz ? 1 : 3).map((f, i) => `<div class="hf" style="animation-delay:${150 + i * 180}ms"><b>${R.esc(f[0])}</b><span>${R.esc(f[1])}</span>${f[2] ? `<em class="src">${R.esc(f[2])}</em>` : ""}</div>`).join("");
       const qz = hk.quiz ? `<div class="hq"><p class="hq-q">${R.esc(hk.quiz.q)}</p><div class="hq-opts">${hk.quiz.opts.map(o => `<button type="button" class="hq-o" data-o="${R.esc(o)}">${R.esc(o)}</button>`).join("")}</div><p class="hq-r" hidden>${R.esc(hk.quiz.reveal)}</p></div>` : "";
       app.innerHTML = `<div class="screen"><div class="hook"><div class="hb">
         <p class="eyebrow">${R.fill(hk.kicker, a)}</p><h2>${R.fill(hk.title, a)}</h2>${hk.line ? `<p class="hl">${R.fill(hk.line, a)}</p>` : ""}
         <div class="hfacts">${facts}</div>${qz}
-      </div></div><div class="cta-row"><button class="btn btn-gold btn-block" id="nx" type="button">Keep going</button></div></div>`;
+      </div></div><div class="cta-row stick"><button class="btn btn-gold btn-block ready" id="nx" type="button">Keep going</button></div></div>`;
       app.querySelectorAll(".hq-o").forEach(b => b.onclick = () => {
         const ok = b.dataset.o === hk.quiz.answer;
         app.querySelectorAll(".hq-o").forEach(x => { x.disabled = true; x.classList.toggle("right", x.dataset.o === hk.quiz.answer); });
         if (!ok) b.classList.add("wrong");
         const r = app.querySelector(".hq-r"); r.hidden = false; r.textContent = (ok ? "Spot on! " : "Not quite. ") + hk.quiz.reveal;
         R.$("#nx").classList.add("pulse"); R.track("QuizGuess", { right: ok }, true);
+        requestAnimationFrame(() => r.scrollIntoView({ behavior: "smooth", block: "center" }));
       });
       R.$("#nx").onclick = next; return;
     }
@@ -197,7 +346,7 @@
     const OPTS = st.optsFor ? st.optsFor(a) : st.opts;
     if (st.type === "single") {
       app.innerHTML = `<div class="screen">${ib}<h2 class="q">${R.fill(Q, a)}</h2>${st.help ? `<p class="help">${st.help}</p>` : ""}
-        <div class="opts">${OPTS.map(o => `<button class="opt ${a[st.id] === o[0] ? "sel" : ""}" data-v="${o[0]}" type="button">${o[2] ? `<span class="ic">${o[2]}</span>` : ""}<span>${o[1]}</span></button>`).join("")}</div></div>`;
+        <div class="opts n${OPTS.length}">${OPTS.map(o => `<button class="opt ${a[st.id] === o[0] ? "sel" : ""}" data-v="${o[0]}" type="button">${o[2] ? `<span class="ic">${o[2]}</span>` : ""}<span>${o[1]}</span></button>`).join("")}</div></div>`;
       app.querySelectorAll(".opt").forEach(b => b.onclick = () => {
         app.querySelectorAll(".opt").forEach(x => x.classList.remove("sel")); b.classList.add("sel");
         a[st.id] = b.dataset.v; save(); R.track("QuizAnswer", { q: st.id, a: b.dataset.v }, true); setTimeout(next, 220);
@@ -206,19 +355,25 @@
     if (st.type === "multi") {
       const sel = new Set(a[st.id] || []);
       app.innerHTML = `<div class="screen"><h2 class="q">${R.fill(st.q, a)}</h2>${st.help ? `<p class="help">${st.help}</p>` : ""}
-        <div class="opts">${st.opts.map(o => `<button class="opt ${sel.has(o[0]) ? "sel" : ""}" data-v="${o[0]}" type="button"><span class="bx"></span><span>${o[1]}</span></button>`).join("")}</div>
-        <div class="err" id="er"></div><div class="cta-row"><button class="btn btn-primary btn-block" id="nx" type="button">Continue</button></div></div>`;
+        <div class="opts n${st.opts.length}">${st.opts.map(o => `<button class="opt ${sel.has(o[0]) ? "sel" : ""}" data-v="${o[0]}" type="button"><span class="bx"></span><span>${o[1]}</span></button>`).join("")}</div>
+        <div class="err" id="er"></div><div class="cta-row stick"><button class="btn btn-primary btn-block" id="nx" type="button">Continue</button></div></div>`;
       app.querySelectorAll(".opt").forEach(b => b.onclick = () => {
         const v = b.dataset.v;
         if (v === "none") { sel.clear(); sel.add("none"); } else { sel.delete("none"); sel.has(v) ? sel.delete(v) : sel.add(v); }
         app.querySelectorAll(".opt").forEach(x => x.classList.toggle("sel", sel.has(x.dataset.v)));
+        const btn = R.$("#nx"); R.$("#er").textContent = "";
+        btn.textContent = sel.size ? "Continue" : "Pick at least one";
+        btn.classList.toggle("ready", !!sel.size);
       });
+      R.$("#nx").classList.toggle("ready", !!sel.size);
+      if (sel.size) R.$("#nx").textContent = "Continue";
       R.$("#nx").onclick = () => { if (!sel.size) { R.$("#er").textContent = "Choose at least one."; return; } a[st.id] = [...sel]; save(); next(); }; return;
     }
     if (st.type === "scale") {
       app.innerHTML = `<div class="screen"><h2 class="q">${R.fill(st.q, a)}</h2>${st.help ? `<p class="help">${st.help}</p>` : ""}
-        <div class="scale">${[1,2,3,4,5].map(v => `<button class="${+a[st.id] === v ? "sel" : ""}" data-v="${v}" type="button">${v}</button>`).join("")}</div>
-        <div class="scale-l"><span>${st.lo}</span><span>${st.hi}</span></div></div>`;
+        <div class="scale">${[1,2,3,4,5].map(v => `<button class="${+a[st.id] === v ? "sel" : ""}" data-v="${v}" type="button" aria-label="${v} out of 5">${v}</button>`).join("")}</div>
+        <div class="scale-l"><span>1 is ${st.lo.toLowerCase()}</span><span>5 is ${st.hi.toLowerCase()}</span></div>
+        <p class="tapnote">Tap a number and we move on.</p></div>`;
       app.querySelectorAll(".scale button").forEach(b => b.onclick = () => { a[st.id] = b.dataset.v; save(); b.classList.add("sel"); setTimeout(next, 220); }); return;
     }
     if (st.type === "capture") return capture();
@@ -231,26 +386,27 @@
     app.innerHTML = `<div class="screen">
       <p class="eyebrow">All done${n ? ", " + R.esc(n) : ""}</p>
       <h2 class="q">Your Reformer plan is ready.</h2>
-      <p class="help">We've matched your answers to a profile, a twelve week plan and the founder pack that fits. Where should we send it?</p>
-      <div class="card" style="padding:16px 18px;margin-bottom:6px"><ul class="ticks" style="margin:0">
-        <li>Your Reformer profile and what it means for your body</li>
-        <li>Your twelve week plan, built on the Twice a Week Standard</li>
-        <li>Your matched founder pack and price, held while places last</li></ul></div>
-      <label class="f" for="em">Email address</label>
+      <p class="help">Tell us where to send it.</p>
+      <div class="card cap-card"><ul class="ticks" style="margin:0">
+        <li>What is actually going on with your body</li>
+        <li>Your first twelve weeks, week by week</li>
+        <li>The founder place that fits, and what it costs</li></ul></div>
+      <label class="f" for="em">Your email address</label>
       <input type="email" id="em" autocomplete="email" inputmode="email" placeholder="you@example.com" value="${R.esc(state.email || "")}">
-      <label class="f" for="ph">Mobile <span class="muted">(optional, so we can text you if places run low)</span></label>
-      <input type="tel" id="ph" autocomplete="tel" inputmode="tel" placeholder="07..." value="${R.esc(state.phone || "")}">
-      <label class="chk"><input type="checkbox" id="sms"> Yes, text me founder updates. Reply STOP any time.</label>
+      <label class="chk chk-big"><input type="checkbox" id="sms"${state.sms ? " checked" : ""}> <span>Text me if places run low</span></label>
+      <div id="phwrap"${state.sms ? "" : " hidden"}><label class="f" for="ph">Mobile number</label>
+      <input type="tel" id="ph" autocomplete="tel" inputmode="tel" placeholder="07700 900123" value="${R.esc(state.phone || "")}"></div>
       <div class="err" id="er"></div>
-      <div class="cta-row"><button class="btn btn-gold btn-block" id="nx" type="button">Show me my plan</button></div>
-      <p class="small muted center" style="margin-top:12px">🔒 We'll email your plan and founder updates from reef. You can unsubscribe in one click, and we will never share your details.</p>
+      <div class="cta-row stick"><button class="btn btn-gold btn-block ready" id="nx" type="button">Show me my plan</button>
+      <p class="cap-legal">We will email your plan and our founder news, you can unsubscribe in one click, and we never pass your details to anyone.</p></div>
     </div>`;
-    R.$("#em").focus();
+    R.$("#sms").onchange = (e) => { R.$("#phwrap").hidden = !e.target.checked; R.$("#er").textContent = ""; if (e.target.checked) setTimeout(() => R.$("#ph").focus(), 60); };
     R.$("#nx").onclick = async () => {
-      const em = R.$("#em").value.trim(), ph = R.$("#ph").value.trim();
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)) { R.$("#er").textContent = "Please check your email address."; return; }
-      if (ph && ph.replace(/\D/g, "").length < 10) { R.$("#er").textContent = "That mobile number looks a little short."; return; }
-      state.email = em; state.phone = ph; state.sms = R.$("#sms").checked; state.leadAt = Date.now(); save();
+      const em = R.$("#em").value.trim(), sms = R.$("#sms").checked, ph = sms ? R.$("#ph").value.trim() : "";
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)) { R.$("#er").textContent = "Please check your email address."; R.$("#em").focus(); return; }
+      if (sms && !ph) { R.$("#er").textContent = "Pop your mobile in, or untick the box to skip it."; R.$("#ph").focus(); return; }
+      if (sms && ph.replace(/\D/g, "").length < 10) { R.$("#er").textContent = "That mobile number looks a little short."; R.$("#ph").focus(); return; }
+      state.email = em; state.phone = ph; state.sms = sms; state.leadAt = Date.now(); save();
       R.track("Lead", { content_name: C.packs[state.pack].name, value: C.packs[state.pack].price, currency: "GBP" });
       R.sendLead(state);
       analysing();
@@ -258,19 +414,25 @@
   }
 
   function analysing(){
+    document.body.classList.remove("inquiz");
     R.$("#progwrap").classList.add("hide"); R.$("#back").style.visibility = "hidden";
+    R.$("#qstep").textContent = "";
     const a = A();
-    const lines = ["Reading your answers", "Matching your goals to the research", "Building your twelve week plan", "Checking founder places for you"];
+    const lines = ["Reading what you told us", "Lining it up against the research", "Working out your twelve weeks", "Finding the pack that fits"];
     app.innerHTML = `<div class="screen anal"><div class="ring"></div><h2 class="q">Building your plan, ${R.esc(R.first(a) || "friend")}…</h2><ul class="steps">${lines.map(l => `<li>${l}</li>`).join("")}</ul></div>`;
     const li = app.querySelectorAll(".steps li");
-    li.forEach((el, i) => setTimeout(() => el.classList.add("done"), 650 * (i + 1)));
-    setTimeout(result, 650 * lines.length + 500);
+    li.forEach((el, i) => setTimeout(() => el.classList.add("done"), 380 * (i + 1)));
+    setTimeout(result, 380 * lines.length + 300);
   }
 
   function result(){
-    const a = A(), rec = R.recommend(a), R3 = R.recommend3(a), prof = C.profiles[a.goal || "strength"];
+    document.body.classList.remove("inquiz");
+    R.$("#progwrap").classList.add("hide"); R.$("#back").style.visibility = "hidden"; R.$("#qstep").textContent = "";
+    const a = A(), rec = R.recommend(a), prof = C.profiles[a.goal || "strength"];
     const pname = C.profileName(a), n = R.first(a), N = n ? R.esc(n) : "";
-    R.track("QuizComplete", { profile: pname, pack: C.packs[rec.pack].name, shown: R3.list.join(",") }, true);
+    const matched = rec.pack;
+    let picked = matched;
+    R.track("QuizComplete", { profile: pname, pack: C.packs[matched].name }, true);
     const sci = C.science[prof.science[0]];
     const bodyTxt = (a.body || []).filter(b => b !== "none").map(b => R.label("body", b).toLowerCase());
     const pains = [
@@ -280,57 +442,116 @@
       a.metime === "cant" ? "You <b>can't remember</b> the last hour you had just for yourself." : ""
     ].filter(Boolean);
     const bm = C.barrierModules[a.barrier];
-    const recoCard = (id, i) => {
-      const P = C.packs[id], F = R.frame(id), isM = id === R3.matched;
-      const tag = i === 0 ? `<span class="badge">Best value · Lowest price per session</span>` : isM ? `<span class="badge blue">Matched to your answers</span>` : `<span class="badge foam">${P.badge}</span>`;
-      return `<button type="button" class="reco ${i === 0 ? "on" : ""}" data-id="${id}"><span class="rk">${tag}</span>
-        <div class="rh">${R.img(P.imgs[0], "", false)}<div style="min-width:0"><div class="rn">${i + 1}. ${P.name}</div><div class="rd">${({ year: "96 Reformer sessions + 12 wellness sessions", member: "30 Reformer sessions + 3 wellness sessions", plus: "14 Reformer sessions + red light + recovery boots", founder5: "5 Reformer sessions to try it" })[id]}</div>
-        <div class="rmini"><b>${F.per}</b><span>a session · ${R.money(P.price)} total</span></div></div><span class="radio"></span></div>
-        <div class="rbody">${R.priceBlock(id)}
-          <ul class="ticks small" style="margin:6px 0 10px">${R.reasons(a, id).slice(0, 3).map(r => `<li>${r}</li>`).join("")}</ul>
-          ${R.placesHtml(id)}</div></button>`;
+
+    /* ---------- the pack, decided for them ---------- */
+    const sizeChip = (id) => {
+      const X = C.packs[id], F = R.frame(id);
+      const tag = id === matched ? `<span class="size-tag">Your match</span>` : id === "year" ? `<span class="size-tag alt">Best value</span>` : "";
+      return `<button type="button" class="size ${id === picked ? "on" : ""}" data-id="${id}">${tag}
+        <b>${F.per}</b><span>a class</span><em>${X.classes} classes</em><i>${R.money(X.price)}${X.perClassWellness || id === "year" ? " + recovery" : ""}</i></button>`;
     };
-    app.innerHTML = `<div class="screen">
+    const panel = (id) => {
+      const P = C.packs[id], F = R.frame(id), why = R.reasons(a, id).slice(0, 2);
+      const weekly = F.weekly.charAt(0).toUpperCase() + F.weekly.slice(1);
+      return `<span class="badge ${id === matched ? "" : "foam"} pc-badge">${id === matched ? "Matched to your answers" : P.badge}</span>
+        <h3 class="pc-name">${P.name}</h3>
+        <p class="pc-tag">${P.tagline.replace(/\s*\u00a3[\d,]+\.?$/, ".").replace(/\.\.$/, ".")}</p>
+        <div class="pc-money">
+          <div class="pc-per"><b data-count="${P.perClass}">${F.per}</b><span>a class</span></div>
+          <div class="pc-off">A single class is <b>${R.money(R.walkin)}</b> from opening day</div>
+          <div class="pc-total"><b>${R.money(P.price)}</b> ${id === "year" ? "paid once, for" : "in total, for"} ${P.classes} classes${P.perClassWellness ? " and the recovery sessions" : ""}</div>
+          <p class="pc-line">${weekly}${F.perDay ? `. That is about <b>${F.perDay} a day</b>` : F.perWeek ? `. That is about <b>${F.perWeek} a week</b>` : ""}.</p>
+        </div>
+        <ul class="ticks small pc-why">${why.map(r => `<li>${r}</li>`).join("")}</ul>
+        <button class="btn btn-gold btn-block pulse" id="pickBuy" type="button">Start with ${P.name}, ${R.money(P.price)}</button>
+        <p class="pc-re">Secure checkout, and you have your usual ${CFG.refundDays} days to change your mind. Your classes start on opening day.</p>
+        <a class="pc-more" href="${P.file}?from=quiz">See everything in ${P.name}</a>`;
+    };
+    const cmpRow = (id) => {
+      const X = C.packs[id], F = R.frame(id);
+      const bits = X.stack.slice(0, 3).map(r => r[0]).join(" · ");
+      return `<button type="button" class="cmp-row" data-id="${id}">
+        <span class="cr-n">${X.name}<em>${bits}</em></span>
+        <span class="cr-p"><b>${F.per}</b>a class<i>${R.money(X.price)} total</i></span></button>`;
+    };
+
+    app.innerHTML = `<div class="screen res">
       <div class="res-hd reveal"><div class="emo">${prof.emoji}</div><p class="eyebrow">Your Reformer profile</p>
-      <h1 style="font-size:clamp(28px,6vw,42px)">${N ? N + ", you're" : "You're"} <em>${pname}</em></h1>
-      <p style="font-size:18px;color:var(--deep)">${prof.line}</p></div>
-      <div class="card" style="margin-top:18px"><p class="eyebrow">Here's what you told us</p><ul class="ticks" style="margin:0">${pains.map(p => `<li>${p}</li>`).join("")}</ul>
-      <p style="margin:14px 0 0">${prof.why}</p></div>
-      <div class="fact reveal" style="margin-top:14px"><b data-count="${parseFloat(sci[0]) || ""}">${sci[0]}</b><div><div>${sci[1]}</div><div class="src">${sci[2]}</div></div></div>
-      ${bm ? `<div class="card" style="margin-top:14px;border:1.5px solid rgba(179,134,66,.45)"><p class="eyebrow">You said this held you back</p><h3>${bm.t}</h3><p style="margin:0">${R.fill(bm.b, a)}</p></div>` : ""}
-      <div style="margin-top:22px">${R.vsl("result")}</div>
-      ${a.age && C.decadeModules[a.age] ? `<div class="card" style="margin-top:18px"><p class="eyebrow" style="margin-bottom:6px">Built for your ${R.esc(R.label("age", a.age))}</p><p style="margin:0">${C.decadeModules[a.age].b}</p></div>` : ""}
-      <h2 style="margin-top:36px">Your plan: <em>twice a week</em> for twelve weeks.</h2>
-      <p class="muted">The NHS says adults should do strength exercise on at least two days a week, and it names Pilates as an example. Twice a week is also what the published Pilates studies used. Here's what your first twelve weeks look like.</p>
+      <h1 class="res-name">${N ? N + ", you're" : "You're"} <em>${pname}</em></h1>
+      <p class="res-line">${prof.line}</p></div>
+
+      <div class="card res-you"><p class="eyebrow">What you told us</p>
+      <ul class="ticks" style="margin:0">${pains.map(p => `<li>${p}</li>`).join("")}</ul>
+      <p class="res-why">${prof.why}</p></div>
+
+      ${bm ? `<div class="card res-obj"><p class="eyebrow">And the bit that stopped you</p><h3>${bm.t}</h3><p>${R.fill(bm.b, a)}</p></div>` : ""}
+
+      <section class="pickzone" id="pick">
+        <p class="eyebrow">Your pack and your price</p>
+        <h2 class="pick-h" id="pickH"></h2>
+        <p class="pick-sub" id="pickSub"></p>
+        <div class="pickcard" id="pickcard"></div>
+        <p class="size-lab">Want a different size? Tap one and the price above changes</p>
+        <div class="sizes" id="sizes">${C.order.map(sizeChip).join("")}</div>
+        <div class="pick-guar">${R.guarantee(true)}</div>
+      </section>
+
+      <div class="planzone"><p class="eyebrow">Now the plan itself</p><h2 style="margin-top:2px">Your plan: <em>twice a week</em> for twelve weeks.</h2>
+      <p class="muted">The NHS says adults should do something strengthening at least two days a week, and it names Pilates. Twice a week is also the dose the published studies used, so that is your plan.</p>
       <div class="wk">${C.weeks.map(w => `<div class="card"><b>${w[0]}</b><h3>${w[1]}</h3><p>${w[2]}</p></div>`).join("")}</div>
+
       <p class="eyebrow" style="margin-top:30px">Your first moves</p><h3>What you'll do in week one.</h3>
       ${R.moves()}
-      <div style="margin-top:40px" class="center reveal"><p class="eyebrow">Your recommended founder packs</p><h2>${N ? N + ", here are" : "Here are"} your 3 best options.</h2>
-      <p class="muted">We've put the best value first. The more sessions you buy, the less each one costs. Tap any pack to compare.</p></div>
-      ${R.reassure()}
-      <div class="recos" id="recos">${R3.list.map(recoCard).join("")}</div>
-      <div id="recoCta" style="margin-top:16px"></div>
-      <div style="margin-top:18px">${R.guarantee()}</div>
-      <p class="center" style="margin-top:22px"><a href="packs.html?from=quiz">See all four founder packs</a></p>
+      </div>
+
+      <div class="fact reveal" style="margin-top:30px"><b data-count="${parseFloat(sci[0]) || ""}">${sci[0]}</b><div><div>${sci[1]}</div><div class="src">${sci[2]}</div></div></div>
+      <div style="margin-top:18px">${R.vsl("result")}</div>
+      ${a.age && C.decadeModules[a.age] ? `<div class="card" style="margin-top:18px"><p class="eyebrow" style="margin-bottom:6px">Built for your ${R.esc(R.label("age", a.age))}</p><p style="margin:0">${C.decadeModules[a.age].b}</p></div>` : ""}
+
+      <div class="center" style="margin-top:40px"><p class="eyebrow">All four founder packs</p><h2>What you get in each one.</h2>
+      <p class="muted">Tap any pack to see its price up top.</p></div>
+      <div class="cmp">${C.order.map(cmpRow).join("")}</div>
+      <p class="center" style="margin-top:22px"><a href="packs.html?from=quiz">Open the full founder shop</a></p>
       <p class="center"><button class="link-quiet" id="retake" type="button">Retake the quiz</button></p>
     </div>`;
     R.$("#foot").innerHTML = R.footer();
-    const setSel = (id) => {
-      document.querySelectorAll(".reco").forEach(r => r.classList.toggle("on", r.dataset.id === id));
-      const P = C.packs[id], F = R.frame(id);
-      R.$("#recoCta").innerHTML = `<button class="btn btn-gold btn-block pulse" id="addNow" type="button">Claim ${P.name} · ${F.per} a session</button>
-        <a class="btn btn-ghost btn-block" href="${P.file}?from=quiz" style="margin-top:10px">See everything in ${P.name}</a>
-        <p class="small muted center" style="margin:10px 0 0">🛡️ ${CFG.refundDays} day full refund · 🔒 Secure checkout · 📅 Starts on opening day</p>`;
-      R.$("#addNow").onclick = () => R.addToBag(id);
-      let st = R.$("#rsticky");
-      if (!st) { st = document.createElement("div"); st.id = "rsticky"; st.className = "sticky"; document.body.appendChild(st);
-        addEventListener("scroll", () => { const r = R.$("#recos"); if (!r) return; const b = r.getBoundingClientRect(); st.classList.toggle("show", b.top < innerHeight * .9); }, { passive: true }); }
-      st.innerHTML = `<div class="p"><b>${F.per} a session</b>${P.name} · 🛡️ ${CFG.refundDays} day refund</div><button class="btn btn-gold" type="button">Claim</button>`;
-      st.querySelector("button").onclick = () => R.addToBag(id);
+
+    const stickState = () => {
+      const st = R.$("#rsticky"), c = R.$("#pickcard");
+      if (st && c) st.classList.toggle("show", c.getBoundingClientRect().bottom < 40);
     };
-    document.querySelectorAll(".reco").forEach(r => r.onclick = () => { setSel(r.dataset.id); R.track("RecoSelect", { pack: r.dataset.id }, true); });
-    setSel(R3.list[0]);
-    R.$("#retake").onclick = () => { const utm = state.utm; state = { answers: {}, utm }; R.save(state); const s = R.$("#rsticky"); if (s) s.remove(); idx = -1; hist.length = 0; render(); scrollTo(0, 0); };
+    const sticky = () => {
+      let st = R.$("#rsticky");
+      if (!st) {
+        st = document.createElement("div"); st.id = "rsticky"; st.className = "sticky";
+        document.body.appendChild(st);
+        addEventListener("scroll", stickState, { passive: true });
+      }
+      return st;
+    };
+    const setPick = (id, scrollBack) => {
+      picked = id;
+      const P = C.packs[id], F = R.frame(id);
+      R.$("#pickcard").innerHTML = panel(id);
+      R.$("#pickcard").classList.toggle("is-match", id === matched);
+      R.$("#pickH").innerHTML = id === matched
+        ? `${N ? N + ", start" : "Start"} with <em>${P.name}</em>.`
+        : `<em>${P.name}</em>, then.`;
+      R.$("#pickSub").textContent = id === matched
+        ? "We picked it from your answers, and here is exactly what it costs."
+        : "Here is exactly what that one costs. Your match was " + C.packs[matched].name + ".";
+      document.querySelectorAll(".size").forEach(s => s.classList.toggle("on", s.dataset.id === id));
+      R.$("#pickBuy").onclick = () => R.addToBag(id);
+      const st = sticky();
+      st.innerHTML = `<div class="p"><b>${F.per} a class</b>${P.name} · ${R.money(P.price)} total</div><button class="btn btn-gold" type="button">Choose</button>`;
+      st.querySelector("button").onclick = () => R.addToBag(id);
+      stickState();
+      if (scrollBack) { R.$("#pick").scrollIntoView({ behavior: "auto", block: "start" }); }
+    };
+    document.querySelectorAll(".size").forEach(b => b.onclick = () => { setPick(b.dataset.id); R.track("RecoSelect", { pack: b.dataset.id }, true); });
+    document.querySelectorAll(".cmp-row").forEach(b => b.onclick = () => { setPick(b.dataset.id, true); R.track("RecoSelect", { pack: b.dataset.id, from: "compare" }, true); });
+    setPick(matched);
+    R.$("#retake").onclick = () => { const utm = state.utm; state = { answers: {}, utm }; R.save(state); const s = R.$("#rsticky"); if (s) s.remove(); idx = -1; hist.length = 0; render(); scrollTo({ top: 0, behavior: "auto" }); };
     R.animate();
   }
 
@@ -345,3 +566,5 @@
 </script>
 </body>
 </html>
+
+</body></html>

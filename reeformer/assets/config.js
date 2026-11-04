@@ -25,7 +25,7 @@ window.REEF_CONFIG = {
   /* ---------- Momence: checkout links for each pack ----------
      Momence > Offerings > (pack/membership) > copy purchase link, e.g. https://momence.com/m/123456
      In Momence Settings > General Setup > Checkout purchase tracking, set the redirect URL to
-     https://reeformer.com/founders/thank-you.html  (so buyers land on the upsell + Guest Pass page). */
+     https://reefwellnessstudio.com/founders/thank-you.html  (so buyers land on the upsell + Guest Pass page). */
   checkout: {
     founder5:  "",   // TODO
     plus:      "",   // TODO
@@ -70,14 +70,14 @@ window.REEF_CONFIG = {
 
   /* ---------- Founders Guarantee ----------
      Shown on every pack page, in the bag and at checkout. Every line MUST match your real terms.
-     Want it even stronger? e.g. "Love your first class or get your money back" – only add it if you will honour it. */
+     Want it even stronger? e.g. "Love your first class or get your money back", only add it if you will honour it. */
   guarantee: {
     name: "The Founders Guarantee",
     lines: [
-      "Full refund within 14 days. No questions asked.",
-      "Your sessions don't start until the doors open, so you never lose a single one.",
-      "If opening is ever delayed, your sessions simply wait for you.",
-      "Your founder price is locked. It never goes up for you."
+      "You have your usual 14 days to change your mind, for any reason at all.",
+      "Your classes do not start until the doors open, so a delay never costs you one.",
+      "If opening is ever put back, your classes simply wait for you.",
+      "Founder prices end on opening day and are never offered again."
     ]
   },
   longStopDateText: "",                   // TODO e.g. "31 January 2027"
@@ -87,7 +87,7 @@ window.REEF_CONFIG = {
   callBookingUrl: "",                     // TODO Calendly or Momence appointment link for a 10 minute call with Ricky
   whatsappNumber: "",                     // TODO e.g. "447700900123"
   phoneDisplay: "",                       // TODO e.g. "07700 900123"
-  email: "hello@reeformer.com",
+  email: "hello@reefwellnessstudio.com",
 
   /* ---------- Videos (paste YouTube/Vimeo embed URL or an .mp4 URL) ---------- */
   videos: {

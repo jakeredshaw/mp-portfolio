@@ -59,11 +59,11 @@
     <p>The best Reformer results come from training twice a week and recovering properly in between. Add the <b>${R.esc(T.name)}</b> to your founder place now, at a price you'll only see on this page.</p>
     <div class="addon">${R.img("concept-hallway-pr")}<div class="ab"><span class="badge blue">Only on this page</span><h3 style="margin:12px 0 6px">${R.esc(T.name)}</h3>
       <ul class="ticks">${T.includes.map(i => `<li>${R.esc(i)}</li>`).join("")}<li>Use them any time after opening day</li></ul>
-      <div class="price"><b>${R.money(T.price)}</b><s>${R.money(T.value)}</s><span class="save">You pay ${R.money(T.value - T.price)} less</span></div>
+      <div class="price"><b>${R.money(T.price)}</b><span class="small muted">${R.money(T.value)} at prices from opening day</span><span class="save">You pay ${R.money(T.value - T.price)} less</span></div>
       <p class="small muted">Against our prices from opening day. Lie back on the red light bed and switch off. Then a slow, steady squeeze through your legs in the recovery boots while you rest.</p>
       <button class="btn btn-gold btn-block" id="trio" type="button" style="background:var(--deep)">Yes, add the ${R.esc(T.name)}</button>
       <button class="link-quiet" id="notrio" type="button" style="display:block;margin:6px auto 0">No thanks, I'll pay full price later</button></div></div>
-    ${showAddon(L) ? `<div id="alt" class="hide" style="margin-top:18px"><div class="card"><p class="eyebrow">Or just the red light</p><h3>${R.esc(L.name)}</h3><p class="muted">${R.esc(L.includes.join(", "))} for <b>${R.money(L.price)}</b> <s>${R.money(L.value)}</s>.</p><button class="btn btn-primary btn-block" id="rl" type="button">Add ${R.esc(L.name)}</button></div></div>` : ""}
+    ${showAddon(L) ? `<div id="alt" class="hide" style="margin-top:18px"><div class="card"><p class="eyebrow">Or just the red light</p><h3>${R.esc(L.name)}</h3><p class="muted">${R.esc(L.includes.join(", "))} for <b>${R.money(L.price)}</b>, against ${R.money(L.value)} at prices from opening day.</p><button class="btn btn-primary btn-block" id="rl" type="button">Add ${R.esc(L.name)}</button></div></div>` : ""}
   </div></section>`);
 
   // 2) guest passes
