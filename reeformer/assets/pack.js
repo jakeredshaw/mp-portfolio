@@ -26,7 +26,7 @@
   const sec = [];
 
   /* ================= PDP: gallery + buy box ================= */
-  const slides = [R.vsl(packId), ...P.imgs.map(i => R.img(i))];
+  const slides = [R.vsl(packId), ...P.imgs.map(i => R.img(i))].filter(Boolean);
   const brandTile = `<div class="img" style="background:var(--deep);display:grid;place-items:center"><div class="center" style="color:#F3E2C2;padding:20px"><img src="assets/logo/reef-mark-shell.png" alt="" width="110" height="115" style="margin:0 auto 18px;opacity:.95"><div class="caps" style="color:#fff">${P.name}</div><div style="font-family:var(--serif);font-size:30px;color:var(--gold-soft);margin-top:6px">${R.money(P.price)}</div><div class="small" style="margin-top:4px">${P.classes} Reformer classes</div></div></div>`;
   slides.push(brandTile);
   const variants = C.order.slice().reverse().map(id => { const X = C.packs[id]; return `<a class="vr ${id === packId ? "on" : ""}" href="${X.file}${q}" aria-label="${X.name}">${id === "year" ? `<span class="vr-best">Best value</span>` : ""}<b>${R.money(X.perClass)}</b><span>a class</span><em>${X.classes} classes</em></a>`; }).join("");

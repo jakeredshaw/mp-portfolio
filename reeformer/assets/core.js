@@ -313,6 +313,7 @@
     opts = opts || {}; const V = C.vsls[key] || { title: "Video", hook: "", beats: [], len: "", who: "" };
     const url = CFG.videos[key];
     if (url) return R.videoHtml(url, V.title);
+    if (!CFG.showVideoPlaceholders) return "";
     return `<div class="vslx ${opts.wide ? "wide" : ""}" role="img" aria-label="${R.esc(V.title)}: video coming soon">
       <div class="vx-bg"></div>
       <svg class="vx-person" viewBox="0 0 200 240" aria-hidden="true"><circle cx="100" cy="78" r="38"/><path d="M28 240c0-52 32-86 72-86s72 34 72 86z"/></svg>

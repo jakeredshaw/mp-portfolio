@@ -90,6 +90,7 @@ window.REEF_CONFIG = {
   email: "hello@reefwellnessstudio.com",
 
   /* ---------- Videos (paste YouTube/Vimeo embed URL or an .mp4 URL) ---------- */
+  showVideoPlaceholders: false,           // true shows "video coming soon" slots where no video is set
   videos: {
     quiz:     "",   // 45 sec welcome on the quiz start screen
     result:   "",   // 60 sec "your plan, explained" on the result screen

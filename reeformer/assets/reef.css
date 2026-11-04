@@ -498,3 +498,14 @@ html,body{overflow-x:clip}
 .fact{flex-direction:column;align-items:flex-start;gap:6px}
 .fact b{font-size:clamp(20px,5.2vw,24px);line-height:1.2}
 .stat b{font-family:var(--sans);font-weight:800;font-size:clamp(19px,4.6vw,23px);line-height:1.25;color:var(--deep)}
+
+/* ---------- v7 · result header, plan card, faq ---------- */
+.res-mark{display:block;width:72px;height:auto;margin:0 auto 10px;animation:pop 3.2s ease-in-out infinite}
+.res-plan{margin-top:18px;text-align:center;border:1.5px solid rgba(179,134,66,.45);background:linear-gradient(160deg,rgba(255,251,241,.97),rgba(234,243,244,.8))}
+.res-plan-name{font-size:clamp(25px,6vw,34px);margin:4px 0 10px;color:var(--deep)}
+.res-plan-for{margin:0 0 8px;font-size:15.5px}
+.res-plan-line{margin:0;color:var(--deep)}
+.faqzone{margin-top:34px;padding:0}
+.faqzone details{background:transparent}
+#whynow{margin-top:14px}
+.pc-off{display:block!important}

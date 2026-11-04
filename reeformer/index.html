@@ -293,8 +293,7 @@
       ${R.ticker()}
       <section class="hero" style="padding-top:28px">
       ${state.leadAt && state.answers && state.answers.ready ? `<div class="card" style="margin-bottom:18px;text-align:left"><p class="eyebrow" style="margin-bottom:6px">Welcome back${R.first(state.answers) ? ", " + R.esc(R.first(state.answers)) : ""}</p><p style="margin:0 0 12px">Your Reformer plan is saved.</p><div style="display:grid;gap:8px"><button class="btn btn-primary btn-block" id="seePlan" type="button">See my plan</button><button class="btn btn-ghost btn-block" id="redo" type="button">Start the quiz again</button></div></div>` : ""}
-      <p class="eyebrow">Watch first · 45 seconds</p>
-      ${R.vsl("quiz")}
+      ${R.vsl("quiz") ? `<p class="eyebrow">Watch first · 45 seconds</p>${R.vsl("quiz")}` : ""}
       <div style="height:18px"></div>
       ${R.reassure()}
       <div class="htrust"><div><b>9</b>Reformer beds on Wyle Cop</div><div><b>5am</b>to 10pm, every single day</div><div><b>800+</b>Guided sessions on your own screen</div></div>
@@ -435,12 +434,20 @@
     R.track("QuizComplete", { profile: pname, pack: C.packs[matched].name }, true);
     const sci = C.science[prof.science[0]];
     const bodyTxt = (a.body || []).filter(b => b !== "none").map(b => R.label("body", b).toLowerCase());
+    const bodyLine = { back: "Your lower back aches. That usually means the muscles that hold your spine up have gone quiet.", neck: "Your neck and shoulders feel tight. That's what hours of looking down at screens does.", hips: "Your hips feel stiff, and stiff joints only get stiffer if you leave them.", knees: "Your knees aren't what they were, and the muscles around them need help." };
     const pains = [
-      bodyTxt.length ? `Your <b>${bodyTxt.join(" and ")}</b> ${bodyTxt.length > 1 ? "are" : "is"} giving you trouble.` : `You feel good now, and you want to <b>keep it that way</b>.`,
-      ({ desk: "You spend most of the day <b>sitting at a desk or driving</b>.", feet: "You're <b>on your feet all day</b>, so your body is tired but not trained.", rush: "You're <b>always rushing</b>, so your body never gets a proper reset.", parent: "You're <b>busy looking after everyone else</b>.", flex: "Your days are <b>flexible</b>, which is perfect for building a routine." })[a.day],
-      +a.pace >= 4 ? `Your week is a <b>${a.pace} out of 5</b>. That's a lot to carry.` : "",
-      a.metime === "cant" ? "You <b>can't remember</b> the last hour you had just for yourself." : ""
+      ...((a.body || []).filter(b => b !== "none").slice(0, 2).map(b => bodyLine[b])),
+      (a.body || []).includes("none") ? "Nothing hurts yet. Keep it that way, because strength is far easier to keep than to win back." : "",
+      ({ desk: "You sit at a desk or drive for most of the day. That's hours every single day with your head forward and your back rounded.", feet: "You're on your feet all day. Your body is tired, but it isn't getting any stronger.", rush: "You're always rushing, so your body never gets a proper reset.", parent: "You spend your days looking after everyone else. Who is looking after you?", flex: "Your days are flexible, which is the perfect chance to build a routine that sticks." })[a.day],
+      +a.pace >= 4 ? `Your week is a ${R.esc(a.pace)} out of 5. That's really busy, and your body is carrying all of it.` : +a.pace === 3 ? "Your week is a 3 out of 5. Busy enough that you need an hour to properly switch off." : "",
+      a.metime === "cant" ? "You can't remember the last hour that was just for you. That has to change." : a.metime === "month" ? "Your last hour to yourself was weeks ago." : "",
+      a.exp === "0" ? "You've never done Pilates, so you'll start properly, with an instructor setting everything up for you." : ""
     ].filter(Boolean);
+    const goalTxt = { strength: "feel strong again", posture: "stand tall and stop your back aching", shape: "tone up and feel great in your body", calm: "feel calmer and sleep better", resilient: "move freely without the twinges", comeback: "feel like yourself again" }[a.goal || "strength"];
+    const dayTxt = { desk: "you sit for most of the day", feet: "you're on your feet all day", rush: "you're always rushing", parent: "you're busy looking after your family", flex: "your days are flexible" }[a.day];
+    const ageTxt = a.age === "70s" ? "you're 70 or over" : a.age ? "you're in your " + a.age : "";
+    const planFor = "Because " + [ageTxt, dayTxt].filter(Boolean).join(", ") + (ageTxt || dayTxt ? ", and " : "") + "you want to " + goalTxt + ", we've built this plan around you.";
+    const planFor2 = planFor.charAt(0).toUpperCase() + planFor.slice(1);
     const bm = C.barrierModules[a.barrier];
 
     /* ---------- the pack, decided for them ---------- */
@@ -453,7 +460,7 @@
     const panel = (id) => {
       const P = C.packs[id], F = R.frame(id), why = R.reasons(a, id).slice(0, 2);
       const weekly = F.weekly.charAt(0).toUpperCase() + F.weekly.slice(1);
-      return `<span class="badge ${id === matched ? "" : "foam"} pc-badge">${id === matched ? "Matched to your answers" : P.badge}</span>
+      return `<span class="badge ${id === matched ? "" : "foam"} pc-badge">${id === matched && id === "year" ? "Best value, and your match" : id === matched ? "Matched to your answers" : id === "year" ? "Best value · lowest price a class" : P.badge}</span>
         <h3 class="pc-name">${P.name}</h3>
         <p class="pc-tag">${P.tagline.replace(/\s*\u00a3[\d,]+\.?$/, ".").replace(/\.\.$/, ".")}</p>
         <div class="pc-money">
@@ -476,15 +483,21 @@
     };
 
     app.innerHTML = `<div class="screen res">
-      <div class="res-hd reveal"><div class="emo">${prof.emoji}</div><p class="eyebrow">Your Reformer profile</p>
-      <h1 class="res-name">${N ? N + ", you're" : "You're"} <em>${pname}</em></h1>
-      <p class="res-line">${prof.line}</p></div>
+      <div class="res-hd reveal"><img class="res-mark" src="assets/logo/reef-mark-gold.png" alt="reef" width="72" height="75">
+      <p class="eyebrow">Quiz complete</p>
+      <h1 class="res-name">Congratulations${N ? ", " + N : ""}. <em>You did it.</em></h1>
+      <p class="res-line">Most people never take the first step. Only about 1 in 20 adults in England do enough exercise to keep their muscles strong. Today, you started.</p></div>
 
-      <div class="card res-you"><p class="eyebrow">What you told us</p>
+      <div class="card res-plan"><p class="eyebrow">Your custom Reformer plan with reef</p>
+      <h2 class="res-plan-name">${pname}</h2>
+      <p class="res-plan-for">${planFor2}</p>
+      <p class="res-plan-line"><b>${prof.line}</b></p></div>
+
+      <div class="card res-you"><p class="eyebrow">${N ? N + ", here's" : "Here's"} why you need this</p>
       <ul class="ticks" style="margin:0">${pains.map(p => `<li>${p}</li>`).join("")}</ul>
-      <p class="res-why">${prof.why}</p></div>
+      <p class="res-why"><b>You are exactly who Reformer Pilates was made for, and it is going to help.</b></p></div>
 
-      ${bm ? `<div class="card res-obj"><p class="eyebrow">And the bit that stopped you</p><h3>${bm.t}</h3><p>${R.fill(bm.b, a)}</p></div>` : ""}
+      ${bm ? `<div class="card res-obj"><p class="eyebrow">Your worry, answered</p><h3>${bm.t}</h3><p>${R.fill(bm.b, a)}</p></div>` : ""}
 
       <section class="pickzone" id="pick">
         <p class="eyebrow">Your pack and your price</p>
@@ -492,8 +505,13 @@
         <p class="pick-sub" id="pickSub"></p>
         <div class="pickcard" id="pickcard"></div>
         <p class="size-lab">Want a different size? Tap one and the price above changes</p>
-        <div class="sizes" id="sizes">${C.order.map(sizeChip).join("")}</div>
+        <div class="sizes" id="sizes">${C.order.slice().reverse().map(sizeChip).join("")}</div>
+        <div id="whynow"></div>
         <div class="pick-guar">${R.guarantee(true)}</div>
+      </section>
+
+      <section class="faqzone"><p class="eyebrow">Every worry, answered</p><h2 style="margin-top:2px">${N ? N + ", still" : "Still"} not sure? Read this.</h2>
+        ${C.faq.map(f => `<details><summary>${f[0]}</summary><div class="dbody"><p>${R.fill(f[1], a)}</p></div></details>`).join("")}
       </section>
 
       <div class="planzone"><p class="eyebrow">Now the plan itself</p><h2 style="margin-top:2px">Your plan: <em>twice a week</em> for twelve weeks.</h2>
@@ -534,12 +552,13 @@
       const P = C.packs[id], F = R.frame(id);
       R.$("#pickcard").innerHTML = panel(id);
       R.$("#pickcard").classList.toggle("is-match", id === matched);
-      R.$("#pickH").innerHTML = id === matched
-        ? `${N ? N + ", start" : "Start"} with <em>${P.name}</em>.`
-        : `<em>${P.name}</em>, then.`;
-      R.$("#pickSub").textContent = id === matched
-        ? "We picked it from your answers, and here is exactly what it costs."
-        : "Here is exactly what that one costs. Your match was " + C.packs[matched].name + ".";
+      R.$("#pickH").innerHTML = id === "year"
+        ? `${N ? N + ", our" : "Our"} best value for you: <em>${P.name}</em>.`
+        : id === matched ? `${N ? N + ", start" : "Start"} with <em>${P.name}</em>.` : `<em>${P.name}</em>, then.`;
+      R.$("#pickSub").textContent = id === "year"
+        ? (matched === "year" ? "The more classes you choose, the less each one costs. It's our best value, and it's the perfect match for your answers." : "The more classes you choose, the less each one costs. Want to start smaller? Your answers also suit " + C.packs[matched].name + ", and every option is just below.")
+        : id === matched ? "This one matches your answers exactly. Here is what it costs." : "Here is exactly what that one costs. Your match was " + C.packs[matched].name + ".";
+      R.$("#whynow").innerHTML = R.benefitsNow(id);
       document.querySelectorAll(".size").forEach(s => s.classList.toggle("on", s.dataset.id === id));
       R.$("#pickBuy").onclick = () => R.addToBag(id);
       const st = sticky();
@@ -550,7 +569,7 @@
     };
     document.querySelectorAll(".size").forEach(b => b.onclick = () => { setPick(b.dataset.id); R.track("RecoSelect", { pack: b.dataset.id }, true); });
     document.querySelectorAll(".cmp-row").forEach(b => b.onclick = () => { setPick(b.dataset.id, true); R.track("RecoSelect", { pack: b.dataset.id, from: "compare" }, true); });
-    setPick(matched);
+    setPick("year");
     R.$("#retake").onclick = () => { const utm = state.utm; state = { answers: {}, utm }; R.save(state); const s = R.$("#rsticky"); if (s) s.remove(); idx = -1; hist.length = 0; render(); scrollTo({ top: 0, behavior: "auto" }); };
     R.animate();
   }

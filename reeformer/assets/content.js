@@ -196,32 +196,39 @@
   /* -------------------------------------------------------------- PROFILES */
   C.profiles = {
     strength: { name: "The Strength Rebuilder", emoji: "💪",
-      line: "Your legs remember being strong, and this is the plan that reminds them.",
+      line: "Get strong enough that stairs, shopping and lifting feel easy again.",
       why: "You want the kind of strength you actually use, so stairs stop being a decision and lifting stops being a job. Reformer is strength training with springs instead of weights, and every muscle works on the way out and on the way back.",
       science: ["strengthGuideline", "chairStand", "nhs"] },
     posture: { name: "The Posture Reset", emoji: "🧍",
-      line: "Standing taller, moving easier, and finally rid of that ache.",
+      line: "Stand taller and give your back the support it has been missing.",
       why: "You want to stand taller and stop carrying your whole day in your back and shoulders. Joseph Pilates was a sickly child who built this machine to fix his own body, and studies show it helps your posture.",
       science: ["backPain", "headOffCentre", "neckLoad"] },
     shape: { name: "The Sculptor", emoji: "✨",
-      line: "You get stronger first, and the way you look follows from that.",
+      line: "Get stronger first. A toned, sculpted body follows.",
       why: "You want to feel great in your body. Reformer works the deep muscles and the long ones together under spring tension, so you can expect to leave shaking a bit and aching in places the gym never found.",
       science: ["core228", "flex", "classpass"] },
     calm: { name: "The Hour Back", emoji: "🌊",
-      line: "An hour where nobody needs anything from you.",
+      line: "A calmer mind, deeper sleep, and an hour that is just for you.",
       why: "You want calm, and an hour that's genuinely yours. The breathing is built into every exercise, and studies show it lowers anxiety more than almost anything else they measured.",
       science: ["anxiety", "energy", "classpass"] },
     resilient: { name: "The Resilient Mover", emoji: "🦵",
-      line: "Train properly on a machine that looks after your joints.",
+      line: "Move freely again, on a machine that is kind to your joints.",
       why: "You want to keep moving without the twinges. Reformer is low impact, so the carriage takes some of the work off your joints and the springs let you load the muscle without loading your spine.",
       science: ["backPain", "balance", "flex"] },
     comeback: { name: "The Comeback", emoji: "🌱",
-      line: "You're not going back to who you used to be. You're going somewhere better than that.",
+      line: "Feel like yourself again, one class at a time.",
       why: "Life has changed and your body has noticed. Reformer starts wherever you're today, with springs that take some of the weight until you're ready for more, and builds you up a class at a time.",
       science: ["energy", "core228", "nhs"] }
   };
   // desk workers with posture goal get the sharper name
-  C.profileName = (a) => (a.goal === "posture" && a.day === "desk") ? "The Desk Body Reset" : C.profiles[a.goal || "strength"].name;
+  // Plain plan names built from their answers, e.g. "The Beginner's Strong Back Plan"
+  C.profileName = (a) => {
+    const b = a.body || [], g = a.goal || "strength";
+    let base = ({ strength: "Strength Builder Plan", shape: "Tone and Sculpt Plan", calm: "Stress Relief Plan", comeback: "Fresh Start Plan" })[g];
+    if (g === "posture") base = b.includes("back") ? "Strong Back Plan" : b.includes("neck") ? "Neck and Posture Plan" : a.day === "desk" ? "Desk Posture Plan" : "Stand Tall Plan";
+    if (g === "resilient") base = b.includes("back") ? "Strong Back Plan" : (b.includes("knees") || b.includes("hips")) ? "Joint Friendly Strength Plan" : "Move Freely Plan";
+    return "The " + (a.exp === "0" ? "Beginner's " : "") + base;
+  };
 
   /* -------------------------------------------------------------- SCIENCE */
   C.science = {
