@@ -83,8 +83,8 @@
   /* ------------------------------------------------------------------ QUIZ */
   // type: single (auto advance), multi, scale, text, hook (interstitial)
   // NHS mini guess, shown on the first encouragement screen
-  const NHS_GUESS = { q: "Quick guess. How many days a week does the NHS say adults should do strength exercise?", opts: ["1 day", "2 days", "5 days"], answer: "2 days",
-    reveal: "It's 2 days a week, and the NHS names Pilates as an example. That's exactly what your plan is built on." };
+  const NHS_GUESS = { q: "Quick guess! The NHS says adults should do strength exercise how many days a week?", opts: ["1 day", "2 days", "5 days"], answer: "2 days",
+    reveal: "2 days a week, and the NHS names Pilates as one way to do it. That's why your plan is 2 classes a week." };
 
   C.steps = [
     { id: "name", type: "text", q: "What's your first name?", placeholder: "First name", cta: "Let's go" },
@@ -145,47 +145,49 @@
   C.hooks = {
     hook_exp(a) {
       if (a.exp === "0") return { kicker: "Good news, {n}", title: "You don't need any experience.",
-        facts: [["Day 1", "Your instructor sets up the machine for you."], ["Springs", "They help you at first, and challenge you once you're ready."], ["No.1", "The most booked workout on ClassPass worldwide, three years running.", "ClassPass, 2025"]],
+        facts: [["No experience needed", "Your instructor sets the machine up for you, then walks you through your first slow, shaky, brilliant session."], ["The springs help you", "They lift and support you at first, then make every move burn once you're ready."], ["The world's No.1 workout", "Pilates is the most booked workout on ClassPass worldwide, three years running.", "ClassPass, 2025"]],
         quiz: NHS_GUESS };
       if (a.exp === "1-5") return { kicker: "Great, {n}", title: "You've made a start. We'll make the rest easy.",
-        line: "If you have never used the machine and have no idea what you're doing, that's completely normal. Here is how we help.",
-        facts: [["Your screen", "Every move is shown on the bed in front of you."], ["Day 1", "An instructor sets your springs and footbar for you."], ["Steady", "The carriage only moves when you push it, so you're always in control."]],
+        line: "Never used the machine? Not sure what to do? That's normal. Here's how we help.",
+        facts: [["We set it up for you", "An instructor sets your springs and footbar on day one."], ["Every move on screen", "Each move is shown on a screen right in front of you."], ["You're in control", "The bed only moves when you push it."]],
         quiz: NHS_GUESS };
-      return { kicker: "Love it, {n}", title: "Now make it a habit, close to home.",
-        facts: [["9", "Reformer beds on Wyle Cop."], ["5am to 10pm", "Open every day."], ["800+", "Guided sessions on your own screen."]],
+      return { kicker: "Love it, {n}", title: "Now make it part of your week.",
+        facts: [["9 beds on Wyle Cop", "Warm lights, music in your ears, and that deep burn you've been missing."], ["Open 5am to 10pm", "Every day, so it fits around your week."], ["800+ guided classes", "On your own screen, whenever you want."]],
         quiz: NHS_GUESS };
     },
     hook_body(a) {
       const b = (a.body || []).filter(x => x !== "none");
       if (!b.length) return { kicker: "Smart, {n}", title: "Start before anything hurts.",
-        facts: [["1 in 20", "Adults in England do enough strengthening exercise, on the strictest way of counting it.", "Strain et al, study of 253,423 adults"], ["12 weeks", "Where most of the published Pilates studies record the change."]] };
+        facts: [["Most adults don't do enough", "Only about 1 in 20 adults in England do enough exercise to keep their muscles strong.", "Strain et al, 253,423 adults"], ["You'll feel it in 12 weeks", "Most Pilates studies last 12 weeks, and that's where they see real changes. Taller. Stronger. Calmer."]] };
       if (b.includes("back")) return { kicker: "We hear you, {n}", title: "Back pain is common, and resting it is rarely the whole answer.",
-        facts: [["14 points", "Average drop in back pain out of 100, against people who did almost nothing.", "Yamato et al, Cochrane review, 10 trials"], ["1 in 6", "Adults in England live with back pain, so you're far from alone.", "Versus Arthritis"], ["Low impact", "The carriage supports your joints, so there's no jumping and no pounding."]] };
+        facts: [["Pilates lowers back pain", "In 10 studies, people who did Pilates had less back pain than people who did almost nothing.", "Cochrane review, 510 adults"], ["You're not alone", "About 1 in 6 adults in England live with back pain.", "Versus Arthritis"], ["Gentle on your body", "The bed glides smoothly under you. No jumping, no pounding, just a slow, deep burn."]] };
       if (b.includes("neck")) return { kicker: "We hear you, {n}", title: "That tight neck probably comes from your phone and your desk.",
-        facts: [["12lb to 60lb", "What your neck carries upright, and what it carries at a 60 degree phone tilt.", "Hansraj, 2014"], ["Before and after", "Beginners' heads sat nearly 12mm off centre at the start, and about 3mm off by the end.", "Sim et al, 2022"]] };
-      return { kicker: "We hear you, {n}", title: "Stiff joints tend to loosen with gentle movement, not with more sitting still.",
-        facts: [["Low impact", "No jumping. The carriage supports your joints."], ["12 studies", "Across twelve studies people got meaningfully more flexible. It's one of the most consistent findings in the research.", "Bajčetić et al, 2026"]] };
+        facts: [["Your phone strains your neck", "Looking down at a phone makes your head feel about 5 times heavier to your neck.", "Hansraj, 2014"], ["Reformer straightens you up", "In one study, beginners held their heads much straighter after a Reformer course.", "Sim et al, 2022"]] };
+      return { kicker: "We hear you, {n}", title: "Stiff joints loosen up with gentle movement, not more sitting still.",
+        facts: [["Gentle on your joints", "The bed glides smoothly under you and supports you the whole time. No jumping, no pounding."], ["Pilates makes you more flexible", "Across 12 studies, people got more flexible. It's one of the most reliable results in the research.", "Bajčetić et al, 2026"]] };
     },
     hook_pace(a) {
       if ((+a.pace || 3) >= 4) return { kicker: "Read this, {n}", title: "This hour is just for you.",
-        facts: [["50 min", "Headphones on, and nobody needs anything from you."], ["Anxiety", "Across controlled trials Pilates lowered anxiety, and it's one of the largest effects the Pilates trials recorded for anything they measured.", "Fleming and Herring, 2018"], ["☕", "Then a coffee in the lounge."]] };
+        line: "50 minutes. Headphones on, warm lights down, and nobody needs a single thing from you.",
+        facts: [["Reformer lowers anxiety", "Across controlled trials Pilates lowered anxiety, and it's one of the largest effects the Pilates trials recorded for anything they measured.", "Fleming and Herring, 2018"], ["Then, a coffee you'll crave", "After a leg shaking, glowing session, sink into the lounge with a rich, velvety flat white, made by hand just for you."]] };
       return { kicker: "Perfect, {n}", title: "A calm week is the best time to start.",
-        facts: [["2 a week", "That's what the research used, so it's what your plan uses."], ["12 weeks", "Long enough that you feel the difference, and short enough that you stick with it."]] };
+        facts: [["2 classes a week", "That's what the research used, so it's what your plan uses."], ["You'll feel it in 12 weeks", "Long enough to feel stronger and stand taller. Short enough to stick with it."]] };
     },
     hook_barrier(a) {
+      const PRICE = [["£15.61 a class", "That's on Founding Year. From opening day, one class costs £25."], ["No hidden fees", "No joining fee, and no contract tying you in."]];
       const H = {
-        intimidated: ["You won't feel out of place.", [["Coffee first", "You walk into a coffee bar, not a wall of mirrors."], ["Your screen", "Headphones on. Nobody is watching you."], ["Together", "Every founder starts the week we open, so nobody else knows what they're doing either."]]],
-        notfit: ["You don't need to be fit to start.", [["Light springs", "We start you easy and build up."], ["Same machine", "Beginners and pro athletes use the same bed."], ["Pro athletes", "Professional athletes train on exactly the same machine you would be using."]]],
-        time: ["There's always an hour that works.", [["5am to 10pm", "Open every day."], ["No waiting", "Digital sessions start when you step on the bed."], ["2 min walk", "From the car park, which is free after 6pm at the time of writing."]]],
-        cost: ["Founder prices end on opening day.", [["£15.61", "A class on Founding Year. From opening day a class is £25."], ["No fees", "No joining fee, and no minimum term on anything."], ["14 days", "You have your usual 14 days to change your mind."]]],
-        injury: ["Reformer is kind to your body.", [["Low impact", "No jumping. The carriage supports your joints."], ["Springs help", "A spring can take weight off a movement as well as add to it, so you train around a niggle."], ["Day 1", "Tell your instructor. They'll adapt every move."]]],
-        gym: ["The gym not sticking wasn't your fault.", [["£503m", "Spent on unused UK gym memberships in a single year.", "PA Life survey, January 2025"], ["No.1", "The most booked workout on ClassPass worldwide, three years running.", "ClassPass, 2025"], ["Different", "This isn't a room full of machines you have to work out on your own."]]],
-        nearby: ["Now there's one.", [["Wyle Cop", "A Reformer studio right in the middle of Shrewsbury."], ["9", "Reformer beds."], ["First pick", "Founders book their classes first."]]],
-        full: ["Getting a spot is easier here.", [["9", "Beds, so you get a place rather than a waiting list."], ["Any time", "Digital sessions start on any free bed."], ["First pick", "Founders book before anyone else."]]],
-        far: ["We're right in town.", [["Wyle Cop", "In the heart of Shrewsbury."], ["2 min walk", "From St Julian's Friars car park."], ["Free", "Parking after 6pm, at the time of writing."]]],
-        pricey: ["Founder prices end on opening day.", [["£15.61", "A class on Founding Year, against £25 from opening day."], ["Founders only", "This price isn't offered again after we open."], ["No fees", "No joining fee, and no minimum term."]]],
-        busy: ["We fit around your life.", [["5am to 10pm", "Open every day."], ["50 min", "In and out, with a car park two minutes away."], ["Any time", "A guided session starts the moment you step on a free bed."]]],
-        bored: ["You won't get bored here.", [["800+", "Guided sessions on your own screen."], ["Mix it up", "Instructor classes, digital sessions and one to ones."], ["Recovery", "Red light, recovery boots and hyperbaric too."]]]
+        intimidated: ["You won't feel out of place.", [["Coffee first, not mirrors", "You walk into the smell of fresh coffee and soft, warm lighting. Not a cold wall of mirrors."], ["Nobody is watching", "You have your own screen and headphones."], ["Everyone is new", "Every founder starts the week we open, so nobody else knows what they're doing either."]]],
+        notfit: ["You don't need to be fit to start.", [["We start you easy", "Light springs to start. You'll still feel that deep, satisfying shake."], ["Built for beginners", "Beginners and pro athletes use the same machine, just on different settings."], ["Pros use it too", "Professional athletes train on the exact same machine you'll use."]]],
+        time: ["There's always an hour that works.", [["Open 5am to 10pm", "Every day of the week."], ["No waiting for a class", "A guided class starts the moment you step on a free bed."], ["Park 2 minutes away", "The car park is free after 6pm, at the time of writing."]]],
+        cost: ["Founder prices end on opening day.", [PRICE[0], PRICE[1], ["Change your mind? That's fine", "You have 14 days to change your mind and get your money back."]]],
+        injury: ["Reformer is kind to your body.", [["Gentle on your body", "The bed glides smoothly under you. No jumping, no pounding."], ["The springs can help", "They can take weight off a move, so you can work around a sore spot."], ["We adapt every move", "Tell your instructor on day one and they'll change anything you need."]]],
+        gym: ["The gym not sticking wasn't your fault.", [["Gym memberships get wasted", "People in the UK spent £503 million on gym memberships they didn't use, in one year.", "PA Life survey, 2025"], ["People come back to Pilates", "It's the most booked workout on ClassPass worldwide, three years running.", "ClassPass, 2025"], ["You're never on your own", "Every class is guided, so you always know what to do."]]],
+        nearby: ["Now there's one.", [["Right on Wyle Cop", "In the middle of Shrewsbury."], ["9 Reformer beds", "A proper studio, not a back room."], ["Founders book first", "You pick your classes before anyone else."]]],
+        full: ["Getting a spot is easier here.", [["9 beds", "More beds means more spaces in each class."], ["Start any time", "A guided class starts on any free bed."], ["Founders book first", "You pick your classes before anyone else."]]],
+        far: ["We're right in town.", [["Right in town", "On Wyle Cop, in the middle of Shrewsbury."], ["Park 2 minutes away", "At St Julian's Friars car park."], ["Free evening parking", "After 6pm, at the time of writing."]]],
+        pricey: ["Founder prices end on opening day.", [PRICE[0], ["Founders only", "This price is never offered again after we open."], PRICE[1]]],
+        busy: ["We fit around your life.", [["Open 5am to 10pm", "Every day of the week."], ["In and out in 50 minutes", "Walk out glowing, with the car park 2 minutes away."], ["Start any time", "A guided class starts the moment you step on a free bed."]]],
+        bored: ["You won't get bored here.", [["800+ guided classes", "On your own screen, so it's never the same twice."], ["Mix it up", "Instructor classes, screen classes and one to one sessions."], ["Recovery too", "Melt under the warm glow of the red light bed, or let the recovery boots gently squeeze your tired legs."]]]
       }[a.barrier] || ["Got it.", []];
       return { kicker: "We've got you, {n}", title: H[0], facts: H[1] };
     }
@@ -199,7 +201,7 @@
       science: ["strengthGuideline", "chairStand", "nhs"] },
     posture: { name: "The Posture Reset", emoji: "🧍",
       line: "Standing taller, moving easier, and finally rid of that ache.",
-      why: "You want to stand taller and stop carrying your whole day in your back and shoulders. Joseph Pilates was a sickly child who built this machine to fix his own body, and posture is where the trials most often show a difference.",
+      why: "You want to stand taller and stop carrying your whole day in your back and shoulders. Joseph Pilates was a sickly child who built this machine to fix his own body, and studies show it helps your posture.",
       science: ["backPain", "headOffCentre", "neckLoad"] },
     shape: { name: "The Sculptor", emoji: "✨",
       line: "You get stronger first, and the way you look follows from that.",
@@ -207,7 +209,7 @@
       science: ["core228", "flex", "classpass"] },
     calm: { name: "The Hour Back", emoji: "🌊",
       line: "An hour where nobody needs anything from you.",
-      why: "You want calm, and an hour that's genuinely yours. The breathing is built into every exercise, and anxiety is where the Pilates trials show their biggest results.",
+      why: "You want calm, and an hour that's genuinely yours. The breathing is built into every exercise, and studies show it lowers anxiety more than almost anything else they measured.",
       science: ["anxiety", "energy", "classpass"] },
     resilient: { name: "The Resilient Mover", emoji: "🦵",
       line: "Train properly on a machine that looks after your joints.",
@@ -223,28 +225,29 @@
 
   /* -------------------------------------------------------------- SCIENCE */
   C.science = {
-    backPain: ["14 points", "Average drop in back pain, on a scale of 100, against people who did almost nothing. Ten trials, 510 adults.", "Yamato et al, Cochrane review"],
-    headOffCentre: ["12mm to 3mm", "How far beginners' heads sat off centre at the start of a Reformer programme, and at the end.", "Sim et al, 2022"],
-    neckLoad: ["12lb to 60lb", "Load on your neck upright, and at a 60 degree phone tilt.", "Hansraj, Surgical Technology International, 2014"],
-    core228: ["228%", "More work from the deep stomach muscles in one exercise when the spring is set lighter, not heavier.", "Kim et al, Healthcare, 2024"],
-    flex: ["12 studies", "Across twelve studies people got meaningfully more flexible. One of the most consistent findings in the research.", "Bajčetić et al, 2026"],
-    anxiety: ["Anxiety", "Across controlled trials Pilates lowered anxiety, and it's one of the largest effects the Pilates trials recorded for anything they measured.", "Fleming and Herring, 2018"],
-    energy: ["Energy", "People reported more energy and less fatigue across the pooled Pilates trials, and the difference was a big one.", "Fleming and Herring, 2018"],
-    balance: ["Over 60s", "Balance improved a lot across the trials in adults over 60.", "Barker et al, 2015"],
-    chairStand: ["12 weeks", "Women over 60 could stand up from a chair and sit back down more times in 30 seconds after twelve weeks.", "García Garro et al, 2020"],
-    strengthGuideline: ["1 in 20", "Adults in England who do enough strengthening exercise, on the strictest way of counting it.", "Strain et al, study of 253,423 adults"],
-    nhs: ["2 days", "The NHS advises strengthening activities on at least two days a week, and names Pilates as an example.", "NHS physical activity guidelines"],
-    classpass: ["No.1", "The most booked workout on ClassPass worldwide, for the third year running.", "ClassPass, 2025"],
-    gym: ["£503m", "Spent on unused UK gym memberships in a single year, with only 4% saying a New Year gym resolution stuck.", "PA Life survey, January 2025"]
+    backPain: ["Pilates lowers back pain", "In 10 studies, people who did Pilates had less back pain than people who did almost nothing.", "Cochrane review, 510 adults"],
+    headOffCentre: ["Reformer straightens you up", "In one study, beginners held their heads much straighter after a Reformer course.", "Sim et al, 2022"],
+    neckLoad: ["Your phone strains your neck", "Looking down at a phone makes your head feel about 5 times heavier to your neck.", "Hansraj, 2014"],
+    core228: ["Lighter springs, stronger tummy", "With a lighter spring, people's deep tummy muscles worked more than 3 times harder in the same move.", "Kim et al, 2024"],
+    flex: ["Pilates makes you more flexible", "Across 12 studies, people got more flexible. It's one of the most reliable results in the research.", "Bajčetić et al, 2026"],
+    anxiety: ["Reformer lowers anxiety", "Across controlled trials Pilates lowered anxiety, and it's one of the largest effects the Pilates trials recorded for anything they measured.", "Fleming and Herring, 2018"],
+    energy: ["Pilates gives you more energy", "Across the Pilates trials, people felt less tired and had more energy, and the difference was a big one.", "Fleming and Herring, 2018"],
+    balance: ["Better balance after 60", "In studies of adults over 60, Pilates improved balance a lot.", "Barker et al, 2015"],
+    chairStand: ["Stronger legs in 12 weeks", "After twelve weeks, women over 60 could stand up from a chair more times in 30 seconds.", "García Garro et al, 2020"],
+    strengthGuideline: ["Most adults don't do enough", "Only about 1 in 20 adults in England do enough exercise to keep their muscles strong.", "Strain et al, 253,423 adults"],
+    nhs: ["The NHS says 2 days a week", "Adults should do strength exercise at least 2 days a week, and the NHS names Pilates as one way to do it.", "NHS"],
+    classpass: ["The world's No.1 workout", "Pilates is the most booked workout on ClassPass worldwide, three years running.", "ClassPass, 2025"],
+    gym: ["Gym memberships get wasted", "People in the UK spent £503 million on gym memberships they didn't use, in one year.", "PA Life survey, 2025"]
   };
+
 
   /* -------------------------------------------------------------- MODULES */
   C.bodyModules = {
-    back: { t: "Your lower back", b: "Around one in six adults in England lives with back pain, and usually there's no single cause to point at. In a review of ten trials covering 510 adults, Pilates brought pain down by about 14 points out of 100." },
+    back: { t: "Your lower back", b: "Around one in six adults in England lives with back pain, and usually there's no single cause to point at. In 10 studies, people with back pain who did Pilates ended up with less pain than people who did almost nothing." },
     neck: { t: "Your neck and shoulders", b: "Upright, your neck carries about 12lb. Tip it forward over a phone and that goes up to about 60lb. Held forward long enough it drags your shoulders with it, and Reformer trains the muscles that pull you back up." },
     hips: { t: "Your hips", b: "Hours of sitting tightens the front of your hips and lets your backside stop pulling its weight. The footwork and the leg work on the Reformer opens the front and wakes up the muscles behind, with the springs controlling every inch." },
     knees: { t: "Your knees", b: "Reformer lets you build the muscles around the knee lying down, with no impact and no body weight on the joint unless you choose it. The springs take the load you can't, and give it back as you get stronger." },
-    none: { t: "Keeping it that way", b: "You're starting from a strong place, which is the smartest time to begin. Strength and balance are far easier to keep than to win back, and twelve weeks is the window most of the published trials measured." }
+    none: { t: "Keeping it that way", b: "You're starting from a strong place, which is the smartest time to begin. Strength and balance are far easier to keep than to win back, and most Pilates studies see real changes within 12 weeks." }
   };
 
   C.dayModules = {
@@ -252,7 +255,7 @@
     feet: "On your feet all day, your body is tired but not trained. Reformer lets you lie down and still build serious strength, with the springs supporting your joints instead of loading them.",
     rush: "Always rushing means your body never gets a proper reset. A session starts the moment you step on the bed, so 50 minutes is 50 minutes, and the lounge is there if you want ten more.",
     parent: "When everyone needs you, an hour away is the hardest thing to find and the thing that helps most. We open at 5am and close at 10pm, so you can go when the house is covered.",
-    flex: "Flexible days mean you can choose the quiet slots and build a proper routine. Twice a week, every week, is the pattern the published trials used."
+    flex: "Flexible days mean you can choose the quiet slots and build a proper routine. Twice a week, every week, is what the studies used."
   };
 
   C.barrierModules = {
@@ -275,7 +278,7 @@
     "30s": { t: "Your 30s", b: "Time gets tight and the first niggles arrive. This is the decade to put strength in the bank, while it's still easy to build. A bed and a screen ready from 5am to 10pm fits around everything else." },
     "40s": { t: "Your 40s", b: "The first creaks. Hormones start to shift, muscle starts to slip, and the back starts to complain. Twice a week on the Reformer is the simplest, lowest impact way to hold onto what you have and build more." },
     "50s": { t: "Your 50s", b: "This is the decade to train more cleverly rather than more brutally. Reformer loads the muscle without loading your spine. We will also be straight with you: Pilates holds bone rather than building it, so what it's genuinely brilliant for is strength, posture and balance." },
-    "60s": { t: "Your 60s", b: "Balance, posture and confidence on the stairs. Across randomised trials in adults over 60, balance improved by a large margin (Barker et al, 2015). Balance sounds like a small thing, but it's what keeps you living on your own terms." },
+    "60s": { t: "Your 60s", b: "Balance, posture and confidence on the stairs. In studies of adults over 60, Pilates improved balance a lot. Balance sounds like a small thing, but it's what keeps you living on your own terms." },
     "70s": { t: "Your 70s and beyond", b: "Keep doing everything you love. Start with a lighter spring and a short range, and build. Begin with an instructor who sets everything up for you, and answers the getting on and off question in the first two minutes." }
   };
 
@@ -302,9 +305,9 @@
   ];
 
   C.weeks = [
-    ["Weeks 1 to 4", "Learn the machine", "Your instructor sets your springs, and you learn the footwork, the breathing and the control. Most of the work in these four weeks is teaching your body where it is."],
-    ["Weeks 5 to 8", "Feel the change", "Moves that had you shaking start to feel steady. Posture, core control and flexibility are where the trials start reporting a difference."],
-    ["Weeks 9 to 12", "Own it", "Twelve weeks is where most of the published trials stop, and where they record less anxiety and more energy. By then you're not making yourself go."]
+    ["Weeks 1 to 4", "Learn the machine", "Your instructor sets your springs and shows you the basics: how to move, how to breathe and how to stay in control."],
+    ["Weeks 5 to 8", "Feel the change", "Moves that made your legs shake start to feel strong and steady. This is when studies start to see better posture, a stronger middle and more flexibility."],
+    ["Weeks 9 to 12", "Own it", "By week 12, studies see less anxiety and more energy. You stand taller, you sleep deeper, and you crave your next class."]
   ];
 
   /* ------------------------------------------------------------- VSLs

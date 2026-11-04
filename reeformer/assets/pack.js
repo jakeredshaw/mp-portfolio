@@ -5,7 +5,7 @@
   const R = REEF, C = REEF_CONTENT, CFG = REEF_CONFIG;
   const packId = document.body.dataset.pack, P = C.packs[packId];
   const s = R.fromUrl(), a = s.answers || {};
-  const personal = !!a.goal, n = R.first(a), N = n ? R.esc(n) : "";
+  const personal = !!(a.goal && a.ready), n = R.first(a), N = n ? R.esc(n) : "";
   const prof = C.profiles[a.goal] || null;
   const pname = personal ? C.profileName(a) : "";
   const rec = personal ? R.recommend(a) : null;

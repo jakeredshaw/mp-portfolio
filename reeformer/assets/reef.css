@@ -490,3 +490,11 @@ html,body{overflow-x:clip}
 .hq-r{margin:12px 0 0;font-size:14px;font-weight:600;color:var(--deep);animation:fadeup .35s ease}
 .mv-n{font-family:var(--sans);font-weight:800;font-size:44px;line-height:1;padding:18px 16px 0;background:linear-gradient(135deg,#E39A2E,#22B3D6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .move figcaption{padding-top:6px}
+
+/* ---------- v6 · facts lead with a plain claim, explanation underneath ---------- */
+.hf{grid-template-columns:1fr;gap:4px}
+.hf b{grid-row:auto;max-width:none;font-size:clamp(18px,4.8vw,22px);line-height:1.2;letter-spacing:-.005em}
+.hf span{font-size:14.5px}
+.fact{flex-direction:column;align-items:flex-start;gap:6px}
+.fact b{font-size:clamp(20px,5.2vw,24px);line-height:1.2}
+.stat b{font-family:var(--sans);font-weight:800;font-size:clamp(19px,4.6vw,23px);line-height:1.25;color:var(--deep)}
