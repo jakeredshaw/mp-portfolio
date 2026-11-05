@@ -87,7 +87,7 @@
     reveal: "2 days a week, and the NHS names Pilates as one way to do it. That's why your plan is 2 classes a week." };
 
   C.steps = [
-    { id: "name", type: "text", q: "First things first. What's your name?", help: "So your plan is made for you, not for anyone.", cta: "Let's go" },
+    { id: "name", type: "text", q: "What is your full name?", help: "Your first name, then your surname. We need both to build your plan.", cta: "Let's go" },
     { id: "goal", type: "single", q: "{n}, picture yourself 3 months from now. What has changed?",
       opts: [
         ["strength", "I feel strong again.", "💪"],

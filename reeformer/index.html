@@ -288,7 +288,7 @@
       <p class="eyebrow">Free quiz · About two minutes</p>
       <h1>Find your <em style="color:var(--gold-soft)">Pilates type</em>.</h1>
       <p style="font-size:16px;opacity:.95;max-width:46ch;margin:0 auto 22px">${qCount} easy questions about your body and your week, and we will show you where to start, how often to come, and what it costs.</p>
-      <button class="btn btn-light btn-block" id="start" type="button" style="max-width:420px;margin:0 auto">Find my Pilates type</button>
+      <button class="btn btn-gold btn-block btn-start" id="start" type="button">Start quiz now</button>
       <p class="small" style="margin:14px 0 0;opacity:.85">Concept visual · 57 Wyle Cop, Shrewsbury</p></div></section>
       ${R.ticker()}
       <section class="hero" style="padding-top:28px">
@@ -337,8 +337,8 @@
         <label class="f" for="fn">First name</label>
         <input type="text" id="fn" autocomplete="given-name" autocapitalize="words" placeholder="First name" value="${R.esc(a.firstName || (a.lastName ? "" : R.first(a)))}" maxlength="40">
         <div class="ferr" id="erFn"></div>
-        <label class="f" for="ln">Last name</label>
-        <input type="text" id="ln" autocomplete="family-name" autocapitalize="words" placeholder="Last name" value="${R.esc(a.lastName || "")}" maxlength="40">
+        <label class="f" for="ln">Surname</label>
+        <input type="text" id="ln" autocomplete="family-name" autocapitalize="words" placeholder="Surname" value="${R.esc(a.lastName || "")}" maxlength="40">
         <div class="ferr" id="erLn"></div>
         <div class="cta-row"><button class="btn btn-primary btn-block" id="nx" type="button">${st.cta}</button></div></div>`;
       const fn = R.$("#fn"), ln = R.$("#ln"); setTimeout(() => (fn.value ? ln : fn).focus(), 50);
@@ -351,8 +351,8 @@
         const f = tidy(fn.value), l = tidy(ln.value); let fail = false;
         if (!f) { bad(fn, "#erFn", "Please enter your first name."); fail = true; }
         else if (!real(f)) { bad(fn, "#erFn", "Please use letters only for your first name."); fail = true; }
-        if (!l) { bad(ln, "#erLn", "Please enter your last name."); fail = true; }
-        else if (!real(l)) { bad(ln, "#erLn", "Please use letters only for your last name."); fail = true; }
+        if (!l) { bad(ln, "#erLn", "Please enter your surname."); fail = true; }
+        else if (!real(l)) { bad(ln, "#erLn", "Please use letters only for your surname."); fail = true; }
         if (fail) { const b = R.$(".bad"); if (b) b.focus(); R.track("NameError", {}, true); return; }
         a.firstName = f; a.lastName = l; a.name = f + " " + l; save(); next();
       };
