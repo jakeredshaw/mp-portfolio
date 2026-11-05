@@ -11,15 +11,45 @@ window.REEF_CONFIG = {
   testMode: true,
 
   /* ---------- Momence: leads ----------
-     Momence > Marketing > Leads > Collect Leads using API.
-     Copy your host id, the token and the lead source id for "Quiz funnel". */
+     The quiz posts ONCE to our own endpoint, which then writes three things into
+     Momence: the lead carrying every answer, the customer profile with their
+     name, email and phone, and the tags staff read at a glance.
+     The endpoint's code is in reeformer-pilates/api/quiz-lead.js and its Momence
+     passwords live in Vercel's encrypted settings, never in this file. */
   momence: {
-    hostId: "",          // TODO e.g. "123456"
-    token: "",           // TODO the lead collection token
-    sourceId: "",        // TODO lead source id for the quiz
-    sendQuizAnswers: true, // sends profile, pack and answers as extra lead fields
-    // Optional backup: a Make/Zapier webhook that also receives every lead with full answers
-    backupWebhook: ""    // TODO optional
+    endpoint: "https://reefwellnessstudio.com/api/quiz-lead",
+
+    /* true = leads go to Momence even while testMode is on (payments stay
+       simulated). Turned on 5 Nov 2026 so Jacob can test the quiz into Momence. */
+    liveLeads: true,
+    sendQuizAnswers: true,
+
+    /* Left side is ours and never changes. Right side is the "Code" box on each
+       custom lead field in Momence > Settings > Leads, read off the real
+       dashboard on 5 November 2026. One wrong letter makes that answer arrive
+       empty and nobody is told, so never edit these by guesswork.
+       An empty string means Momence has no such field, so we skip it. */
+    fieldCodes: {
+      staffBriefing:         "staffBriefing",   // the paragraph staff read first
+      pilatesProfile:        "pilatesProfile",
+      recommendedPack:       "recommendedPack",
+      mainGoal:              "mainGoal",
+      pilatesExperience:     "pilatesExperience",
+      stiffAreas:            "stiffAreas",
+      typicalDay:            "typicalDay",
+      weekBusyness:          "weekBusyness",   // a Number field in Momence
+      lastTimeForThemselves: "lastHourToSelf",
+      whatStoppedThem:       "barrier",
+      ageBand:               "ageBand",
+      gender:                "gender",
+      classesPerWeek:        "classesPerWeek",
+      readinessToStart:      "readiness",
+      smsConsent:            "",               // no such field in Momence yet
+      utmSource:             ""                // no such field in Momence yet
+    },
+
+    // Optional second copy of every lead, e.g. a Make.com webhook.
+    backupWebhook: ""
   },
 
   /* ---------- Momence: checkout links for each pack ----------

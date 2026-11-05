@@ -74,30 +74,138 @@
     return out.slice(0, 4);
   };
 
-  /* ---------- Momence lead ---------- */
-  R.sendLead = async (s) => {
-    const a = s.answers || {}, m = CFG.momence;
-    if (CFG.testMode) {
-      const log = (R.load().testLeads || []); log.push({ at: new Date().toISOString(), email: s.email, phone: s.phone, profile: C.profileName(a), pack: C.packs[s.pack].name, answers: a });
-      R.update({ testLeads: log.slice(-50) }); console.info("[reef TEST] lead captured, not sent", log[log.length - 1]); return;
-    }
-    const parts = String(a.name || "").trim().split(/\s+/);
-    const base = { token: m.token, sourceId: m.sourceId, firstName: parts[0] || "", lastName: parts.slice(1).join(" ") || "", email: s.email, phoneNumber: s.phone || "" };
-    const extra = {
-      quizProfile: C.profileName(a), recommendedPack: C.packs[s.pack].name, goal: a.goal, experience: a.exp,
-      body: (a.body || []).join(","), day: a.day, weekPace: a.pace, meTime: a.metime, barrier: a.barrier,
-      ageBand: a.age, sex: a.sex, frequency: a.freq, readiness: a.ready, smsConsent: s.sms ? "yes" : "no",
-      utm: s.utm ? JSON.stringify(s.utm) : ""
+  /* ---------- Momence lead ----------
+     Posts once, to our own endpoint at /api/quiz-lead, which then writes three
+     things into Momence: the lead with every answer on it, the customer profile
+     with their name, email and phone, and the tags staff read at a glance.
+     The code for that endpoint is in reeformer-pilates/api/quiz-lead.js and the
+     Momence passwords live in Vercel, never in this file. ---------- */
+
+  /* One plain paragraph a member of staff can read in ten seconds, before they
+     walk over to somebody. Momence strips line breaks out of this field, so it
+     must stay a single run of short sentences. */
+  R.staffBriefing = (s) => {
+    const a = s.answers || {}, out = [];
+    const and = (xs) => xs.length < 2 ? (xs[0] || "") : xs.slice(0, -1).join(", ") + " and " + xs[xs.length - 1];
+
+    out.push({ "0": "New to Reformer.", "1-5": "Has done 1 to 5 Pilates classes.",
+               "6-20": "Has done 6 to 20 Pilates classes.", "20+": "Has done 20 or more Pilates classes." }[a.exp] || "");
+
+    const who = [a.sex === "f" ? "Woman" : a.sex === "m" ? "Man" : "",
+                 a.age === "70s" ? "70 or over" : a.age || ""].filter(Boolean).join(", ");
+    if (who) out.push(who + ".");
+
+    const goal = { strength: "feel strong again", posture: "stand tall and stop their back aching",
+                   shape: "tone up and feel good in their body", calm: "feel calmer and sleep better",
+                   resilient: "move freely without the twinges", comeback: "feel like themselves again" }[a.goal];
+    if (goal) out.push("Wants to " + goal + ".");
+
+    const sore = (a.body || []).filter((b) => b !== "none").map((b) => R.label("body", b).toLowerCase());
+    out.push(sore.length ? "Stiff in the " + and(sore) + "." : (a.body || []).includes("none") ? "Nothing aching yet." : "");
+
+    const day = { desk: "Sits at a desk or drives all day", feet: "On their feet all day",
+                  rush: "Always rushing", parent: "Busy with family", flex: "Retired or flexible days" }[a.day];
+    if (day) out.push(day + (a.pace ? ", week is " + a.pace + " out of 5 for busy" : "") + ".");
+    else if (a.pace) out.push("Week is " + a.pace + " out of 5 for busy.");
+
+    if (a.metime === "cant") out.push("Cannot remember their last hour to themselves.");
+    else if (a.metime === "month") out.push("Last hour to themselves was weeks ago.");
+
+    const freq = { "1": "Can come once a week.", "2": "Can come twice a week.",
+                   "3": "Can come three or more times a week.", unsure: "Not sure yet how often they can come." }[a.freq];
+    if (freq) out.push(freq);
+
+    const worry = { intimidated: "feeling out of place", notfit: "not feeling fit enough", time: "no time",
+                    cost: "the cost", injury: "an old injury", gym: "the gym never sticking",
+                    nearby: "no studio nearby", full: "classes always being full", far: "the studio being too far",
+                    pricey: "it being too expensive", busy: "life getting busy", bored: "getting bored" }[a.barrier];
+    if (worry) out.push("Main worry is " + worry + ".");
+
+    const ready = { now: "Ready to start now.", keen: "Keen, just needs the right plan.", curious: "Only curious so far." }[a.ready];
+    if (ready) out.push(ready);
+
+    if (C.packs[s.pack]) out.push("Matched pack: " + C.packs[s.pack].name + ".");
+
+    return out.filter(Boolean).join(" ").replace(/\s+/g, " ").trim();
+  };
+
+  // Human readable values, because a member of staff reads these, not a machine.
+  R.leadFields = (s) => {
+    const a = s.answers || {}, sh = C.short || {};
+    const lbl = (k, v) => (sh[k] && sh[k][v]) || v || "";
+    return {
+      staffBriefing:         R.staffBriefing(s),
+      pilatesProfile:        C.profileName(a),
+      recommendedPack:       (C.packs[s.pack] || {}).name || "",
+      mainGoal:              lbl("goal", a.goal),
+      pilatesExperience:     lbl("exp", a.exp),
+      stiffAreas:            (a.body || []).map((b) => lbl("body", b)).join(", "),
+      typicalDay:            lbl("day", a.day),
+      weekBusyness:          a.pace == null ? "" : Number(a.pace),   // a Number in Momence
+      lastTimeForThemselves: lbl("metime", a.metime),
+      whatStoppedThem:       lbl("barrier", a.barrier),
+      ageBand:               lbl("age", a.age),
+      gender:                lbl("sex", a.sex),
+      classesPerWeek:        lbl("freq", a.freq),
+      readinessToStart:      lbl("ready", a.ready),
+      smsConsent:            s.sms ? "Yes" : "No",
+      utmSource:             (s.utm && (s.utm.utm_source || s.utm.source)) || ""
     };
-    const post = (url, body) => fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), keepalive: true });
-    if (m.hostId && m.token) {
-      const url = `https://api.momence.com/integrations/customer-leads/${encodeURIComponent(m.hostId)}/collect`;
-      try {
-        const res = await post(url, m.sendQuizAnswers ? Object.assign({}, base, extra) : base);
-        if (!res.ok && m.sendQuizAnswers) await post(url, base); // retry with core fields only
-      } catch (e) { console.warn("Momence lead failed", e); }
-    } else console.warn("[reef] Momence hostId/token not set in config.js. Lead not sent.");
-    if (m.backupWebhook) { try { await post(m.backupWebhook, Object.assign({}, base, extra, { token: undefined, answers: a })); } catch (e) {} }
+  };
+
+  // The few things an instructor wants to see without opening anything.
+  // Every name here must exist as a tag in Momence or it is quietly skipped.
+  R.leadTags = (s) => {
+    const a = s.answers || {}, sh = C.short || {}, t = ["Quiz completed"];
+    const exp = { "0": "New to Pilates", "1-5": "Pilates: 1 to 5 classes", "6-20": "Pilates: 6 to 20 classes", "20+": "Pilates: 20+ classes" };
+    if (exp[a.exp]) t.push(exp[a.exp]);
+    (a.body || []).forEach((b) => { if (b !== "none" && sh.body && sh.body[b]) t.push("Stiff: " + sh.body[b]); });
+    if (sh.freq && sh.freq[a.freq]) t.push("Can come: " + sh.freq[a.freq]);
+    if (C.packs[s.pack]) t.push("Match: " + C.packs[s.pack].name);
+    return t;
+  };
+
+  R.sendLead = async (s) => {
+    const m = CFG.momence || {};
+    const fields = R.leadFields(s), tags = R.leadTags(s);
+
+    if (CFG.testMode && !m.liveLeads) {
+      const log = (R.load().testLeads || []);
+      log.push({ at: new Date().toISOString(), name: (s.answers || {}).name, email: s.email, phone: s.phone, fields: fields, tags: tags });
+      R.update({ testLeads: log.slice(-50) });
+      console.info("[reef TEST] lead captured, not sent", log[log.length - 1]);
+      return;
+    }
+
+    // Rename our keys to whatever the Momence custom field Codes actually are.
+    const codes = m.fieldCodes || {}, out = {};
+    Object.keys(fields).forEach((k) => {
+      const code = Object.prototype.hasOwnProperty.call(codes, k) ? codes[k] : k;
+      if (code && fields[k] !== "") out[code] = fields[k];
+    });
+
+    const payload = {
+      name: (s.answers || {}).name || "",
+      email: s.email,
+      phone: s.phone || "",
+      website: "",                       // honeypot, stays empty
+      fields: m.sendQuizAnswers === false ? {} : out,
+      tags: tags
+    };
+
+    const post = (url, body) => fetch(url, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body), keepalive: true
+    });
+
+    if (m.endpoint) {
+      try { await post(m.endpoint, payload); }
+      catch (e) { console.warn("[reef] lead endpoint failed", e); }
+    } else {
+      console.warn("[reef] momence.endpoint not set in config.js. Lead not sent.");
+    }
+
+    if (m.backupWebhook) { try { await post(m.backupWebhook, payload); } catch (e) {} }
   };
 
   /* ---------- tracking ---------- */

@@ -574,7 +574,7 @@
     R.animate();
   }
 
-  if (CFG.testMode) R.$("#tb").innerHTML = `<div class="testbar">Test mode: leads are logged, payments simulated · <a href="lab.html">Open the Funnel Lab</a></div>`;
+  if (CFG.testMode) R.$("#tb").innerHTML = `<div class="testbar">Test mode: ${(CFG.momence||{}).liveLeads ? "leads go to Momence" : "leads are logged"}, payments simulated · <a href="lab.html">Open the Funnel Lab</a></div>`;
   const qp = new URLSearchParams(location.search);
   if (qp.has("restart")) { state = { answers: {}, utm: state.utm }; R.save(state); }
   // Funnel Lab / email links: ?r=CODE&view=result jumps straight to that result
