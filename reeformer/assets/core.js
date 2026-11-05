@@ -167,7 +167,7 @@
 
   R.sendLead = async (s) => {
     const m = CFG.momence || {};
-    const fields = R.leadFields(s), tags = R.leadTags(s);
+    const fields = R.leadFields(s), tags = R.leadTags(s).concat(s.extraTags || []);
 
     if (CFG.testMode && !m.liveLeads) {
       const log = (R.load().testLeads || []);
@@ -186,6 +186,8 @@
 
     const payload = {
       name: (s.answers || {}).name || "",
+      firstName: (s.answers || {}).firstName || R.first(s.answers),
+      lastName: (s.answers || {}).lastName || "",
       email: s.email,
       phone: s.phone || "",
       website: "",                       // honeypot, stays empty
@@ -281,7 +283,7 @@
     R.track("InitiateCheckout", { value: P.price, currency: "GBP", content_name: P.name });
     if (CFG.testMode) { location.href = "checkout.html?pack=" + packId; return; }
     const url = CFG.checkout[packId];
-    if (!url) { R.toast("Checkout link for " + P.name + " is not set yet (assets/config.js)."); return; }
+    if (!url) { location.href = "checkout.html?pack=" + packId; return; }
     location.href = url;
   };
   R.toast = (msg) => {

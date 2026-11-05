@@ -8,7 +8,7 @@ window.REEF_CONFIG = {
      true  = every checkout button runs a simulated checkout (no payment, no Momence) and leads are logged, not sent.
               A light blue bar on every page links to the Funnel Lab (lab.html) to test every route.
      false = live: leads go to Momence and checkout buttons go to your Momence links. */
-  testMode: true,
+  testMode: false,   // LIVE since 5 Nov 2026. Packs without a Momence link below show a "Hold my founder place" form that sends the lead to Momence.
 
   /* ---------- Momence: leads ----------
      The quiz posts ONCE to our own endpoint, which then writes three things into

@@ -95,7 +95,12 @@
       const nt = R.$("#notrio"); if (nt) nt.remove();
       R.track("Purchase", { value: x.price, currency: "GBP", content_name: x.name }); return;
     }
-    if (!x.checkout) { R.toast("Add on checkout link not set yet (assets/config.js)."); return; }
+    if (!x.checkout) {
+      const btn = key === "trio" ? R.$("#trio") : R.$("#rl");
+      if (s.email) R.sendLead(Object.assign({}, s, { extraTags: ["Wants add on: " + x.name] }));
+      btn.outerHTML = `<div class="card" style="background:var(--foam);border-color:var(--sky);text-align:center"><b style="color:var(--ok)">✓ ${R.esc(x.name)} held for you</b><div class="small muted">We'll send your secure payment link for ${R.money(x.price)}${s.email ? " to " + R.esc(s.email) : ""}. Nothing is taken today.</div></div>`;
+      const nt = R.$("#notrio"); if (nt) nt.remove(); return;
+    }
     location.href = x.checkout;
   };
   if (R.$("#trio")) {

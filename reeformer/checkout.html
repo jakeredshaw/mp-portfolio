@@ -59,10 +59,55 @@
   const s = R.load(), a = s.answers || {};
   let pid = new URLSearchParams(location.search).get("pack") || s.bag || "plus";
   if (!C.packs[pid]) pid = "plus";
-  if (!CFG.testMode) { if (CFG.checkout[pid]) location.replace(CFG.checkout[pid]); else document.body.innerHTML = "<p style='padding:40px'>Checkout link not set in assets/config.js</p>"; return; }
-  R.$("#tb").innerHTML = `<div class="testbar">Test checkout: no payment is taken. Use any details. · <a href="lab.html">Funnel Lab</a></div>`;
   let bump = false;
-  const parts = String(a.name || "").trim().split(/\s+/);
+  const parts = a.firstName ? [a.firstName].concat(String(a.lastName || "").split(/\s+/)) : String(a.name || "").trim().split(/\s+/);
+
+  // Live, but this pack has no Momence payment link yet: hold the place and send the lead to Momence.
+  function holdPlace(){
+    const P = C.packs[pid];
+    document.title = "Hold your founder place · reef";
+    R.$("#co").innerHTML = `
+    <aside class="co-side"><div class="line-item">${R.img(P.imgs[0], "", false)}<div><div class="caps" style="color:var(--deep)">${P.name}</div><div class="small muted">${P.classes} Reformer classes</div><div class="small muted">${P.validity}</div></div><b>${R.money(P.price)}</b></div>
+      <div class="sumrow" style="color:var(--deep);font-weight:800;margin-top:12px"><span>That works out at</span><span>${R.money(P.perClass)} a class</span></div></aside>
+    <section class="co-main" id="hp">
+      <h2 style="margin-top:6px">Hold your ${P.name} place</h2>
+      <p class="muted">Pop your details in and we will hold this founder place at this price for you. We'll send you a secure payment link to finish. Nothing is taken today.</p>
+      <div class="stack3">
+        <div class="row2"><div><input class="fld" id="fn" placeholder="First name" autocomplete="given-name" value="${R.esc(a.firstName || parts[0] || "")}"><div class="ferr" id="erFn"></div></div>
+        <div><input class="fld" id="ln" placeholder="Last name" autocomplete="family-name" value="${R.esc(a.lastName || parts.slice(1).join(" "))}"><div class="ferr" id="erLn"></div></div></div>
+        <div><input class="fld" id="em" type="email" inputmode="email" placeholder="Email" autocomplete="email" value="${R.esc(s.email || "")}"><div class="ferr" id="erEm"></div></div>
+        <div><input class="fld" id="ph" type="tel" inputmode="tel" placeholder="+44 7700 900123" autocomplete="tel" value="${R.esc(s.phone || "+44 ")}"><div class="fhint">Start with +44, then your number without the first 0.</div><div class="ferr" id="erPh"></div></div>
+      </div>
+      <button class="btn btn-gold btn-block pulse" id="hold" type="button" style="margin-top:18px">Hold my founder place</button>
+      <div style="margin-top:14px">${R.guarantee(true)}</div>
+      <p class="small muted center" style="margin-top:12px">Questions? <a href="mailto:${CFG.email}">${CFG.email}</a></p>
+    </section>`;
+    const bad = (el, box, msg) => { el.classList.add("bad"); R.$(box).textContent = msg; el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake"); };
+    [["#fn","#erFn"],["#ln","#erLn"],["#em","#erEm"],["#ph","#erPh"]].forEach(([i, b]) => R.$(i).oninput = () => { R.$(i).classList.remove("bad"); R.$(b).textContent = ""; });
+    R.$("#hold").onclick = () => {
+      const f = R.$("#fn").value.trim(), l = R.$("#ln").value.trim(), e = R.$("#em").value.trim(), num = R.$("#ph").value.trim().replace(/[\s()]/g, "");
+      let fail = false;
+      if (!f) { bad(R.$("#fn"), "#erFn", "Please enter your first name."); fail = true; }
+      if (!l) { bad(R.$("#ln"), "#erLn", "Please enter your last name."); fail = true; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e)) { bad(R.$("#em"), "#erEm", "Please enter a real email address, like name@example.com."); fail = true; }
+      if (!num || num === "+44") { bad(R.$("#ph"), "#erPh", "Please enter your mobile number. It must start with +44."); fail = true; }
+      else if (!num.startsWith("+44")) { bad(R.$("#ph"), "#erPh", num.startsWith("07") ? "Please start with +44 instead of 0. For example, 07700 900123 becomes +44 7700 900123." : "Your number must start with +44."); fail = true; }
+      else if (!/^\+447\d{9}$/.test(num)) { bad(R.$("#ph"), "#erPh", num.startsWith("+440") ? "Drop the 0 after +44. For example, +44 7700 900123." : "That doesn't look like a UK mobile. It should look like +44 7700 900123."); fail = true; }
+      if (fail) { const b = R.$(".bad"); if (b) b.focus(); return; }
+      const ans = Object.assign({}, a, { firstName: f, lastName: l, name: f + " " + l });
+      R.update({ answers: ans, email: e, phone: num, heldPack: pid, heldAt: Date.now(), bag: null });
+      R.track("Lead", { content_name: P.name, value: P.price, currency: "GBP" });
+      R.sendLead(Object.assign({}, R.load(), { pack: s.pack || pid, extraTags: ["Wants to buy: " + P.name] }));
+      R.$("#hp").innerHTML = `<h2 style="margin-top:6px">Your place is held, ${R.esc(f)}.</h2>
+        <p>We are holding your <b>${P.name}</b> founder place at <b>${R.money(P.price)}</b>. We'll send your secure payment link to <b>${R.esc(e)}</b> and by text to <b>${R.esc(num)}</b>.</p>
+        <p class="muted">Nothing has been taken. Questions? <a href="mailto:${CFG.email}">${CFG.email}</a></p>
+        <a class="btn btn-ghost btn-block" href="index.html?view=result" style="margin-top:12px">Back to my plan</a>`;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+  }
+
+  if (!CFG.testMode) { if (CFG.checkout[pid]) { location.replace(CFG.checkout[pid]); return; } return holdPlace(); }
+  R.$("#tb").innerHTML = `<div class="testbar">Test checkout: no payment is taken. Use any details. · <a href="lab.html">Funnel Lab</a></div>`;
 
   function render(){
     const P = C.packs[pid], U = P.bump ? C.packs[P.bump.to] : null;

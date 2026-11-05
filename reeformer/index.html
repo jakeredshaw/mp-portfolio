@@ -334,11 +334,31 @@
     }
     if (st.type === "text") {
       app.innerHTML = `<div class="screen"><h2 class="q">${R.fill(st.q, a)}</h2>${st.help ? `<p class="help">${st.help}</p>` : ""}
-        <input type="text" id="tx" autocomplete="given-name" placeholder="${st.placeholder}" value="${R.esc(a.name || "")}" maxlength="40">
-        <div class="err" id="er"></div><div class="cta-row"><button class="btn btn-primary btn-block" id="nx" type="button">${st.cta}</button></div></div>`;
-      const tx = R.$("#tx"); setTimeout(() => tx.focus(), 50);
-      const sub = () => { const v = tx.value.trim(); if (v.length < 1) { R.$("#er").textContent = "Pop your first name in so we can personalise your plan."; return; } a.name = v; save(); next(); };
-      R.$("#nx").onclick = sub; tx.onkeydown = e => { if (e.key === "Enter") sub(); }; return;
+        <label class="f" for="fn">First name</label>
+        <input type="text" id="fn" autocomplete="given-name" autocapitalize="words" placeholder="First name" value="${R.esc(a.firstName || (a.lastName ? "" : R.first(a)))}" maxlength="40">
+        <div class="ferr" id="erFn"></div>
+        <label class="f" for="ln">Last name</label>
+        <input type="text" id="ln" autocomplete="family-name" autocapitalize="words" placeholder="Last name" value="${R.esc(a.lastName || "")}" maxlength="40">
+        <div class="ferr" id="erLn"></div>
+        <div class="cta-row"><button class="btn btn-primary btn-block" id="nx" type="button">${st.cta}</button></div></div>`;
+      const fn = R.$("#fn"), ln = R.$("#ln"); setTimeout(() => (fn.value ? ln : fn).focus(), 50);
+      const bad = (input, box, msg) => { input.classList.add("bad"); R.$(box).textContent = msg; input.classList.remove("shake"); void input.offsetWidth; input.classList.add("shake"); };
+      const ok = (input, box) => { input.classList.remove("bad"); R.$(box).textContent = ""; };
+      const tidy = v => { v = v.trim().replace(/\s+/g, " "); return v === v.toLowerCase() ? v.replace(/(^|[\s'-])([a-z])/g, (m, p, c) => p + c.toUpperCase()) : v; };
+      const real = v => /^[A-Za-z\u00C0-\u024F][A-Za-z\u00C0-\u024F' .-]*$/.test(v) && /[A-Za-z\u00C0-\u024F]/.test(v);
+      fn.oninput = () => ok(fn, "#erFn"); ln.oninput = () => ok(ln, "#erLn");
+      const sub = () => {
+        const f = tidy(fn.value), l = tidy(ln.value); let fail = false;
+        if (!f) { bad(fn, "#erFn", "Please enter your first name."); fail = true; }
+        else if (!real(f)) { bad(fn, "#erFn", "Please use letters only for your first name."); fail = true; }
+        if (!l) { bad(ln, "#erLn", "Please enter your last name."); fail = true; }
+        else if (!real(l)) { bad(ln, "#erLn", "Please use letters only for your last name."); fail = true; }
+        if (fail) { const b = R.$(".bad"); if (b) b.focus(); R.track("NameError", {}, true); return; }
+        a.firstName = f; a.lastName = l; a.name = f + " " + l; save(); next();
+      };
+      R.$("#nx").onclick = sub;
+      fn.onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); ln.focus(); } };
+      ln.onkeydown = e => { if (e.key === "Enter") sub(); }; return;
     }
     const ib = "";
     const Q = typeof st.q === "function" ? st.q(a) : st.q;
