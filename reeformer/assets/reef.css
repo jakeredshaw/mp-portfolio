@@ -509,3 +509,11 @@ html,body{overflow-x:clip}
 .faqzone details{background:transparent}
 #whynow{margin-top:14px}
 .pc-off{display:block!important}
+
+/* ---------- capture: required email + +44 mobile ---------- */
+input.bad{border-color:#D64545!important;background:#FFF1F0!important;box-shadow:0 0 0 3px rgba(214,69,69,.18)}
+.ferr{color:#C0392B;font-size:13.5px;font-weight:700;margin:6px 2px 0;min-height:0}
+.ferr:empty{display:none}
+.fhint{color:var(--muted);font-size:12.5px;margin:6px 2px 0}
+@keyframes shake{10%,90%{transform:translateX(-1px)}20%,80%{transform:translateX(2px)}30%,50%,70%{transform:translateX(-4px)}40%,60%{transform:translateX(4px)}}
+input.shake{animation:shake .4s}
