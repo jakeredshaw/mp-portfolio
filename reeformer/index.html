@@ -414,28 +414,29 @@
       <input type="email" id="em" autocomplete="email" inputmode="email" placeholder="you@example.com" value="${R.esc(state.email || "")}">
       <div class="ferr" id="erEm"></div>
       <label class="f" for="ph">Your mobile number</label>
-      <input type="tel" id="ph" autocomplete="tel" inputmode="tel" placeholder="+44 7700 900123" value="${R.esc(state.phone || "+44 ")}">
-      <div class="fhint" id="hintPh">Start with +44, then your number without the first 0.</div>
+      <div class="ph44" id="phwrap44"><span class="ph44-cc" aria-hidden="true">+44</span><input type="tel" id="ph" autocomplete="tel-national" inputmode="numeric" placeholder="7700 900123" aria-label="Mobile number after +44" value="${R.esc((state.phone || "").replace(/^\+44/, ""))}"></div>
+      <div class="fhint" id="hintPh">We add the +44 for you. Type the rest of your number.</div>
       <div class="ferr" id="erPh"></div>
-      <label class="chk chk-big"><input type="checkbox" id="sms"${state.sms ? " checked" : ""}> <span>Also text me if founder places run low</span></label>
+      <label class="optin"><input type="checkbox" id="mk" checked> <span>Click this box if you want to be the first to know when Reef opens and get some marketing emails.</span></label>
       <div class="cta-row stick"><button class="btn btn-gold btn-block ready" id="nx" type="button">Show me my plan</button>
-      <p class="cap-legal">We will email your plan and our founder news, and only text you offers if you tick the box. Unsubscribe any time, and we never pass your details to anyone.</p></div>
+      <p class="cap-legal">We'll email you your plan. Unsubscribe any time, and we never pass your details to anyone.</p></div>
     </div>`;
     const em = R.$("#em"), ph = R.$("#ph");
     const bad = (input, box, msg) => { input.classList.add("bad"); R.$(box).textContent = msg; input.classList.remove("shake"); void input.offsetWidth; input.classList.add("shake"); };
     const ok = (input, box) => { input.classList.remove("bad"); R.$(box).textContent = ""; };
     em.oninput = () => ok(em, "#erEm");
-    ph.oninput = () => { ok(ph, "#erPh"); R.$("#hintPh").hidden = false; };
-    ph.onfocus = () => { if (!ph.value.trim()) ph.value = "+44 "; };
+    const wrap44 = R.$("#phwrap44");
+    ph.oninput = () => { ok(ph, "#erPh"); wrap44.classList.remove("bad"); };
+    // whatever they type, we store +44 then the number: 07700 900123, 447700900123 and +44 7700 900123 all become +447700900123
+    const toE164 = (v) => { let d = String(v).replace(/[^\d+]/g, ""); d = d.replace(/^\+?44/, "").replace(/^0+/, "").replace(/\D/g, ""); return d ? "+44" + d : ""; };
     R.$("#nx").onclick = async () => {
-      const e = em.value.trim(), raw = ph.value.trim(), num = raw.replace(/[\s()]/g, ""), sms = R.$("#sms").checked;
+      const e = em.value.trim(), num = toE164(ph.value), mk = R.$("#mk").checked;
       let fail = false;
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e)) { bad(em, "#erEm", "Please enter a real email address, like name@example.com."); fail = true; }
-      if (!num || num === "+44") { bad(ph, "#erPh", "Please enter your mobile number. It must start with +44."); fail = true; }
-      else if (!num.startsWith("+44")) { bad(ph, "#erPh", num.startsWith("07") ? "Please start with +44 instead of 0. For example, 07700 900123 becomes +44 7700 900123." : "Your number must start with +44."); fail = true; }
-      else if (!/^\+447\d{9}$/.test(num)) { bad(ph, "#erPh", num.startsWith("+440") ? "Drop the 0 after +44. For example, +44 7700 900123." : "That doesn't look like a UK mobile. It should look like +44 7700 900123."); fail = true; }
+      if (!num) { bad(ph, "#erPh", "Please enter your mobile number."); wrap44.classList.add("bad"); fail = true; }
+      else if (!/^\+447\d{9}$/.test(num)) { bad(ph, "#erPh", "That doesn't look like a UK mobile. After +44 it should look like 7700 900123."); wrap44.classList.add("bad"); fail = true; }
       if (fail) { const first = R.$(".bad"); if (first) first.focus(); R.track("CaptureError", {}, true); return; }
-      state.email = e; state.phone = num; state.sms = sms; state.leadAt = Date.now(); save();
+      state.email = e; state.phone = num; state.marketing = mk; state.leadAt = Date.now(); save();
       R.track("Lead", { content_name: C.packs[state.pack].name, value: C.packs[state.pack].price, currency: "GBP" });
       R.sendLead(state);
       analysing();

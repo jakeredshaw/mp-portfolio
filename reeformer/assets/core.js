@@ -148,7 +148,7 @@
       gender:                lbl("sex", a.sex),
       classesPerWeek:        lbl("freq", a.freq),
       readinessToStart:      lbl("ready", a.ready),
-      smsConsent:            s.sms ? "Yes" : "No",
+      smsConsent:            s.marketing ? "Yes" : "No",   // the "first to know when Reef opens + marketing emails" box
       utmSource:             (s.utm && (s.utm.utm_source || s.utm.source)) || ""
     };
   };
@@ -162,6 +162,7 @@
     (a.body || []).forEach((b) => { if (b !== "none" && sh.body && sh.body[b]) t.push("Stiff: " + sh.body[b]); });
     if (sh.freq && sh.freq[a.freq]) t.push("Can come: " + sh.freq[a.freq]);
     if (C.packs[s.pack]) t.push("Match: " + C.packs[s.pack].name);
+    t.push(s.marketing ? "Marketing emails: Yes" : "Marketing emails: No");
     return t;
   };
 
