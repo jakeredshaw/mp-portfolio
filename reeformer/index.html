@@ -5,9 +5,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Your Reformer Plan · reef</title>
-<meta name="description" content="A free two minute quiz. Find your Pilates type, get a twelve week Reformer plan and see the founder place that fits. reef opens in January 2027 on Wyle Cop, Shrewsbury.">
+<meta name="description" content="A free two minute quiz. Find your Pilates type, get a twelve week Reformer plan and hear about reef before anyone else. reef opens in January 2027 on Wyle Cop, Shrewsbury.">
 <meta property="og:title" content="Find your Pilates type · reef, Shrewsbury">
-<meta property="og:description" content="A free two minute quiz that tells you where to start with Reformer Pilates, and what it costs. reef, Wyle Cop, Shrewsbury.">
+<meta property="og:description" content="A free two minute quiz that tells you where to start with Reformer Pilates. reef, Wyle Cop, Shrewsbury.">
 <meta property="og:image" content="assets/logo/reef-lockup-stacked-gold.png">
 <meta name="theme-color" content="#FAF6E8">
 <link rel="icon" href="assets/logo/reef-mark-gold.png">
@@ -238,7 +238,7 @@
 </style>
 </head>
 <body>
-<div id="tb"></div><div class="ribbon" id="ribbon">Founder places are open · Prices end on opening day</div>
+<div id="tb"></div><div class="ribbon" id="ribbon">Reformer Pilates on Wyle Cop, Shrewsbury · Opening January 2027</div>
 <div class="qbar" id="qbar">
   <header class="qtop" id="qtop">
     <button class="back" id="back" type="button" aria-label="Go back one question"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg><span>Back</span></button>
@@ -409,7 +409,7 @@
       <div class="card cap-card"><ul class="ticks" style="margin:0">
         <li>What is actually going on with your body</li>
         <li>Your first twelve weeks, week by week</li>
-        <li>The founder place that fits, and what it costs</li></ul></div>
+        <li>Founder news before anyone else</li></ul></div>
       <label class="f" for="em">Your email address</label>
       <input type="email" id="em" autocomplete="email" inputmode="email" placeholder="you@example.com" value="${R.esc(state.email || "")}">
       <div class="ferr" id="erEm"></div>
@@ -448,7 +448,7 @@
     R.$("#progwrap").classList.add("hide"); R.$("#back").style.visibility = "hidden";
     R.$("#qstep").textContent = "";
     const a = A();
-    const lines = ["Reading what you told us", "Lining it up against the research", "Working out your twelve weeks", "Finding the pack that fits"];
+    const lines = ["Reading what you told us", "Lining it up against the research", "Working out your twelve weeks", "Matching your first classes"];
     app.innerHTML = `<div class="screen anal"><div class="ring"></div><h2 class="q">Building your plan, ${R.esc(R.first(a) || "friend")}…</h2><ul class="steps">${lines.map(l => `<li>${l}</li>`).join("")}</ul></div>`;
     const li = app.querySelectorAll(".steps li");
     li.forEach((el, i) => setTimeout(() => el.classList.add("done"), 380 * (i + 1)));
@@ -481,38 +481,6 @@
     const planFor2 = planFor.charAt(0).toUpperCase() + planFor.slice(1);
     const bm = C.barrierModules[a.barrier];
 
-    /* ---------- the pack, decided for them ---------- */
-    const sizeChip = (id) => {
-      const X = C.packs[id], F = R.frame(id);
-      const tag = id === matched ? `<span class="size-tag">Your match</span>` : id === "year" ? `<span class="size-tag alt">Best value</span>` : "";
-      return `<button type="button" class="size ${id === picked ? "on" : ""}" data-id="${id}">${tag}
-        <b>${F.per}</b><span>a class</span><em>${X.classes} classes</em><i>${R.money(X.price)}${X.perClassWellness || id === "year" ? " + recovery" : ""}</i></button>`;
-    };
-    const panel = (id) => {
-      const P = C.packs[id], F = R.frame(id), why = R.reasons(a, id).slice(0, 2);
-      const weekly = F.weekly.charAt(0).toUpperCase() + F.weekly.slice(1);
-      return `<span class="badge ${id === matched ? "" : "foam"} pc-badge">${id === matched && id === "year" ? "Best value, and your match" : id === matched ? "Matched to your answers" : id === "year" ? "Best value · lowest price a class" : P.badge}</span>
-        <h3 class="pc-name">${P.name}</h3>
-        <p class="pc-tag">${P.tagline.replace(/\s*\u00a3[\d,]+\.?$/, ".").replace(/\.\.$/, ".")}</p>
-        <div class="pc-money">
-          <div class="pc-per"><b data-count="${P.perClass}">${F.per}</b><span>a class</span></div>
-          <div class="pc-off">A single class is <b>${R.money(R.walkin)}</b> from opening day</div>
-          <div class="pc-total"><b>${R.money(P.price)}</b> ${id === "year" ? "paid once, for" : "in total, for"} ${P.classes} classes${P.perClassWellness ? " and the recovery sessions" : ""}</div>
-          <p class="pc-line">${weekly}${F.perDay ? `. That is about <b>${F.perDay} a day</b>` : F.perWeek ? `. That is about <b>${F.perWeek} a week</b>` : ""}.</p>
-        </div>
-        <ul class="ticks small pc-why">${why.map(r => `<li>${r}</li>`).join("")}</ul>
-        <button class="btn btn-gold btn-block pulse" id="pickBuy" type="button">Start with ${P.name}, ${R.money(P.price)}</button>
-        <p class="pc-re">Secure checkout, and you have your usual ${CFG.refundDays} days to change your mind. Your classes start on opening day.</p>
-        <a class="pc-more" href="${P.file}?from=quiz">See everything in ${P.name}</a>`;
-    };
-    const cmpRow = (id) => {
-      const X = C.packs[id], F = R.frame(id);
-      const bits = X.stack.slice(0, 3).map(r => r[0]).join(" · ");
-      return `<button type="button" class="cmp-row" data-id="${id}">
-        <span class="cr-n">${X.name}<em>${bits}</em></span>
-        <span class="cr-p"><b>${F.per}</b>a class<i>${R.money(X.price)} total</i></span></button>`;
-    };
-
     app.innerHTML = `<div class="screen res">
       <div class="res-hd reveal"><img class="res-mark" src="assets/logo/reef-mark-gold.png" alt="reef" width="72" height="75">
       <p class="eyebrow">Quiz complete</p>
@@ -530,15 +498,14 @@
 
       ${bm ? `<div class="card res-obj"><p class="eyebrow">Your worry, answered</p><h3>${bm.t}</h3><p>${R.fill(bm.b, a)}</p></div>` : ""}
 
-      <section class="pickzone" id="pick">
-        <p class="eyebrow">Your pack and your price</p>
-        <h2 class="pick-h" id="pickH"></h2>
-        <p class="pick-sub" id="pickSub"></p>
-        <div class="pickcard" id="pickcard"></div>
-        <p class="size-lab">Want a different size? Tap one and the price above changes</p>
-        <div class="sizes" id="sizes">${C.order.slice().reverse().map(sizeChip).join("")}</div>
-        <div id="whynow"></div>
-        <div class="pick-guar">${R.guarantee(true)}</div>
+      <section class="pickzone nextzone">
+        <p class="eyebrow">What happens next</p>
+        <h2 class="pick-h">${N ? N + ", you're" : "You're"} on the list.</h2>
+        <ul class="ticks" style="margin:0">
+          <li>Your plan is on its way to ${R.esc(state.email || "your inbox")}.</li>
+          <li>You'll be the first to hear when reef opens, ${R.esc(CFG.openingDateText)}.</li>
+          <li>You'll see the class timetable before anyone else.</li>
+        </ul>
       </section>
 
       <section class="faqzone"><p class="eyebrow">Every worry, answered</p><h2 style="margin-top:2px">${N ? N + ", still" : "Still"} not sure? Read this.</h2>
@@ -557,50 +524,10 @@
       <div style="margin-top:18px">${R.vsl("result")}</div>
       ${a.age && C.decadeModules[a.age] ? `<div class="card" style="margin-top:18px"><p class="eyebrow" style="margin-bottom:6px">Built for your ${R.esc(R.label("age", a.age))}</p><p style="margin:0">${C.decadeModules[a.age].b}</p></div>` : ""}
 
-      <div class="center" style="margin-top:40px"><p class="eyebrow">All four founder packs</p><h2>What you get in each one.</h2>
-      <p class="muted">Tap any pack to see its price up top.</p></div>
-      <div class="cmp">${C.order.map(cmpRow).join("")}</div>
-      <p class="center" style="margin-top:22px"><a href="packs.html?from=quiz">Open the full founder shop</a></p>
       <p class="center"><button class="link-quiet" id="retake" type="button">Retake the quiz</button></p>
     </div>`;
     R.$("#foot").innerHTML = R.footer();
 
-    const stickState = () => {
-      const st = R.$("#rsticky"), c = R.$("#pickcard");
-      if (st && c) st.classList.toggle("show", c.getBoundingClientRect().bottom < 40);
-    };
-    const sticky = () => {
-      let st = R.$("#rsticky");
-      if (!st) {
-        st = document.createElement("div"); st.id = "rsticky"; st.className = "sticky";
-        document.body.appendChild(st);
-        addEventListener("scroll", stickState, { passive: true });
-      }
-      return st;
-    };
-    const setPick = (id, scrollBack) => {
-      picked = id;
-      const P = C.packs[id], F = R.frame(id);
-      R.$("#pickcard").innerHTML = panel(id);
-      R.$("#pickcard").classList.toggle("is-match", id === matched);
-      R.$("#pickH").innerHTML = id === "year"
-        ? `${N ? N + ", our" : "Our"} best value for you: <em>${P.name}</em>.`
-        : id === matched ? `${N ? N + ", start" : "Start"} with <em>${P.name}</em>.` : `<em>${P.name}</em>, then.`;
-      R.$("#pickSub").textContent = id === "year"
-        ? (matched === "year" ? "The more classes you choose, the less each one costs. It's our best value, and it's the perfect match for your answers." : "The more classes you choose, the less each one costs. Want to start smaller? Your answers also suit " + C.packs[matched].name + ", and every option is just below.")
-        : id === matched ? "This one matches your answers exactly. Here is what it costs." : "Here is exactly what that one costs. Your match was " + C.packs[matched].name + ".";
-      R.$("#whynow").innerHTML = R.benefitsNow(id);
-      document.querySelectorAll(".size").forEach(s => s.classList.toggle("on", s.dataset.id === id));
-      R.$("#pickBuy").onclick = () => R.addToBag(id);
-      const st = sticky();
-      st.innerHTML = `<div class="p"><b>${F.per} a class</b>${P.name} · ${R.money(P.price)} total</div><button class="btn btn-gold" type="button">Choose</button>`;
-      st.querySelector("button").onclick = () => R.addToBag(id);
-      stickState();
-      if (scrollBack) { R.$("#pick").scrollIntoView({ behavior: "auto", block: "start" }); }
-    };
-    document.querySelectorAll(".size").forEach(b => b.onclick = () => { setPick(b.dataset.id); R.track("RecoSelect", { pack: b.dataset.id }, true); });
-    document.querySelectorAll(".cmp-row").forEach(b => b.onclick = () => { setPick(b.dataset.id, true); R.track("RecoSelect", { pack: b.dataset.id, from: "compare" }, true); });
-    setPick("year");
     R.$("#retake").onclick = () => { const utm = state.utm; state = { answers: {}, utm }; R.save(state); const s = R.$("#rsticky"); if (s) s.remove(); idx = 0; hist.length = 0; R.track("QuizRestart", {}, true); render(); scrollTo({ top: 0, behavior: "auto" }); };
     R.animate();
   }

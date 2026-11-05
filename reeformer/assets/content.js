@@ -174,18 +174,18 @@
         facts: [["2 classes a week", "That's what the research used, so it's what your plan uses."], ["You'll feel it in 12 weeks", "Long enough to feel stronger and stand taller. Short enough to stick with it."]] };
     },
     hook_barrier(a) {
-      const PRICE = [["£15.61 a class", "That's on Founding Year. From opening day, one class costs £25."], ["No hidden fees", "No joining fee, and no contract tying you in."]];
+      const FAIR = [["Founders hear first", "You'll hear about our opening offer before anyone else."], ["No hidden fees", "No joining fee, and no contract tying you in."], ["No pressure", "This quiz is free and commits you to nothing."]];
       const H = {
         intimidated: ["You won't feel out of place.", [["Coffee first, not mirrors", "You walk into the smell of fresh coffee and soft, warm lighting. Not a cold wall of mirrors."], ["Nobody is watching", "You have your own screen and headphones."], ["Everyone is new", "Every founder starts the week we open, so nobody else knows what they're doing either."]]],
         notfit: ["You don't need to be fit to start.", [["We start you easy", "Light springs to start. You'll still feel that deep, satisfying shake."], ["Built for beginners", "Beginners and pro athletes use the same machine, just on different settings."], ["Pros use it too", "Professional athletes train on the exact same machine you'll use."]]],
         time: ["There's always an hour that works.", [["Open 5am to 10pm", "Every day of the week."], ["No waiting for a class", "A guided class starts the moment you step on a free bed."], ["Park 2 minutes away", "The car park is free after 6pm, at the time of writing."]]],
-        cost: ["Founder prices end on opening day.", [PRICE[0], PRICE[1], ["Change your mind? That's fine", "You have 14 days to change your mind and get your money back."]]],
+        cost: ["We'll keep it fair.", FAIR],
         injury: ["Reformer is kind to your body.", [["Gentle on your body", "The bed glides smoothly under you. No jumping, no pounding."], ["The springs can help", "They can take weight off a move, so you can work around a sore spot."], ["We adapt every move", "Tell your instructor on day one and they'll change anything you need."]]],
         gym: ["The gym not sticking wasn't your fault.", [["Gym memberships get wasted", "People in the UK spent £503 million on gym memberships they didn't use, in one year.", "PA Life survey, 2025"], ["People come back to Pilates", "It's the most booked workout on ClassPass worldwide, three years running.", "ClassPass, 2025"], ["You're never on your own", "Every class is guided, so you always know what to do."]]],
         nearby: ["Now there's one.", [["Right on Wyle Cop", "In the middle of Shrewsbury."], ["9 Reformer beds", "A proper studio, not a back room."], ["Founders book first", "You pick your classes before anyone else."]]],
         full: ["Getting a spot is easier here.", [["9 beds", "More beds means more spaces in each class."], ["Start any time", "A guided class starts on any free bed."], ["Founders book first", "You pick your classes before anyone else."]]],
         far: ["We're right in town.", [["Right in town", "On Wyle Cop, in the middle of Shrewsbury."], ["Park 2 minutes away", "At St Julian's Friars car park."], ["Free evening parking", "After 6pm, at the time of writing."]]],
-        pricey: ["Founder prices end on opening day.", [PRICE[0], ["Founders only", "This price is never offered again after we open."], PRICE[1]]],
+        pricey: ["We'll keep it fair.", FAIR],
         busy: ["We fit around your life.", [["Open 5am to 10pm", "Every day of the week."], ["In and out in 50 minutes", "Walk out glowing, with the car park 2 minutes away."], ["Start any time", "A guided class starts the moment you step on a free bed."]]],
         bored: ["You won't get bored here.", [["800+ guided classes", "On your own screen, so it's never the same twice."], ["Mix it up", "Instructor classes, screen classes and one to one sessions."], ["Recovery too", "Melt under the warm glow of the red light bed, or let the recovery boots gently squeeze your tired legs."]]]
       }[a.barrier] || ["Got it.", []];
@@ -269,19 +269,19 @@
     intimidated: { t: "Worried you'd feel out of place?", b: "We built reef around that worry. You walk into a coffee bar, not a wall of mirrors, and the studio is further in. Your own screen and headphones mean nobody is watching. And every founder starts the week we open, so nobody else in the room knows what they're doing either." },
     notfit: { t: "Think you need to get fit first?", b: "That rule is backwards. You start in order to get fit, not the other way round. The springs set the effort, so you learn on light ones and move up as you get stronger. Pilates builds flexibility, it doesn't ask you to arrive with it." },
     time: { t: "Worried about finding the time?", b: "We're open 5am to 10pm. A guided session begins the moment you step on the bed rather than on the hour, and St Julian's Friars car park is about a two minute walk away." },
-    cost: { t: "Worried about the cost?", b: "This is the cheapest reef will ever be. Founder prices end for good on opening day, and every pack shows you the honest price per class next to what a class costs once we open. You also have your usual {refund} days to change your mind." },
+    cost: { t: "Worried about the cost?", b: "We get it. There's no joining fee and no contract tying you in, and founders hear about our opening offer before anyone else. This quiz is free and commits you to nothing." },
     injury: { t: "Worried about an old injury?", b: "Reformer is low impact and the carriage supports your joints. A spring can take weight out of a movement as well as add to it, so you train around a niggle. Tell your instructor on day one, and speak to your GP first if you have a condition." },
     gym: { t: "The gym never stuck?", b: "You're not the problem. Britain spends £503 million a year on gym memberships nobody uses. Pilates, meanwhile, was the most booked workout on ClassPass worldwide for the third year running." },
     nearby: { t: "Never had a proper studio nearby?", b: "Now you will. reef is a full Reformer studio right in the middle of Shrewsbury, with nine beds, on Wyle Cop. Founders get first choice before anyone else." },
     full: { t: "Classes always full?", b: "We have nine beds, so a class is a class, not a queue. Digital sessions start the moment you step on a free bed, and founders book before anyone else." },
     far: { t: "Studio too far away?", b: "reef is on Wyle Cop, right in the middle of Shrewsbury. St Julian's Friars car park is a two minute walk away, and it's free after 6pm." },
-    pricey: { t: "Got too expensive?", b: "Founder prices are the lowest we will ever charge. On Founding Year a class works out at £15.61, against £25 from opening day, and this price is never offered again." },
+    pricey: { t: "Got too expensive?", b: "We get it. There's no joining fee and no contract tying you in, and founders hear about our opening offer before anyone else. This quiz is free and commits you to nothing." },
     busy: { t: "Life got busy?", b: "We're open 5am to 10pm, every day. A guided session on your own screen starts whenever you step on a free bed, so you never wait for a class time." },
     bored: { t: "Got bored of the same class?", b: "You get instructor classes, more than 800 guided digital sessions on your own screen, and red light, recovery boots and hyperbaric for recovery." }
   };
 
   C.decadeModules = {
-    "20s": { t: "Your 20s", b: "This is the decade you build the body you'll live in. The habits you set in this decade tend to be the ones you keep. And the founder price is one nobody can get once we open." },
+    "20s": { t: "Your 20s", b: "This is the decade you build the body you'll live in. The habits you set in this decade tend to be the ones you keep." },
     "30s": { t: "Your 30s", b: "Time gets tight and the first niggles arrive. This is the decade to put strength in the bank, while it's still easy to build. A bed and a screen ready from 5am to 10pm fits around everything else." },
     "40s": { t: "Your 40s", b: "The first creaks. Hormones start to shift, muscle starts to slip, and the back starts to complain. Twice a week on the Reformer is the simplest, lowest impact way to hold onto what you have and build more." },
     "50s": { t: "Your 50s", b: "This is the decade to train more cleverly rather than more brutally. Reformer loads the muscle without loading your spine. We will also be straight with you: Pilates holds bone rather than building it, so what it's genuinely brilliant for is strength, posture and balance." },
@@ -291,7 +291,7 @@
 
   C.expModules = {
     "0": "Never done it before? That's honestly the easiest place to start from. Every move has an easier version and a harder one, your first class is with an instructor, and the screen on your bed shows you each move as you go.",
-    "1-5": "You have had a taste of it before. A studio in the middle of town and a founder price is what makes it stick this time.",
+    "1-5": "You have had a taste of it before. A studio in the middle of town, open 5am to 10pm, is what makes it stick this time.",
     "6-20": "You know the shake. Now you get nine beds, more than 800 guided sessions on your own screen and hours that fit your life.",
     "20+": "You're experienced, so you'll want heavier springs, harder progressions and the freedom to train on your own schedule. That's why the screens are there, and why we open early and close late."
   };
@@ -301,14 +301,12 @@
   /* ---------------------------------------------------------------- FAQ */
   C.faq = [
     ["Do I need any experience?", "None at all. Every move has an easier version and a harder one, and your first class is with an instructor who sets your springs and footbar for you."],
-    ["When do my classes start?", "Credits start on opening day, {open}. Founders get first choice of booking slots before anyone else."],
-    ["What if I change my mind?", "You have a full {refund} day refund window on online purchases. Your credits also don't start ticking until we open."],
-    ["What if the opening is delayed?", "Your credits don't start until the doors open, so a delay never costs you a class. {longstop}"],
+    ["When do you open?", "{open}. You'll hear first, by email and text, and founders get first choice of booking slots before anyone else."],
     ["Where do I park?", "St Julian's Friars car park is about a two minute walk away, it's open 24 hours, and at the time of writing it's free after 6pm."],
     ["What are the hours?", "5am to 10pm. Instructor led classes run on the timetable, and digital sessions on your own screen start whenever you step on the bed."],
     ["What should I wear?", "Comfortable fitted clothes you can move in, and grip socks. If you forget your socks there are some on the counter, so don't worry if yours are in the wash."],
     ["I have a health condition, am pregnant or recovering from an injury.", "Please speak to your GP, consultant or midwife before you start, and tell your instructor before your first class. This page shares published research, not personal medical advice."],
-    ["Can I bring a friend?", "Every founder gets three Guest Passes, so three of your friends get a free first class and founder pricing until opening day. You don't have to walk in on your own."]
+    ["Can I bring a friend?", "Yes. Send them this quiz, so they get their own plan too. You don't have to walk in on your own."]
   ];
 
   C.weeks = [
