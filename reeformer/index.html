@@ -600,7 +600,7 @@
     document.querySelectorAll(".size").forEach(b => b.onclick = () => { setPick(b.dataset.id); R.track("RecoSelect", { pack: b.dataset.id }, true); });
     document.querySelectorAll(".cmp-row").forEach(b => b.onclick = () => { setPick(b.dataset.id, true); R.track("RecoSelect", { pack: b.dataset.id, from: "compare" }, true); });
     setPick("year");
-    R.$("#retake").onclick = () => { const utm = state.utm; state = { answers: {}, utm }; R.save(state); const s = R.$("#rsticky"); if (s) s.remove(); idx = -1; hist.length = 0; render(); scrollTo({ top: 0, behavior: "auto" }); };
+    R.$("#retake").onclick = () => { const utm = state.utm; state = { answers: {}, utm }; R.save(state); const s = R.$("#rsticky"); if (s) s.remove(); idx = 0; hist.length = 0; R.track("QuizRestart", {}, true); render(); scrollTo({ top: 0, behavior: "auto" }); };
     R.animate();
   }
 
@@ -610,7 +610,8 @@
   // Funnel Lab / email links: ?r=CODE&view=result jumps straight to that result
   if (qp.get("view") === "result" && state.answers.ready) { idx = steps.length - 1; result(); }
   // refreshing always starts on the welcome screen (returning visitors get "See my plan" or "Start again")
-  else render();
+  // no landing page: the link goes straight into question 1
+  else { state = { answers: {}, utm: state.utm }; R.save(state); R.track("QuizStart", {}, true); idx = 0; render(); }
 })();
 </script>
 </body>
