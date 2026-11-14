@@ -28,7 +28,7 @@ const W = 1.6;            // width
 const H = 0.9;            // body height
 const DB = 0.4;           // depth at the base
 const DT_CLOSED = 0.2;    // depth at the top when closed: the sides taper
-const DT_OPEN = 0.52;     // the mouth spreads when the bag is opened
+const DT_OPEN = 0.5;      // the mouth spreads when the bag is opened
 const INSET = 0.014;      // thickness of the leather walls
 
 // state that changes as the bag opens
@@ -47,7 +47,7 @@ const fy = v => (0.5 - v / 100) * HS0;
 const depthAt = s => DB + (DT - DB) * s;
 
 // soft leather: front and back panels swell, most in the lower middle
-const BULGE = 0.042;
+const BULGE = 0.058;
 function bulge(u, s) {
   if (u <= 0 || u >= 1) return 0;
   const across = Math.pow(Math.sin(Math.PI * u), 0.55);
@@ -113,94 +113,155 @@ function init() {
 
   const bag = new THREE.Group();
 
-  // ---------- Panels: grids whose shape is recalculated as the bag opens ----------
-  const grids = [];
-  function grid(nu, nv, at, mat, flipped = false) {
-    const count = (nu + 1) * (nv + 1);
+  // ---------- Body: one continuous, curved leather shell ----------
+  // The outline at each height is a rounded rectangle: soft corners, panels
+  // that swell, sides that bow, a gusset that folds in, a base that rounds
+  // under and a top edge that dips. Nothing on it is a straight line.
+  const SEGS = [[0, .3, 'front'], [.3, .5, 'right'], [.5, .8, 'back'], [.8, 1, 'left']];
+  const smooth = (a0, a1, x) => { const k = Math.min(Math.max((x - a0) / (a1 - a0), 0), 1); return k * k * (3 - 2 * k); };
+
+  function section(s, inset) {
+    const sb = .1, Rb = .07;
+    let a = W / 2 * (1 + .024 * Math.sin(Math.PI * s)) - inset;   // sides bow out at mid-height
+    let b = depthAt(s) / 2 - inset;
+    let r = Math.min(.085, b * .85);
+    if (s < sb) {                                                   // base rounds under
+      const k = 1 - s / sb, inward = Rb * (1 - Math.sqrt(Math.max(0, 1 - k * k)));
+      a -= inward; b -= inward; r = Math.max(.006, r - inward * .6);
+    }
+    return { a, b, r: Math.min(r, b * .95) };
+  }
+
+  // a point on the long (front) side, local frame; w 0..1 from corner-middle to corner-middle
+  function longSide(w, s, sec, bk) {
+    const { a, b, r } = sec, Lc = r * Math.PI / 4, Lf = 2 * (a - r), d = w * (2 * Lc + Lf);
+    if (d < Lc) { const ang = (135 - d / Lc * 45) * Math.PI / 180; return [-(a - r) + r * Math.cos(ang), (b - r) + r * Math.sin(ang), 0]; }
+    if (d > Lc + Lf) { const ang = (90 - (d - Lc - Lf) / Lc * 45) * Math.PI / 180; return [(a - r) + r * Math.cos(ang), (b - r) + r * Math.sin(ang), 0]; }
+    const x = -(a - r) + (d - Lc), fe = Math.min(d - Lc, Lc + Lf - d);
+    const u = x / W + .5;
+    const z = b + bk * bulge(u, s) * Math.cos(TILT) * smooth(0, .07, fe);
+    const uc = Math.min(Math.max(u, 0), 1);
+    return [x, z, rimSag(uc) + .012 * Math.sin(Math.PI * uc)];   // the top edge dips gently between the corners
+  }
+  // a point on the short (right) side; w 0..1 front corner-middle to back corner-middle
+  function shortSide(w, s, sec) {
+    const { a, b, r } = sec, Lc = r * Math.PI / 4, Lf = 2 * (b - r), d = w * (2 * Lc + Lf);
+    if (d < Lc) { const ang = (45 - d / Lc * 45) * Math.PI / 180; return [(a - r) + r * Math.cos(ang), (b - r) + r * Math.sin(ang), 0]; }
+    if (d > Lc + Lf) { const ang = (0 - (d - Lc - Lf) / Lc * 45) * Math.PI / 180; return [(a - r) + r * Math.cos(ang), -(b - r) + r * Math.sin(ang), 0]; }
+    const z = (b - r) - (d - Lc), wz = Lf > 0 ? (d - Lc) / Lf : .5;
+    // the gusset folds inwards and its top edge dips a little, as in the side photo
+    return [a - pleat(wz, s), z, .016 * Math.sin(Math.PI * wz) * (1 - .6 * open)];
+  }
+  function ringPoint(t, s, inset = 0, bk = 1) {
+    t = ((t % 1) + 1) % 1;
+    s = Math.min(Math.max(s, 0), 1);
+    const sec = section(s, inset);
+    let x, z, dip;
+    if (t < .3) [x, z, dip] = longSide(t / .3, s, sec, bk);
+    else if (t < .5) [x, z, dip] = shortSide((t - .3) / .2, s, sec);
+    else if (t < .8) { [x, z, dip] = longSide((t - .5) / .3, s, sec, bk); x = -x; z = -z; }
+    else { [x, z, dip] = shortSide((t - .8) / .2, s, sec); x = -x; z = -z; }
+    return new THREE.Vector3(x, s * (H - dip), z);
+  }
+  function ringNormal(t, s, inset = 0, bk = 1) {
+    const e = 1e-3;
+    const dt = ringPoint(t + e, s, inset, bk).sub(ringPoint(t - e, s, inset, bk));
+    const s0 = Math.max(s - e, 0), s1 = Math.min(s + e, 1);
+    const ds = ringPoint(t, s1, inset, bk).sub(ringPoint(t, s0, inset, bk));
+    return dt.cross(ds).normalize();
+  }
+
+  const ROWS = [0, .006, .014, .026, .04, .056, .075];
+  for (let v = .1; v < 1; v += .028) ROWS.push(v);
+  ROWS.push(.985, 1);
+
+  const surfaces = [];
+  // a surface over t0..t1 (around) and the given heights; fn(t, s) gives its point and normal
+  function surface(t0, t1, cols, rows, fn, mat, uvFn) {
+    const nr = rows.length, count = (cols + 1) * nr;
     const g = new THREE.BufferGeometry();
     g.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(count * 3), 3));
+    g.setAttribute('normal', new THREE.Float32BufferAttribute(new Float32Array(count * 3), 3));
     const uv = [];
-    for (let j = 0; j <= nv; j++) for (let i = 0; i <= nu; i++) uv.push(i / nu, j / nv);
+    for (let j = 0; j < nr; j++) for (let i = 0; i <= cols; i++) uv.push(...uvFn(i / cols, rows[j], j / (nr - 1)));
     g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
     const idx = [];
-    for (let j = 0; j < nv; j++) for (let i = 0; i < nu; i++) {
-      const a = j * (nu + 1) + i, b = a + 1, c = a + nu + 2, d = a + nu + 1;
-      if (flipped) idx.push(a, c, b, a, d, c); else idx.push(a, b, c, a, c, d);
+    for (let j = 0; j < nr - 1; j++) for (let i = 0; i < cols; i++) {
+      const p0 = j * (cols + 1) + i, p1 = p0 + 1, p2 = p1 + cols + 1, p3 = p0 + cols + 1;
+      idx.push(p0, p1, p2, p0, p2, p3);
     }
     g.setIndex(idx);
     const m = new THREE.Mesh(g, mat);
-    m.userData = { nu, nv, at };
-    bag.add(m); grids.push(m); refreshGrid(m);
-    return m;
+    m.userData.update = () => {
+      const p = g.attributes.position, n = g.attributes.normal;
+      let k = 0;
+      for (let j = 0; j < nr; j++) for (let i = 0; i <= cols; i++, k++) {
+        const t = t0 + (t1 - t0) * i / cols, [pt, nm] = fn(t, rows[j]);
+        p.setXYZ(k, pt.x, pt.y, pt.z); n.setXYZ(k, nm.x, nm.y, nm.z);
+      }
+      p.needsUpdate = n.needsUpdate = true; g.computeBoundingSphere();
+    };
+    bag.add(m); surfaces.push(m); return m;
   }
-  function refreshGrid(m) {
-    const { nu, nv, at } = m.userData, p = m.geometry.attributes.position, uv = m.geometry.attributes.uv;
-    let k = 0;
-    for (let j = 0; j <= nv; j++) for (let i = 0; i <= nu; i++, k++) {
-      const q = at(i / nu, j / nv);
-      p.setXYZ(k, q.x, q.y, q.z);
-      if (q.tu !== undefined) uv.setXY(k, q.tu, q.tv);
-    }
-    p.needsUpdate = true; uv.needsUpdate = true;
-    m.geometry.computeVertexNormals(); m.geometry.computeBoundingSphere();
+  const outer = (t, s) => [ringPoint(t, s), ringNormal(t, s)];
+  const segMats = { front: matFront, right: matSide, back: matBack, left: matSide };
+  for (const [t0, t1, k] of SEGS) {
+    surface(t0, t1, k === 'front' || k === 'back' ? 64 : 28, ROWS, outer, segMats[k], (w, s) => [w, s]);
   }
 
-  const zFace = (u, s) => depthAt(s) / 2 + bulge(u, s) * Math.cos(TILT);
-  // outside
-  grid(48, 32, (u, s) => ({ x: (u - .5) * W, y: s * H, z: zFace(u, s) }), matFront);
-  grid(48, 32, (u, s) => ({ x: (.5 - u) * W, y: s * H, z: -zFace(u, s) }), matBack);
-  for (const side of [1, -1]) {
-    grid(16, 32, (w, s) => ({ x: side * (W / 2 - pleat(w, s)), y: s * H, z: (.5 - w) * depthAt(s), tu: w, tv: s }), matSide, side < 0);
-  }
-  grid(8, 4, (u, w) => ({ x: (u - .5) * W, y: 0.001, z: (w - .5) * DB }), leather({ color: 0x3a1a12 }));
+  // base: rounded underneath
+  const base = leather({ color: 0x3a1a12, side: THREE.DoubleSide });
+  surface(0, 1, 96, [0, .25, .5, .75, 1], (t, k) => {
+    const p = ringPoint(t, 0).multiplyScalar(1 - k); p.y = .002 * (1 - k);
+    return [p, new THREE.Vector3(0, -1, 0)];
+  }, base, (w, k) => [w, k]);
 
-  // inside: the lining, set in by the thickness of the leather
+  // inside: the red twill lining and floor, set in by the leather's thickness
   const e = INSET;
-  grid(24, 16, (u, s) => ({ x: (u - .5) * (W - 2 * e), y: e + s * (H - e), z: depthAt(s) / 2 - e, tu: u, tv: s }), matLining, true);
-  grid(24, 16, (u, s) => ({ x: (.5 - u) * (W - 2 * e), y: e + s * (H - e), z: -(depthAt(s) / 2 - e), tu: u, tv: s }), matLining, true);
-  for (const side of [1, -1]) {
-    grid(8, 16, (w, s) => ({ x: side * (W / 2 - e - pleat(w, s)), y: e + s * (H - e), z: (.5 - w) * (depthAt(s) - 2 * e), tu: w * .3, tv: s }), matLining, side > 0);
-  }
-  grid(8, 4, (u, w) => ({ x: (u - .5) * (W - 2 * e), y: e, z: (w - .5) * (DB - 2 * e) }), matLiningFloor, true);
+  surface(0, 1, 160, ROWS.filter(r => r >= .04), (t, s) => [ringPoint(t, s, e), ringNormal(t, s, e)], matLining, (w, s) => [w * 3.2, s]);
+  matLining.side = THREE.DoubleSide;
+  matLiningFloor.side = THREE.DoubleSide;
+  surface(0, 1, 96, [0, .5, 1], (t, k) => {
+    const p = ringPoint(t, .04, e).multiplyScalar(1 - k); p.y = e + .02;
+    return [p, new THREE.Vector3(0, 1, 0)];
+  }, matLiningFloor, (w, k) => [w, k]);
 
-  // the closed top: a stitched rim round a dark opening (hidden once opened)
-  let lid;
-  {
-    const tc = document.createElement('canvas'); tc.width = 1024; tc.height = 160;
-    const tg = tc.getContext('2d');
-    tg.fillStyle = '#5c2a1e'; tg.fillRect(0, 0, 1024, 160);
-    for (let i = 0; i < 2600; i++) { const l = Math.random() < .5 ? 255 : 0; tg.fillStyle = `rgba(${l},${l * .85},${l * .7},.06)`; tg.beginPath(); tg.arc(Math.random() * 1024, Math.random() * 160, 1 + Math.random() * 2.5, 0, 7); tg.fill(); }
-    const og = tg.createLinearGradient(0, 34, 0, 126); og.addColorStop(0, '#2a0b0b'); og.addColorStop(.5, '#4a1214'); og.addColorStop(1, '#2a0b0b');
-    tg.fillStyle = og; tg.beginPath(); tg.roundRect(26, 34, 972, 92, 30); tg.fill();
-    tg.strokeStyle = 'rgba(220,195,165,.55)'; tg.setLineDash([8, 6]); tg.lineWidth = 2;
-    tg.beginPath(); tg.roundRect(12, 18, 1000, 124, 34); tg.stroke();
-    const tt = new THREE.CanvasTexture(tc); tt.colorSpace = THREE.SRGBColorSpace; tt.anisotropy = 8;
-    lid = grid(32, 4, (u, w) => ({ x: (u - .5) * W, y: H - rimSag(u), z: (w - .5) * -DT }), leather({ map: tt, roughness: .75 }));
-  }
+  // the top edge: leather turned over from outside to inside, slightly rolled
+  const rimMat = leather({ color: 0x55271b, roughness: .6, side: THREE.DoubleSide });
+  surface(0, 1, 160, [0, .25, .5, .75, 1], (t, k) => {
+    const a0 = ringPoint(t, 1), a1 = ringPoint(t, 1, e);
+    const p = a0.lerp(a1, k); p.y += .005 * Math.sin(Math.PI * k);
+    return [p, new THREE.Vector3(0, 1, 0)];
+  }, rimMat, (w, k) => [w, k]);
 
-  // ---------- Piping and belt edges: rebuilt as the shape changes ----------
-  const edges = new THREE.Group(); bag.add(edges);
-  const beltMat = leather({ map: texBelt, bumpMap: texBelt, bumpScale: 1.4, roughness: .6 });
+  // the buckled belts wrap round each end, following the curve of the bag
+  const beltMat = leather({ map: texBelt, bumpMap: texBelt, bumpScale: 1.4, roughness: .6, side: THREE.DoubleSide });
   const sTop = 1 - .065, sBot = 1 - .195;
-  for (const side of [1, -1]) {
-    grid(16, 3, (w, k) => {
-      const s = sBot + (sTop - sBot) * k, d = depthAt(s) / 2 + .014;
-      return { x: side * (W / 2 + .012 + 0.006 * Math.sin(Math.PI * w)), y: s * H, z: (.5 - w) * 2 * d, tu: side > 0 ? w : 1 - w, tv: k };
-    }, beltMat, side < 0);
+  const beltRows = [0, .25, .5, .75, 1].map(k => sBot + (sTop - sBot) * k);
+  const beltAt = (t, s) => {
+    const n = ringNormal(t, s); n.y = 0; n.normalize();
+    return [ringPoint(t, s).add(n.clone().multiplyScalar(.013)), n];
+  };
+  for (const [t0, t1] of [[.288, .512], [.788, 1.012]]) {
+    surface(t0, t1, 40, beltRows, beltAt, beltMat, (w, s, k) => [w, k]);
   }
+
+  // ---------- Piping and belt edges: curved tubes, rebuilt as the shape changes ----------
+  const edges = new THREE.Group(); bag.add(edges);
   function rebuildEdges() {
     for (const m of edges.children) m.geometry.dispose();
     edges.clear();
-    const x = W / 2, b = DB / 2, t = DT / 2;
-    const tube = (pts, r, mat, n = 1) => edges.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts.map(p => new THREE.Vector3(...p))), n, r, 10, false), mat));
-    const along = z => Array.from({ length: 17 }, (_, i) => { const u = i / 16; return [(u - .5) * W, H - rimSag(u), z]; });
-    for (const [a, c] of [[[-x, 0, b], [-x, H, t]], [[x, 0, b], [x, H, t]], [[-x, 0, -b], [-x, H, -t]], [[x, 0, -b], [x, H, -t]],
-      [[-x, 0, b], [x, 0, b]], [[-x, 0, -b], [x, 0, -b]], [[-x, 0, b], [-x, 0, -b]], [[x, 0, b], [x, 0, -b]],
-      [[-x, H, t], [-x, H, -t]], [[x, H, t], [x, H, -t]]]) tube([a, c], .012, darkEdge);
-    tube(along(t), .012, darkEdge, 32); tube(along(-t), .012, darkEdge, 32);
-    for (const side of [1, -1]) for (const s of [sTop, sBot]) {
-      const d = depthAt(s) / 2 + .014;
-      tube([-1, 0, 1].map(k => [side * (W / 2 + .012 + (k === 0 ? .006 : 0)), s * H, k * d]), .005, beltEdge, 12);
+    const tube = (pts, r, mat, closed = false) => edges.add(new THREE.Mesh(
+      new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts, closed, 'centripetal'), pts.length * 2, r, 10, closed), mat));
+    const offset = (t, s, d) => { const n = ringNormal(t, s); return ringPoint(t, s).add(n.multiplyScalar(d)); };
+    // rolled top edge and base seam
+    tube(Array.from({ length: 120 }, (_, i) => offset(i / 120, 1, .004).add(new THREE.Vector3(0, .002, 0))), .013, darkEdge, true);
+    tube(Array.from({ length: 120 }, (_, i) => offset(i / 120, .03, .003)), .011, darkEdge, true);
+    // piping down each corner, where front and back meet the gusset
+    for (const t of [0, .3, .5, .8]) tube(Array.from({ length: 22 }, (_, i) => offset(t, .03 + .97 * i / 21, .004)), .011, darkEdge);
+    // belt edges
+    for (const [t0, t1] of [[.288, .512], [.788, 1.012]]) for (const s of [sTop, sBot]) {
+      tube(Array.from({ length: 24 }, (_, i) => beltAt(t0 + (t1 - t0) * i / 23, s)[0]), .005, beltEdge);
     }
   }
 
@@ -239,8 +300,8 @@ function init() {
     k.position.copy(onFace((47.2 + 55.4) / 2, 23.5, .03)); front.add(k); }
   piece(front, matFront, [[25.5, 0], [33, 0], [33.5, 10], [31, 19], [28.6, 23], [26, 19], [25, 10]], .012, .004);
   piece(front, matFront, [[67.5, 0], [75, 0], [75.3, 10], [73.5, 18.5], [71.2, 22.5], [68.6, 18.5], [67, 10]], .012, .004);
-  piece(front, matFront, [[0, 8], [23, 8.5], [27.5, 14], [23.5, 19.5], [0, 19.5]], .01, .002);
-  piece(front, matFront, [[100, 6], [78, 6.5], [74, 12], [77.5, 18], [100, 18]], .01, .002);
+  piece(front, matFront, [[5, 8], [23, 8.5], [27.5, 14], [23.5, 19.5], [5, 19.5]], .01, .002);
+  piece(front, matFront, [[95, 6], [78, 6.5], [74, 12], [77.5, 18], [95, 18]], .01, .002);
   piece(front, matFront, [[11.8, 6.5], [14.9, 6.5], [14.9, 20.5], [11.8, 20.5]], .012, .012);
   piece(front, matFront, [[86, 4.5], [89.2, 4.5], [89.2, 18.8], [86, 18.8]], .012, .012);
   for (const [u, v] of [[7, 11], [93.5, 10.5]]) {
@@ -266,15 +327,19 @@ function init() {
   piece(back, matBack, ellipsePts(53, 26.2, 4.7, 4.1), .009, .004);
   piece(back, matBack, [[27, 0], [35, 0], [35.5, 10], [33, 18], [31, 20.5], [29, 18], [26.5, 10]], .012, .004);
   piece(back, matBack, [[70, 0], [78, 0], [78.5, 10], [76, 18], [74, 20.5], [72, 18], [69.5, 10]], .012, .004);
-  piece(back, matBack, [[0, 2.5], [11.5, 2.5], [11.5, 12.5], [0, 12.5]], .01, .002);
-  piece(back, matBack, [[92.5, 4.5], [100, 4.5], [100, 12.5], [92.5, 12.5]], .01, .002);
+  piece(back, matBack, [[5, 2.5], [11.5, 2.5], [11.5, 12.5], [5, 12.5]], .01, .002);
+  piece(back, matBack, [[92.5, 4.5], [95, 4.5], [95, 12.5], [92.5, 12.5]], .01, .002);
 
   // --- Inside the back wall: the leather zip pocket, from Zoe's photograph ---
   {
     const zw = W * .74, zh = zw * 236 / 1536;
-    const zip = new THREE.Mesh(new THREE.PlaneGeometry(zw, zh), leather({ map: texZip, roughness: .7 }));
+    const geo = new THREE.PlaneGeometry(zw, zh, 32, 4);
+    const p = geo.attributes.position, cy = fy(31);
+    for (let i = 0; i < p.count; i++) p.setZ(i, INSET + .004 - bulgeLocal(-p.getX(i), cy + p.getY(i)));
+    geo.computeVertexNormals();
+    const zip = new THREE.Mesh(geo, leather({ map: texZip, roughness: .7 }));
     zip.rotation.y = Math.PI;                 // facing into the bag
-    zip.position.set(0, fy(31), -INSET - .004);
+    zip.position.set(0, cy, 0);
     back.add(zip);
   }
 
@@ -326,7 +391,7 @@ function init() {
   function placeHandles() {
     for (const { pivot, s } of handlePivots) {
       pivot.position.set(0, H, s * DT / 2);
-      pivot.rotation.x = s * open * 1.15;      // handles drop away to each side
+      pivot.rotation.x = s * open * 2.2;       // handles fall away and hang down each side
     }
   }
 
@@ -334,8 +399,7 @@ function init() {
   function applyShape() {
     DT = DT_CLOSED + (DT_OPEN - DT_CLOSED) * open;
     setShape();
-    for (const m of grids) refreshGrid(m);
-    lid.visible = open < 0.03;
+    for (const m of surfaces) m.userData.update();
     rebuildEdges(); placeFaces(); placeHandles();
   }
   applyShape();
