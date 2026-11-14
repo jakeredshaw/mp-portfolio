@@ -82,6 +82,8 @@ function init() {
   const texSide = photo('img/3d-side.jpg');
   const texBelt = photo('img/3d-belt.jpg');
   const texZip = photo('img/3d-zip.jpg');
+  const texZipOpen = photo('img/3d-zip-open.jpg');
+  const texFacing = photo('img/3d-facing.jpg'); texFacing.wrapS = THREE.RepeatWrapping;
 
   const leather = (o = {}) => new THREE.MeshStandardMaterial({ roughness: .8, metalness: 0, ...o });
   const gold = new THREE.MeshStandardMaterial({ color: 0xd2a650, metalness: .9, roughness: .28 });
@@ -95,7 +97,7 @@ function init() {
   function liningTexture() {
     const c = document.createElement('canvas'); c.width = 512; c.height = 512;
     const g = c.getContext('2d');
-    g.fillStyle = '#c62a2c'; g.fillRect(0, 0, 512, 512);
+    g.fillStyle = '#b4282c'; g.fillRect(0, 0, 512, 512);
     g.strokeStyle = 'rgba(90,0,10,.16)'; g.lineWidth = 1.2;
     for (let i = -512; i < 1024; i += 5) { g.beginPath(); g.moveTo(i, 512); g.lineTo(i + 512, 0); g.stroke(); }
     g.strokeStyle = 'rgba(255,140,130,.08)';
@@ -109,7 +111,7 @@ function init() {
     return t;
   }
   const matLining = leather({ map: liningTexture(), roughness: .95 });
-  const matLiningFloor = leather({ color: 0xa82326, roughness: .95 });
+  const matLiningFloor = leather({ color: 0x9e2428, roughness: .95 });
 
   const bag = new THREE.Group();
 
@@ -234,6 +236,50 @@ function init() {
     return [p, new THREE.Vector3(0, 1, 0)];
   }, rimMat, (w, k) => [w, k]);
 
+  // ---------- Inside details, from the photographs of the open bag ----------
+  // the pebble-grain leather facing that runs round the inside of the top
+  surface(0, 1, 160, [.84, .88, .92, .96, 1], (t, s) => [ringPoint(t, s, e + .0015), ringNormal(t, s, e + .0015)],
+    leather({ map: texFacing, bumpMap: texFacing, bumpScale: 1.3, roughness: .65, side: THREE.DoubleSide }), (w, s) => [w * 7, (s - .84) / .16]);
+
+  // the double gusset: at each end a second, inner pleat of red twill folds in
+  // from the end wall, bound in leather along its edges
+  const G_TOP = .985, G_BOT = .5, G_DEPTH = .085;
+  function gussetPoint(side, w, s) {
+    const zIn = ringPoint(side > 0 ? .3 : .8, s, e).z, zHalf = Math.abs(zIn) * .42;
+    const wallX = Math.abs(ringPoint(side > 0 ? .4 : .9, s, e).x) - .004;
+    const fold = 1 - Math.abs(1 - 2 * w);                 // 0 at the wall, 1 at the fold
+    const k = (s - G_BOT) / (G_TOP - G_BOT);
+    const depth = G_DEPTH * (.75 + .25 * Math.sqrt(Math.max(k, 0)));
+    const x = side * (wallX - depth * fold);
+    return new THREE.Vector3(x, s * H - .006, zHalf * (1 - 2 * w));
+  }
+  const gussetMat = leather({ map: matLining.map, roughness: .95, side: THREE.DoubleSide });
+  const gRows = Array.from({ length: 9 }, (_, i) => G_BOT + (G_TOP - G_BOT) * i / 8);
+  for (const side of [1, -1]) {
+    surface(0, 1, 16, gRows, (w, s) => {
+      const p = gussetPoint(side, w, s), d = 1e-3;
+      const a = gussetPoint(side, Math.min(w + d, 1), s).sub(gussetPoint(side, Math.max(w - d, 0), s));
+      const b = gussetPoint(side, w, Math.min(s + d, 1)).sub(gussetPoint(side, w, Math.max(s - d, 0)));
+      return [p, a.cross(b).normalize()];
+    }, gussetMat, (w, s) => [w * .5, s]);
+  }
+
+  // zip pockets on both long walls inside: the closed zip on the back wall,
+  // and the opened zip on the front wall, each from Zoe's photographs
+  function pocket(group, tex, aspect, v) {
+    const zw = W * .74, zh = zw * aspect;
+    const geo = new THREE.PlaneGeometry(zw, zh, 32, 6);
+    const p = geo.attributes.position, cy = fy(v);
+    for (let i = 0; i < p.count; i++) p.setZ(i, INSET + .004 - bulgeLocal(-p.getX(i), cy + p.getY(i)));
+    geo.computeVertexNormals();
+    // feather the photo's edges so it melts into the lining around it
+    const ac = document.createElement('canvas'); ac.width = 256; ac.height = 128;
+    const ag = ac.getContext('2d'); ag.fillStyle = '#000'; ag.fillRect(0, 0, 256, 128);
+    ag.filter = 'blur(7px)'; ag.fillStyle = '#fff'; ag.fillRect(14, 12, 228, 104);
+    const m = new THREE.Mesh(geo, leather({ map: tex, roughness: .75, alphaMap: new THREE.CanvasTexture(ac), transparent: true }));
+    m.rotation.y = Math.PI; m.position.set(0, cy, 0); group.add(m);
+  }
+
   // the buckled belts wrap round each end, following the curve of the bag
   const beltMat = leather({ map: texBelt, bumpMap: texBelt, bumpScale: 1.4, roughness: .6, side: THREE.DoubleSide });
   const sTop = 1 - .065, sBot = 1 - .195;
@@ -257,6 +303,13 @@ function init() {
     // rolled top edge and base seam
     tube(Array.from({ length: 120 }, (_, i) => offset(i / 120, 1, .004).add(new THREE.Vector3(0, .002, 0))), .013, darkEdge, true);
     tube(Array.from({ length: 120 }, (_, i) => offset(i / 120, .03, .003)), .011, darkEdge, true);
+    // leather piping down the inside corners, and round the double gusset
+    for (const t of [0, .3, .5, .8]) tube(Array.from({ length: 18 }, (_, i) => ringPoint(t, .06 + .9 * i / 17, e + .006)), .007, darkEdge);
+    for (const side of [1, -1]) {
+      tube(Array.from({ length: 12 }, (_, i) => gussetPoint(side, i / 11, G_BOT)), .006, darkEdge);
+      tube(Array.from({ length: 12 }, (_, i) => gussetPoint(side, i / 11, G_TOP)), .006, darkEdge);
+      for (const w of [0, .5, 1]) tube(Array.from({ length: 8 }, (_, i) => gussetPoint(side, w, G_BOT + (G_TOP - G_BOT) * i / 7)), w === .5 ? .005 : .006, darkEdge);
+    }
     // piping down each corner, where front and back meet the gusset
     for (const t of [0, .3, .5, .8]) tube(Array.from({ length: 22 }, (_, i) => offset(t, .03 + .97 * i / 21, .004)), .011, darkEdge);
     // belt edges
@@ -330,18 +383,9 @@ function init() {
   piece(back, matBack, [[5, 2.5], [11.5, 2.5], [11.5, 12.5], [5, 12.5]], .01, .002);
   piece(back, matBack, [[92.5, 4.5], [95, 4.5], [95, 12.5], [92.5, 12.5]], .01, .002);
 
-  // --- Inside the back wall: the leather zip pocket, from Zoe's photograph ---
-  {
-    const zw = W * .74, zh = zw * 236 / 1536;
-    const geo = new THREE.PlaneGeometry(zw, zh, 32, 4);
-    const p = geo.attributes.position, cy = fy(31);
-    for (let i = 0; i < p.count; i++) p.setZ(i, INSET + .004 - bulgeLocal(-p.getX(i), cy + p.getY(i)));
-    geo.computeVertexNormals();
-    const zip = new THREE.Mesh(geo, leather({ map: texZip, roughness: .7 }));
-    zip.rotation.y = Math.PI;                 // facing into the bag
-    zip.position.set(0, cy, 0);
-    back.add(zip);
-  }
+  // --- Inside: a zip pocket on each long wall ---
+  pocket(back, texZip, 236 / 1536, 31);
+  pocket(front, texZipOpen, 520 / 1536, 40);
 
   // ---------- Rolled handles: they fall outwards as the bag opens ----------
   const handlePivots = [];
@@ -365,10 +409,11 @@ function init() {
     ];
     const tilt0 = Math.atan(((DB - DT_CLOSED) / 2) / H);
     for (const s of [1, -1]) {
-      const pivot = new THREE.Group(); bag.add(pivot); handlePivots.push({ pivot, s });
+      const pivot = new THREE.Group(); bag.add(pivot);
       const curve = new THREE.CatmullRomCurve3(path.map(([x, y]) => {
         const above = Math.max(0, y), below = Math.max(0, -y);
-        return new THREE.Vector3(x, y, s * (.034 + (above / rise) * .1 + below * Math.tan(tilt0)));
+        // built about the handle's own centre line, which sits just outside the wall
+        return new THREE.Vector3(x, y, s * ((above / rise) * .1 + below * Math.tan(tilt0)));
       }), false, 'centripetal');
       const segs = 200, radial = 20;
       const geo = new THREE.TubeGeometry(curve, segs, R, radial, false);
@@ -385,15 +430,29 @@ function init() {
         }
       }
       geo.computeVertexNormals();
+      geo.userData.base = geo.attributes.position.array.slice();
       pivot.add(new THREE.Mesh(geo, handleMat));
+      handlePivots.push({ pivot, s, geo });
     }
   }
   function placeHandles() {
-    for (const { pivot, s } of handlePivots) {
-      pivot.position.set(0, H, s * DT / 2);
-      pivot.rotation.x = s * open * 2.2;       // handles fall away and hang down each side
+    // Only the arch folds outwards and down when the bag opens; the ends stay
+    // stitched to the outside of the bag, below the rim, so nothing goes inside.
+    const theta = open * 1.8;
+    for (const { pivot, s, geo } of handlePivots) {
+      const ringZ = ringPoint(s > 0 ? .15 : .65, 1).z;                 // front or back wall at the rim
+      pivot.position.set(0, H - .012, ringZ + s * .046);
+      const base = geo.userData.base, pos = geo.attributes.position;
+      for (let i = 0; i < pos.count; i++) {
+        const x = base[i * 3], y = base[i * 3 + 1], z = base[i * 3 + 2];
+        const k = Math.min(Math.max((y - .02) / .12, 0), 1), a = s * theta * k * k * (3 - 2 * k);
+        const c = Math.cos(a), sn = Math.sin(a);
+        pos.setXYZ(i, x, y * c - z * sn, y * sn + z * c);
+      }
+      pos.needsUpdate = true; geo.computeVertexNormals(); geo.computeBoundingSphere();
     }
   }
+
 
   // apply the current open amount to everything
   function applyShape() {
