@@ -286,3 +286,17 @@ body.intro-on{overflow:hidden}
   .v-controls{gap:2px}
   .v-controls button{padding:10px 10px;font-size:.6rem;letter-spacing:.18em}
 }
+
+/* Royal gallery */
+.royal-gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:60px;max-width:1240px;text-align:left}
+.royal-gallery figure{margin:0}
+.rg-img{aspect-ratio:4/5;overflow:hidden;background:var(--cream)}
+.rg-img img{width:100%;height:100%;object-fit:cover;transition:transform 1.4s cubic-bezier(.2,.6,.2,1)}
+.royal-gallery figure:hover .rg-img img{transform:scale(1.04)}
+.royal-gallery figcaption{padding-top:18px}
+.royal-gallery figcaption b{display:block;font-family:var(--serif);font-weight:400;font-size:1.45rem;margin:6px 0 4px;color:var(--ink)}
+.royal-gallery figcaption p{font-size:.9rem;color:var(--muted);margin:0;max-width:none}
+@media (max-width:960px){.royal-gallery{grid-template-columns:1fr 1fr}.royal-gallery figure:first-child{grid-column:1/-1}.royal-gallery figure:first-child .rg-img{aspect-ratio:1}}
+@media (max-width:560px){.royal-gallery{grid-template-columns:1fr;gap:40px;margin-top:40px}.royal-gallery figure:first-child .rg-img{aspect-ratio:4/5}}
+.royal .royal-gallery{max-width:1240px}
+.royal-gallery figure:first-child .rg-img img{object-position:72% 40%}
