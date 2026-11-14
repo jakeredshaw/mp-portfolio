@@ -300,3 +300,19 @@ body.intro-on{overflow:hidden}
 @media (max-width:560px){.royal-gallery{grid-template-columns:1fr;gap:40px;margin-top:40px}.royal-gallery figure:first-child .rg-img{aspect-ratio:4/5}}
 .royal .royal-gallery{max-width:1240px}
 .royal-gallery figure:first-child .rg-img img{object-position:72% 40%}
+
+/* At the bench */
+.bench{background:var(--cream)}
+.bench-head{max-width:640px;margin:0 auto 56px;text-align:center}
+.bench-head p{color:#41372f}
+.bench-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.bench-grid figure{margin:0}
+.bg-img{aspect-ratio:4/5;overflow:hidden;background:#e5ddd2}
+.bg-img img{width:100%;height:100%;object-fit:cover;transition:transform 1.4s cubic-bezier(.2,.6,.2,1)}
+.bench-grid figure:hover .bg-img img{transform:scale(1.04)}
+.bench-grid figcaption{padding-top:16px}
+.bench-grid figcaption b{display:block;font-family:var(--serif);font-weight:400;font-size:1.4rem;margin-bottom:4px}
+.bench-grid figcaption p{font-size:.9rem;color:var(--muted)}
+.page-hero .hero-visual img[src*="zoe-stitching"]{object-position:50% 35%}
+@media (max-width:960px){.bench-grid{grid-template-columns:1fr 1fr}.bench-grid figure:first-child{grid-column:1/-1}.bench-grid figure:first-child .bg-img{aspect-ratio:4/3}}
+@media (max-width:560px){.bench-grid{grid-template-columns:1fr;gap:40px}.bench-grid figure:first-child .bg-img{aspect-ratio:4/5}.bench-head{margin-bottom:36px}}
