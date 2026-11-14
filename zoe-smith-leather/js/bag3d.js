@@ -1,7 +1,8 @@
 // Interactive 3D view of the Newmarket Bag, built from Zoe's own photographs.
-// Front, back, sides and belt are the real photos. The panels are shaped like
-// soft leather (bulging, with a folded gusset) and the buckles, straps, tabs,
-// horse-bit and rolled handles are raised in 3D.
+// Front, back, sides, belt and the inside zip pocket are the real photos.
+// The panels are shaped like soft leather, the buckles, straps, tabs,
+// horse-bit and rolled handles are raised in 3D, and the bag can be opened
+// to show its red twill lining.
 import * as THREE from 'three';
 import { OrbitControls } from '../vendor/OrbitControls.js';
 
@@ -22,28 +23,41 @@ if (stage && canvas && supportsWebGL()) {
   stage.classList.add('no-3d');
 }
 
-// ---------- Measurements (taken from the photographs) ----------
-const W = 1.6;          // width
-const H = 0.9;          // body height
-const DB = 0.4;         // depth at the base
-const DT = 0.2;         // depth at the top: the sides taper
-const TILT = Math.atan(((DB - DT) / 2) / H);
-const HS = Math.hypot(H, (DB - DT) / 2);   // slanted height of front/back
+// ---------- Measurements (taken from the photographs and videos) ----------
+const W = 1.6;            // width
+const H = 0.9;            // body height
+const DB = 0.4;           // depth at the base
+const DT_CLOSED = 0.2;    // depth at the top when closed: the sides taper
+const DT_OPEN = 0.52;     // the mouth spreads when the bag is opened
+const INSET = 0.014;      // thickness of the leather walls
 
-// photo % (u across, v down) -> local face coordinates
+// state that changes as the bag opens
+let open = 1;             // 0 closed .. 1 open (eased); the bag starts open
+let DT = DT_OPEN, TILT = 0, HS = H;
+function setShape() {
+  TILT = Math.atan(((DB - DT) / 2) / H);
+  HS = Math.hypot(H, (DB - DT) / 2);
+}
+DT = DT_CLOSED; setShape();
+const HS0 = HS;           // pieces are cut once, at the closed shape
+DT = DT_OPEN; setShape();
+
 const fx = u => (u / 100 - 0.5) * W;
-const fy = v => (0.5 - v / 100) * HS;
+const fy = v => (0.5 - v / 100) * HS0;
+const depthAt = s => DB + (DT - DB) * s;
 
-// Soft leather: the front and back panels swell outwards, most in the lower
-// middle where the wool is, and not at all along the stitched edges.
+// soft leather: front and back panels swell, most in the lower middle
 const BULGE = 0.042;
-function bulge(u, s) {               // u: 0..1 across, s: 0..1 bottom..top
+function bulge(u, s) {
   if (u <= 0 || u >= 1) return 0;
   const across = Math.pow(Math.sin(Math.PI * u), 0.55);
   const up = s >= 0.94 ? 0 : Math.pow(Math.sin(Math.PI * Math.min(s / 0.94, 1)), 0.7);
   return BULGE * across * up * (1 - 0.35 * s);
 }
-const bulgeLocal = (x, y) => bulge(x / W + 0.5, y / HS + 0.5);
+const bulgeLocal = (x, y) => bulge(x / W + 0.5, y / HS0 + 0.5);
+// the gusset folds inwards towards the top; it opens out as the bag opens
+const pleat = (w, s) => 0.05 * (1 - 0.8 * open) * Math.pow(1 - Math.abs(2 * w - 1), 1.6) * Math.pow(s, 1.3);
+const rimSag = u => 0.012 * (1 - open) * Math.sin(Math.PI * u);
 
 function init() {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
@@ -52,7 +66,6 @@ function init() {
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 50);
-
   scene.add(new THREE.HemisphereLight(0xfff7ec, 0x8a7562, 1.5));
   const key = new THREE.DirectionalLight(0xffffff, 1.55); key.position.set(2.5, 4, 4); scene.add(key);
   const rim = new THREE.DirectionalLight(0xffe9d2, .9); rim.position.set(-3, 2.5, -4); scene.add(rim);
@@ -68,109 +81,147 @@ function init() {
   const texBack = photo('img/3d-back.jpg');
   const texSide = photo('img/3d-side.jpg');
   const texBelt = photo('img/3d-belt.jpg');
+  const texZip = photo('img/3d-zip.jpg');
 
   const leather = (o = {}) => new THREE.MeshStandardMaterial({ roughness: .8, metalness: 0, ...o });
   const gold = new THREE.MeshStandardMaterial({ color: 0xd2a650, metalness: .9, roughness: .28 });
   const darkEdge = leather({ color: 0x3e1a12, roughness: .55 });
-  // the photos double as a bump map, so the grain and wool pile catch the light
+  const beltEdge = leather({ color: 0x6b3a22 });
   const matFront = leather({ map: texFront, bumpMap: texFront, bumpScale: 1.2, roughness: .85 });
   const matBack = leather({ map: texBack, bumpMap: texBack, bumpScale: 1.2, roughness: .85 });
   const matSide = leather({ map: texSide, bumpMap: texSide, bumpScale: 1.4, roughness: .65 });
 
+  // red twill lining, with a band of leather facing round the top
+  function liningTexture() {
+    const c = document.createElement('canvas'); c.width = 512; c.height = 512;
+    const g = c.getContext('2d');
+    g.fillStyle = '#c62a2c'; g.fillRect(0, 0, 512, 512);
+    g.strokeStyle = 'rgba(90,0,10,.16)'; g.lineWidth = 1.2;
+    for (let i = -512; i < 1024; i += 5) { g.beginPath(); g.moveTo(i, 512); g.lineTo(i + 512, 0); g.stroke(); }
+    g.strokeStyle = 'rgba(255,140,130,.08)';
+    for (let i = -510; i < 1024; i += 5) { g.beginPath(); g.moveTo(i, 512); g.lineTo(i + 512, 0); g.stroke(); }
+    // leather facing (top 15%)
+    g.fillStyle = '#5a2a1e'; g.fillRect(0, 0, 512, 78);
+    for (let i = 0; i < 900; i++) { const l = Math.random() < .5 ? 255 : 0; g.fillStyle = `rgba(${l},${l * .85},${l * .7},.07)`; g.beginPath(); g.arc(Math.random() * 512, Math.random() * 78, 1 + Math.random() * 2, 0, 7); g.fill(); }
+    g.strokeStyle = 'rgba(225,200,170,.6)'; g.setLineDash([7, 5]); g.lineWidth = 2;
+    g.beginPath(); g.moveTo(0, 70); g.lineTo(512, 70); g.stroke();
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
+    return t;
+  }
+  const matLining = leather({ map: liningTexture(), roughness: .95 });
+  const matLiningFloor = leather({ color: 0xa82326, roughness: .95 });
+
   const bag = new THREE.Group();
 
-  // ---------- Body: soft panels built as fine grids ----------
-  const parts = [];
-  function grid(nu, nv, at, mat) {
-    const pos = [], uv = [], idx = [];
-    for (let j = 0; j <= nv; j++) for (let i = 0; i <= nu; i++) {
-      const u = i / nu, v = j / nv, p = at(u, v);
-      pos.push(p.x, p.y, p.z); uv.push(p.tu ?? u, p.tv ?? v);
-    }
+  // ---------- Panels: grids whose shape is recalculated as the bag opens ----------
+  const grids = [];
+  function grid(nu, nv, at, mat, flipped = false) {
+    const count = (nu + 1) * (nv + 1);
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(count * 3), 3));
+    const uv = [];
+    for (let j = 0; j <= nv; j++) for (let i = 0; i <= nu; i++) uv.push(i / nu, j / nv);
+    g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+    const idx = [];
     for (let j = 0; j < nv; j++) for (let i = 0; i < nu; i++) {
       const a = j * (nu + 1) + i, b = a + 1, c = a + nu + 2, d = a + nu + 1;
-      idx.push(a, b, c, a, c, d);
+      if (flipped) idx.push(a, c, b, a, d, c); else idx.push(a, b, c, a, c, d);
     }
-    const g = new THREE.BufferGeometry();
-    g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-    g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
-    g.setIndex(idx); g.computeVertexNormals();
-    const m = new THREE.Mesh(g, mat); bag.add(m); parts.push(m); return m;
+    g.setIndex(idx);
+    const m = new THREE.Mesh(g, mat);
+    m.userData = { nu, nv, at };
+    bag.add(m); grids.push(m); refreshGrid(m);
+    return m;
   }
-  const depthAt = s => DB + (DT - DB) * s;
-  const zFace = (u, s) => depthAt(s) / 2 + bulge(u, s) * Math.cos(TILT);
-  // front (viewed from the front: u left->right, s bottom->top)
-  grid(48, 32, (u, s) => ({ x: (u - .5) * W, y: s * H, z: zFace(u, s) }), matFront);
-  // back (viewed from behind)
-  grid(48, 32, (u, s) => ({ x: (.5 - u) * W, y: s * H, z: -zFace(u, s) }), matBack);
-  // sides: the gusset folds inwards, deeper towards the top, like the photo
-  const pleat = (w, s) => 0.05 * Math.pow(1 - Math.abs(2 * w - 1), 1.6) * Math.pow(s, 1.3);
-  for (const side of [1, -1]) {
-    grid(16, 32, (w, s) => {
-      // w: 0 at the front edge -> 1 at the back edge
-      const z = (.5 - w) * depthAt(s);
-      return { x: side * (W / 2 - pleat(w, s)), y: s * H, z, tu: w, tv: s };
-    }, matSide);
-    if (side < 0) flip(parts[parts.length - 1]);   // keep the left side facing outwards
-  }
-  function flip(mesh) {   // keep faces pointing outwards on the left side
-    const ix = mesh.geometry.index.array;
-    for (let i = 0; i < ix.length; i += 3) { const t = ix[i + 1]; ix[i + 1] = ix[i + 2]; ix[i + 2] = t; }
-    mesh.geometry.index.needsUpdate = true; mesh.geometry.computeVertexNormals();
+  function refreshGrid(m) {
+    const { nu, nv, at } = m.userData, p = m.geometry.attributes.position, uv = m.geometry.attributes.uv;
+    let k = 0;
+    for (let j = 0; j <= nv; j++) for (let i = 0; i <= nu; i++, k++) {
+      const q = at(i / nu, j / nv);
+      p.setXYZ(k, q.x, q.y, q.z);
+      if (q.tu !== undefined) uv.setXY(k, q.tu, q.tv);
+    }
+    p.needsUpdate = true; uv.needsUpdate = true;
+    m.geometry.computeVertexNormals(); m.geometry.computeBoundingSphere();
   }
 
-  // open top: a stitched leather rim round a dark opening
+  const zFace = (u, s) => depthAt(s) / 2 + bulge(u, s) * Math.cos(TILT);
+  // outside
+  grid(48, 32, (u, s) => ({ x: (u - .5) * W, y: s * H, z: zFace(u, s) }), matFront);
+  grid(48, 32, (u, s) => ({ x: (.5 - u) * W, y: s * H, z: -zFace(u, s) }), matBack);
+  for (const side of [1, -1]) {
+    grid(16, 32, (w, s) => ({ x: side * (W / 2 - pleat(w, s)), y: s * H, z: (.5 - w) * depthAt(s), tu: w, tv: s }), matSide, side < 0);
+  }
+  grid(8, 4, (u, w) => ({ x: (u - .5) * W, y: 0.001, z: (w - .5) * DB }), leather({ color: 0x3a1a12 }));
+
+  // inside: the lining, set in by the thickness of the leather
+  const e = INSET;
+  grid(24, 16, (u, s) => ({ x: (u - .5) * (W - 2 * e), y: e + s * (H - e), z: depthAt(s) / 2 - e, tu: u, tv: s }), matLining, true);
+  grid(24, 16, (u, s) => ({ x: (.5 - u) * (W - 2 * e), y: e + s * (H - e), z: -(depthAt(s) / 2 - e), tu: u, tv: s }), matLining, true);
+  for (const side of [1, -1]) {
+    grid(8, 16, (w, s) => ({ x: side * (W / 2 - e - pleat(w, s)), y: e + s * (H - e), z: (.5 - w) * (depthAt(s) - 2 * e), tu: w * .3, tv: s }), matLining, side > 0);
+  }
+  grid(8, 4, (u, w) => ({ x: (u - .5) * (W - 2 * e), y: e, z: (w - .5) * (DB - 2 * e) }), matLiningFloor, true);
+
+  // the closed top: a stitched rim round a dark opening (hidden once opened)
+  let lid;
   {
     const tc = document.createElement('canvas'); tc.width = 1024; tc.height = 160;
     const tg = tc.getContext('2d');
     tg.fillStyle = '#5c2a1e'; tg.fillRect(0, 0, 1024, 160);
     for (let i = 0; i < 2600; i++) { const l = Math.random() < .5 ? 255 : 0; tg.fillStyle = `rgba(${l},${l * .85},${l * .7},.06)`; tg.beginPath(); tg.arc(Math.random() * 1024, Math.random() * 160, 1 + Math.random() * 2.5, 0, 7); tg.fill(); }
-    const og = tg.createLinearGradient(0, 34, 0, 126); og.addColorStop(0, '#120806'); og.addColorStop(.5, '#24120c'); og.addColorStop(1, '#120806');
+    const og = tg.createLinearGradient(0, 34, 0, 126); og.addColorStop(0, '#2a0b0b'); og.addColorStop(.5, '#4a1214'); og.addColorStop(1, '#2a0b0b');
     tg.fillStyle = og; tg.beginPath(); tg.roundRect(26, 34, 972, 92, 30); tg.fill();
     tg.strokeStyle = 'rgba(220,195,165,.55)'; tg.setLineDash([8, 6]); tg.lineWidth = 2;
     tg.beginPath(); tg.roundRect(12, 18, 1000, 124, 34); tg.stroke();
     const tt = new THREE.CanvasTexture(tc); tt.colorSpace = THREE.SRGBColorSpace; tt.anisotropy = 8;
-    // the rim sags very slightly in the middle, as soft leather does
-    grid(32, 4, (u, w) => ({ x: (u - .5) * W, y: H - 0.012 * Math.sin(Math.PI * u), z: (w - .5) * -DT }), leather({ map: tt, roughness: .75 }));
-  }
-  // base
-  grid(8, 4, (u, w) => ({ x: (u - .5) * W, y: 0.001, z: (w - .5) * DB }), leather({ color: 0x3a1a12 }));
-
-  // ---------- Rolled leather piping along the edges ----------
-  {
-    const r = 0.012, x = W / 2, b = DB / 2, t = DT / 2;
-    const line = pts => new THREE.CatmullRomCurve3(pts.map(p => new THREE.Vector3(...p)));
-    const rimY = u => H - 0.012 * Math.sin(Math.PI * u);
-    const along = (z) => Array.from({ length: 17 }, (_, i) => { const u = i / 16; return [(u - .5) * W, rimY(u), z]; });
-    const curves = [
-      line([[-x, 0, b], [-x, H, t]]), line([[x, 0, b], [x, H, t]]),
-      line([[-x, 0, -b], [-x, H, -t]]), line([[x, 0, -b], [x, H, -t]]),
-      line([[-x, 0, b], [x, 0, b]]), line([[-x, 0, -b], [x, 0, -b]]),
-      line([[-x, 0, b], [-x, 0, -b]]), line([[x, 0, b], [x, 0, -b]]),
-      line(along(t)), line(along(-t)),
-    ];
-    for (const c of curves) bag.add(new THREE.Mesh(new THREE.TubeGeometry(c, 32, r, 10, false), darkEdge));
+    lid = grid(32, 4, (u, w) => ({ x: (u - .5) * W, y: H - rimSag(u), z: (w - .5) * -DT }), leather({ map: tt, roughness: .75 }));
   }
 
-  // ---------- Faces: groups that sit on the slanted front and back ----------
+  // ---------- Piping and belt edges: rebuilt as the shape changes ----------
+  const edges = new THREE.Group(); bag.add(edges);
+  const beltMat = leather({ map: texBelt, bumpMap: texBelt, bumpScale: 1.4, roughness: .6 });
+  const sTop = 1 - .065, sBot = 1 - .195;
+  for (const side of [1, -1]) {
+    grid(16, 3, (w, k) => {
+      const s = sBot + (sTop - sBot) * k, d = depthAt(s) / 2 + .014;
+      return { x: side * (W / 2 + .012 + 0.006 * Math.sin(Math.PI * w)), y: s * H, z: (.5 - w) * 2 * d, tu: side > 0 ? w : 1 - w, tv: k };
+    }, beltMat, side < 0);
+  }
+  function rebuildEdges() {
+    for (const m of edges.children) m.geometry.dispose();
+    edges.clear();
+    const x = W / 2, b = DB / 2, t = DT / 2;
+    const tube = (pts, r, mat, n = 1) => edges.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts.map(p => new THREE.Vector3(...p))), n, r, 10, false), mat));
+    const along = z => Array.from({ length: 17 }, (_, i) => { const u = i / 16; return [(u - .5) * W, H - rimSag(u), z]; });
+    for (const [a, c] of [[[-x, 0, b], [-x, H, t]], [[x, 0, b], [x, H, t]], [[-x, 0, -b], [-x, H, -t]], [[x, 0, -b], [x, H, -t]],
+      [[-x, 0, b], [x, 0, b]], [[-x, 0, -b], [x, 0, -b]], [[-x, 0, b], [-x, 0, -b]], [[x, 0, b], [x, 0, -b]],
+      [[-x, H, t], [-x, H, -t]], [[x, H, t], [x, H, -t]]]) tube([a, c], .012, darkEdge);
+    tube(along(t), .012, darkEdge, 32); tube(along(-t), .012, darkEdge, 32);
+    for (const side of [1, -1]) for (const s of [sTop, sBot]) {
+      const d = depthAt(s) / 2 + .014;
+      tube([-1, 0, 1].map(k => [side * (W / 2 + .012 + (k === 0 ? .006 : 0)), s * H, k * d]), .005, beltEdge, 12);
+    }
+  }
+
+  // ---------- Front and back faces: everything raised sits on these ----------
+  const faces = [];
   function faceGroup(back) {
     const outer = new THREE.Group(); if (back) outer.rotation.y = Math.PI;
-    const g = new THREE.Group();
-    g.position.set(0, H / 2, (DB + DT) / 4);
-    g.rotation.x = -TILT;
-    outer.add(g); bag.add(outer);
+    const g = new THREE.Group(); outer.add(g); bag.add(outer); faces.push(g);
     return g;
+  }
+  function placeFaces() {
+    for (const g of faces) { g.position.set(0, H / 2, (DB + DT) / 4); g.rotation.x = -TILT; }
   }
   const front = faceGroup(false), back = faceGroup(true);
 
-  // A raised leather piece cut to a shape, showing the real photo on its face,
-  // and following the swell of the panel underneath it.
   function piece(group, mat, pts, depth, z = 0) {
     const s = new THREE.Shape(pts.map(([u, v]) => new THREE.Vector2(fx(u), fy(v))));
     const geo = new THREE.ExtrudeGeometry(s, { depth, bevelEnabled: true, bevelThickness: .003, bevelSize: .003, bevelSegments: 2, curveSegments: 6, steps: 1 });
     const p = geo.attributes.position, uv = geo.attributes.uv;
     for (let i = 0; i < p.count; i++) {
-      uv.setXY(i, p.getX(i) / W + .5, p.getY(i) / HS + .5);
+      uv.setXY(i, p.getX(i) / W + .5, p.getY(i) / HS0 + .5);
       p.setZ(i, p.getZ(i) + bulgeLocal(p.getX(i), p.getY(i)));
     }
     geo.computeVertexNormals();
@@ -195,7 +246,6 @@ function init() {
   for (const [u, v] of [[7, 11], [93.5, 10.5]]) {
     const s = new THREE.Mesh(new THREE.SphereGeometry(.013, 16, 12), gold); s.position.copy(onFace(u, v, .02)); front.add(s);
   }
-  // horse-bit
   piece(front, matFront, [[29.5, 61.8], [33, 59.2], [37.5, 59.5], [37.5, 64.5], [33, 64.5]], .008, .002);
   piece(front, matFront, [[74.5, 61.8], [71, 59.2], [66.5, 59.5], [66.5, 64.5], [71, 64.5]], .008, .002);
   for (const u of [39.6, 64.3]) {
@@ -206,44 +256,30 @@ function init() {
     const pts = [[42.6, 66.5], [46.5, 69], [50, 71.2], [53.5, 69], [61.3, 66.5]].map(([u, v]) => onFace(u, v, .034));
     for (const c of [new THREE.CatmullRomCurve3(pts.slice(0, 3)), new THREE.CatmullRomCurve3(pts.slice(2))])
       front.add(new THREE.Mesh(new THREE.TubeGeometry(c, 24, .011, 12, false), gold));
-    for (const p of [pts[0], pts[4]]) { const e = new THREE.Mesh(new THREE.SphereGeometry(.016, 16, 12), gold); e.position.copy(p); front.add(e); }
+    for (const p of [pts[0], pts[4]]) { const e2 = new THREE.Mesh(new THREE.SphereGeometry(.016, 16, 12), gold); e2.position.copy(p); front.add(e2); }
     const j = new THREE.Mesh(new THREE.TorusGeometry(.012, .004, 10, 24), gold); j.position.copy(pts[2]); front.add(j);
   }
 
   // --- Back ---
   piece(back, matBack, [[45, 0], [61.5, 0], [61.5, 19.5], [45, 19.5]], .007);
   piece(back, matBack, [[50.3, 0], [56, 0], [56, 16], [50.3, 16]], .01, .008);
-  piece(back, matBack, ellipsePts(53, 26.2, 4.7, 4.1), .009, .004);   // stamped Zoe Smith badge
+  piece(back, matBack, ellipsePts(53, 26.2, 4.7, 4.1), .009, .004);
   piece(back, matBack, [[27, 0], [35, 0], [35.5, 10], [33, 18], [31, 20.5], [29, 18], [26.5, 10]], .012, .004);
   piece(back, matBack, [[70, 0], [78, 0], [78.5, 10], [76, 18], [74, 20.5], [72, 18], [69.5, 10]], .012, .004);
   piece(back, matBack, [[0, 2.5], [11.5, 2.5], [11.5, 12.5], [0, 12.5]], .01, .002);
   piece(back, matBack, [[92.5, 4.5], [100, 4.5], [100, 12.5], [92.5, 12.5]], .01, .002);
 
-  // ---------- Belts wrapping round each end, from the side photograph ----------
+  // --- Inside the back wall: the leather zip pocket, from Zoe's photograph ---
   {
-    const beltMat = leather({ map: texBelt, bumpMap: texBelt, bumpScale: 1.4, roughness: .6 });
-    const sTop = 1 - .065, sBot = 1 - .195;
-    for (const side of [1, -1]) {
-      const m = grid(16, 3, (w, k) => {
-        const s = sBot + (sTop - sBot) * k;
-        const d = depthAt(s) / 2 + .014;
-        // the belt is pulled tight, so it bows only slightly round the end
-        return { x: side * (W / 2 + .012 + 0.006 * Math.sin(Math.PI * w)), y: s * H, z: (.5 - w) * 2 * d, tu: side > 0 ? w : 1 - w, tv: k };
-      }, beltMat);
-      if (side < 0) flip(m);
-      for (const s of [sTop, sBot]) {
-        const d = depthAt(s) / 2 + .014;
-        const c = new THREE.CatmullRomCurve3([-1, 0, 1].map(k => new THREE.Vector3(side * (W / 2 + .012 + (k === 0 ? .006 : 0)), s * H, k * d)));
-        bag.add(new THREE.Mesh(new THREE.TubeGeometry(c, 12, .005, 8, false), leather({ color: 0x6b3a22 })));
-      }
-    }
+    const zw = W * .74, zh = zw * 236 / 1536;
+    const zip = new THREE.Mesh(new THREE.PlaneGeometry(zw, zh), leather({ map: texZip, roughness: .7 }));
+    zip.rotation.y = Math.PI;                 // facing into the bag
+    zip.position.set(0, fy(31), -INSET - .004);
+    back.add(zip);
   }
 
-  // ---------- Rolled handles ----------
-  // Sized from the front photograph: they leave the tabs about a fifth of the
-  // way in from each end, stand almost upright, and arch to about four-fifths
-  // of the body's height above the rim. Thick and round in the middle, they
-  // flatten where they are stitched into the tabs.
+  // ---------- Rolled handles: they fall outwards as the bag opens ----------
+  const handlePivots = [];
   {
     const c = document.createElement('canvas'); c.width = 1024; c.height = 64;
     const g = c.getContext('2d');
@@ -255,44 +291,54 @@ function init() {
     const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = THREE.RepeatWrapping; t.repeat.set(4, 1);
     const handleMat = leather({ map: t, roughness: .38 });
 
-    const top = H, rise = .71, R = .036;
-    const half = W * .21;                  // tab centres sit at 29% and 71% of the width
+    const rise = .71, R = .036, half = W * .21;
     const path = [
-      [-half, top - .1], [-half - .004, top + .02], [-half - .014, top + .16], [-half - .016, top + .32],
-      [-half + .006, top + .48], [-half * .72, top + .61], [-half * .4, top + rise - .018], [0, top + rise],
-      [half * .4, top + rise - .018], [half * .72, top + .61], [half - .006, top + .48], [half + .016, top + .32],
-      [half + .014, top + .16], [half + .004, top + .02], [half, top - .1],
+      [-half, -.1], [-half - .004, .02], [-half - .014, .16], [-half - .016, .32],
+      [-half + .006, .48], [-half * .72, .61], [-half * .4, rise - .018], [0, rise],
+      [half * .4, rise - .018], [half * .72, .61], [half - .006, .48], [half + .016, .32],
+      [half + .014, .16], [half + .004, .02], [half, -.1],
     ];
+    const tilt0 = Math.atan(((DB - DT_CLOSED) / 2) / H);
     for (const s of [1, -1]) {
-      const zRim = s * (DT / 2 + .034);
-      // the handles lean very slightly outwards, as they do in the photos
-      const lean = .1;
+      const pivot = new THREE.Group(); bag.add(pivot); handlePivots.push({ pivot, s });
       const curve = new THREE.CatmullRomCurve3(path.map(([x, y]) => {
-        const above = Math.max(0, y - top);
-        const below = Math.max(0, top - y);
-        return new THREE.Vector3(x, y, zRim + s * (above / rise) * lean + s * below * Math.tan(TILT));
+        const above = Math.max(0, y), below = Math.max(0, -y);
+        return new THREE.Vector3(x, y, s * (.034 + (above / rise) * .1 + below * Math.tan(tilt0)));
       }), false, 'centripetal');
       const segs = 200, radial = 20;
       const geo = new THREE.TubeGeometry(curve, segs, R, radial, false);
-      // taper and flatten the ends where they go into the tabs
-      const pos = geo.attributes.position, frames = curve.computeFrenetFrames(segs, false);
+      const pos = geo.attributes.position;
       for (let i = 0; i <= segs; i++) {
         const k = i / segs, c0 = curve.getPointAt(k);
-        const e = Math.min(k, 1 - k) / 0.1;               // 0 at the ends, 1 after the first tenth
-        const scaleR = e >= 1 ? 1 : .62 + .38 * e;
-        const flat = e >= 1 ? 1 : .55 + .45 * e;          // squashed against the bag at the ends
+        const ee = Math.min(k, 1 - k) / 0.1;
+        const scaleR = ee >= 1 ? 1 : .62 + .38 * ee, flat = ee >= 1 ? 1 : .55 + .45 * ee;
         for (let j = 0; j <= radial; j++) {
           const vi = i * (radial + 1) + j;
-          const v = new THREE.Vector3(pos.getX(vi), pos.getY(vi), pos.getZ(vi)).sub(c0);
-          v.multiplyScalar(scaleR);
+          const v = new THREE.Vector3(pos.getX(vi), pos.getY(vi), pos.getZ(vi)).sub(c0).multiplyScalar(scaleR);
           v.z *= flat;
           pos.setXYZ(vi, c0.x + v.x, c0.y + v.y, c0.z + v.z);
         }
       }
       geo.computeVertexNormals();
-      bag.add(new THREE.Mesh(geo, handleMat));
+      pivot.add(new THREE.Mesh(geo, handleMat));
     }
   }
+  function placeHandles() {
+    for (const { pivot, s } of handlePivots) {
+      pivot.position.set(0, H, s * DT / 2);
+      pivot.rotation.x = s * open * 1.15;      // handles drop away to each side
+    }
+  }
+
+  // apply the current open amount to everything
+  function applyShape() {
+    DT = DT_CLOSED + (DT_OPEN - DT_CLOSED) * open;
+    setShape();
+    for (const m of grids) refreshGrid(m);
+    lid.visible = open < 0.03;
+    rebuildEdges(); placeFaces(); placeHandles();
+  }
+  applyShape();
 
   bag.position.y = -0.84;
   scene.add(bag);
@@ -310,7 +356,7 @@ function init() {
 
   // ---------- Controls ----------
   const controls = new OrbitControls(camera, canvas);
-  canvas.style.touchAction = 'pan-y';          // vertical swipes still scroll the page on phones
+  canvas.style.touchAction = 'pan-y';
   controls.enableZoom = false; controls.enablePan = false;
   controls.enableDamping = true; controls.dampingFactor = .08; controls.rotateSpeed = .8;
   controls.minPolarAngle = 0.02; controls.maxPolarAngle = Math.PI / 2 + 0.05;
@@ -318,8 +364,7 @@ function init() {
   controls.target.set(0, 0, 0);
 
   let dist = 5;
-  camera.position.setFromSpherical(new THREE.Spherical(dist, 1.3, 0.55));
-
+  camera.position.setFromSpherical(new THREE.Spherical(dist, 0.95, 0.55));
   function resize() {
     const w = stage.clientWidth, h = stage.clientHeight;
     renderer.setSize(w, h, false);
@@ -332,9 +377,9 @@ function init() {
   resize();
   new ResizeObserver(resize).observe(stage);
 
-  const buttons = document.querySelectorAll('.v-controls button');
+  const buttons = document.querySelectorAll('.v-controls button[data-view]');
   let anim = null;
-  const views = { front: [1.4, 0], side: [1.4, Math.PI / 2], back: [1.4, Math.PI], above: [0.03, 0] };
+  const views = { front: [1.4, 0], side: [1.4, Math.PI / 2], back: [1.4, Math.PI], above: [0.03, 0], inside: [0.62, 0.35] };
   const setActive = v => buttons.forEach(b => b.setAttribute('aria-pressed', b.dataset.view === v));
   function goTo(name) {
     controls.autoRotate = false;
@@ -351,7 +396,16 @@ function init() {
   }));
   controls.addEventListener('start', () => { anim = null; controls.autoRotate = false; setActive(null); });
 
-  // draw only while on screen
+  // Open / close
+  let openTarget = 1, openFrom = 1, openT0 = 0;
+  const openBtn = document.querySelector('.v-open');
+  if (openBtn) openBtn.addEventListener('click', () => {
+    openFrom = open; openTarget = openTarget ? 0 : 1; openT0 = performance.now();
+    openBtn.setAttribute('aria-pressed', openTarget === 1);
+    openBtn.textContent = openTarget ? 'Close the bag' : 'Open the bag';
+    if (openTarget) goTo('inside'); else if (!controls.autoRotate) goTo('front');
+  });
+
   let visible = true;
   new IntersectionObserver(es => { visible = es[es.length - 1].isIntersecting; if (visible) loop(); }).observe(stage);
 
@@ -360,9 +414,15 @@ function init() {
     cancelAnimationFrame(raf);
     if (!visible) return;
     raf = requestAnimationFrame(loop);
+    if (open !== openTarget) {
+      const k = Math.min((performance.now() - openT0) / 1400, 1);
+      const eased = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+      open = k === 1 ? openTarget : openFrom + (openTarget - openFrom) * eased;
+      applyShape();
+    }
     if (anim) {
-      const k = Math.min((performance.now() - anim.t0) / 1100, 1), e = 1 - Math.pow(1 - k, 3);
-      const s = new THREE.Spherical(dist, anim.from.phi + (anim.phi - anim.from.phi) * e, anim.from.theta + (anim.theta - anim.from.theta) * e);
+      const k = Math.min((performance.now() - anim.t0) / 1100, 1), ez = 1 - Math.pow(1 - k, 3);
+      const s = new THREE.Spherical(dist, anim.from.phi + (anim.phi - anim.from.phi) * ez, anim.from.theta + (anim.theta - anim.from.theta) * ez);
       camera.position.setFromSpherical(s).add(controls.target);
       if (k === 1) anim = null;
     }

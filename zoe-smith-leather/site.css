@@ -316,3 +316,9 @@ body.intro-on{overflow:hidden}
 .page-hero .hero-visual img[src*="zoe-stitching"]{object-position:50% 35%}
 @media (max-width:960px){.bench-grid{grid-template-columns:1fr 1fr}.bench-grid figure:first-child{grid-column:1/-1}.bench-grid figure:first-child .bg-img{aspect-ratio:4/3}}
 @media (max-width:560px){.bench-grid{grid-template-columns:1fr;gap:40px}.bench-grid figure:first-child .bg-img{aspect-ratio:4/5}.bench-head{margin-bottom:36px}}
+
+.v-open-row{display:flex;justify-content:center;margin-top:6px}
+.v-open{background:var(--ink);color:var(--paper);border:1px solid var(--ink);padding:14px 30px;font-family:var(--sans);font-size:.66rem;letter-spacing:.28em;text-transform:uppercase;cursor:pointer;transition:background .3s,color .3s}
+.v-open:hover,.v-open[aria-pressed="true"]{background:transparent;color:var(--ink)}
+.stage.no-3d ~ .v-open-row{display:none}
+@media (max-width:560px){.v-open{width:100%;max-width:320px;padding:14px 18px;font-size:.62rem;letter-spacing:.22em}}
